@@ -27,6 +27,7 @@
 #include <netdb.h>
 #include <cstring>
 // for memset
+#include <string>
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -102,10 +103,20 @@ int main(int argc, char *argv[]){
 	// read on in man 7 socket
 	socklen_t addr_size;
 
+	//char *buffer[256];
+	char buffer[256];
+
 	addr_size = sizeof peer_addr;
 	while(1){
 		confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
 		send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
+
+		string str;
+		while(str.compare("quit")!=0){
+		recv(confd, buffer, 256, 0);
+		str = string(buffer);
+		cout << str;
+		}
 	}
 //--------------------------------------------------------------------------------
 //---------------------------------close or shutdown------------------------------
