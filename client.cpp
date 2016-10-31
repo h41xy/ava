@@ -80,8 +80,10 @@ int main(int argc, char *argv[]){
 	//---------------------------------connect----------------------------------------
 	if(connect(sockfd,serverInfo->ai_addr,serverInfo->ai_addrlen) == -1)
 		cout << "SHIEEEEET";
-	cout << "connecting worked";
-	if(send(sockfd,"Hello world!\n",15,0) == -1)
+	cout << "connecting worked\n";
+	string msg = "YES MUTHAFUCKA!\n";
+	int len = msg.size();
+	if(send(sockfd,msg,17,0) == -1)
 		cout << "send failed";
 	cout << "send succeded";
 	//--------------------------------------------------------------------------------
