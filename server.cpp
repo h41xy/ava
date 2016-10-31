@@ -8,7 +8,7 @@
  *        Version:  1.0
  *        Created:  10/28/2016 03:12:09 PM
  *       Revision:  none
- *       Compiler:  gcc
+ *       Compiler:  g++ server.cpp -o server
  *
  *         Author:  h41
  *   Organization:  htwsaar
@@ -22,8 +22,6 @@
 //definitions of datatypes used in system calls
 #include <sys/socket.h>
 // socket structure definitions
-//#include <netinet/in.h>
-//// constants and sturctures for internet domain addresses
 #include <netdb.h>
 #include <cstring>
 // for memset
@@ -58,7 +56,7 @@ int main(int argc, char *argv[]){
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo(NULL, "25003", &hints, &serverInfo);
+	getaddrinfo(NULL, "25003", &hints, &serverInfo); // for localhost AI_PASSIVE and NULL must be set
 
 	//--------------------------------------------------------------------------------
 
@@ -112,8 +110,8 @@ int main(int argc, char *argv[]){
 	addr_size = sizeof peer_addr;
 	while(1){
 		confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
-		cout << "Someone connected : D";
-		//send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
+		cout << "Someone connected\n";
+		send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
 
 		string str;
 		do{
@@ -121,7 +119,7 @@ int main(int argc, char *argv[]){
 			recv(confd, buffer, 256, 0);
 			str = string(buffer);
 			cout << str;
-		}while(str.find(quit) == std::string::npos);
+		}while(str.compare("quit\n") != 0);
 		close(confd);
 		break;
 	}

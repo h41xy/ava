@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 	hints.ai_socktype = SOCK_STREAM;
 	//hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo("127.0.0.1", "25003", &hints, &serverInfo);
+	getaddrinfo("192.168.1.102", "25003", &hints, &serverInfo);
 
 	//--------------------------------------------------------------------------------
 
@@ -80,62 +80,16 @@ int main(int argc, char *argv[]){
 	//---------------------------------connect----------------------------------------
 	if(connect(sockfd,serverInfo->ai_addr,serverInfo->ai_addrlen) == -1)
 		cout << "SHIEEEEET";
-	cout << "connecting worked\n";
-	string msg = "YES MUTHAFUCKA!\n";
-	int len = msg.size();
-	if(send(sockfd,msg.data(),17,0) == -1)
-		cout << "send failed";
-	cout << "send succeded";
-	//--------------------------------------------------------------------------------
-	//---------------------------------bind-------------------------------------------
+	cout << "connected\n";
 
-	// int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
-	// sockfd is sockfd
-	// addr is the address to be 
-	// addrlen is the length (sizeof)
-	//bind(sockfd, serverInfo->ai_addr, serverInfo->ai_addrlen);
+	string msg;
+	while(1){
+		cout << "What do you want to send?\n";
+		cin >> msg;
+		cout << msg.append("\n");
+		send(sockfd, msg.data(),msg.size(),0);
+		msg.clear();
+	}
 
-	////--------------------------------------------------------------------------------
-
-	////---------------------------------listen-----------------------------------------
-
-	//// int listen(int sockfd, int backlog);
-	//// sockfd is sockfd
-	//// backlog is defines the maximum length to which the queue of pending connections for sockfd may grow.
-	//listen(sockfd,5);
-
-	////--------------------------------------------------------------------------------
-
-	////---------------------------------accept-----------------------------------------
-
-	//// int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-	//// addr points to a struct which gets filled with the peer address
-	//// addrlen  soze of the struct (sizeof)
-	//struct sockaddr_storage peer_addr;
-	//// sockaddr_storage is a generic struct for all domain specific types
-	//// read on in man 7 socket
-	//socklen_t addr_size;
-
-	////char *buffer[256];
-	//char buffer[256];
-	//string quit = "quit";
-
-	//addr_size = sizeof peer_addr;
-	//while(1){
-	//	confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
-	//	send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
-
-	//	string str;
-	//	do{
-	//		memset(buffer,0,sizeof buffer);
-	//		recv(confd, buffer, 256, 0);
-	//		str = string(buffer);
-	//		cout << str;
-	//	}while(str.find(quit) == std::string::npos);
-	//	close(confd);
-	//	break;
-	//}
-	//--------------------------------------------------------------------------------
-	//---------------------------------close or shutdown------------------------------
 	//--------------------------------------------------------------------------------
 }
