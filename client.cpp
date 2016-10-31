@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  server.cpp
+ *       Filename:  client.cpp
  *
  *    Description:  A progam to play around with sockets
  *
@@ -56,15 +56,15 @@ int main(int argc, char *argv[]){
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_INET; //IPv4
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE; // assign localhost
+	//hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo(NULL, "25003", &hints, &serverInfo);
+	getaddrinfo("127.0.0.1", "25003", &hints, &serverInfo);
 
 	//--------------------------------------------------------------------------------
 
 	//-------------------------socket-------------------------------------------------
 
-	int sockfd, confd; // listen on socketfd, new connection on confd
+	int sockfd;//, confd; // listen on socketfd, new connection on confd
 
 	// int socket(int domain, int type, int protocol);
 	// domain is AF_INET
@@ -72,59 +72,67 @@ int main(int argc, char *argv[]){
 	// protocol is 0
 	//sockfd = socket(AF_INET,SOCK_STREAM,0);
 	// instead use the values direct from getaddrinfo
-	sockfd = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
-	cout << "socket created\n";
+	if((sockfd = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol)) == -1)
+		cout << "socket failed\n";
 
 	//--------------------------------------------------------------------------------
 
+	//---------------------------------connect----------------------------------------
+	if(connect(sockfd,serverInfo->ai_addr,serverInfo->ai_addrlen) == -1)
+		cout << "SHIEEEEET";
+	cout << "connecting worked";
+	if(send(sockfd,"Hello world!\n",15,0) == -1)
+		cout << "send failed";
+	cout << "send succeded";
+	//--------------------------------------------------------------------------------
 	//---------------------------------bind-------------------------------------------
 
 	// int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 	// sockfd is sockfd
 	// addr is the address to be 
 	// addrlen is the length (sizeof)
-	bind(sockfd, serverInfo->ai_addr, serverInfo->ai_addrlen);
-	//--------------------------------------------------------------------------------
+	//bind(sockfd, serverInfo->ai_addr, serverInfo->ai_addrlen);
 
-	//---------------------------------listen-----------------------------------------
+	////--------------------------------------------------------------------------------
 
-	// int listen(int sockfd, int backlog);
-	// sockfd is sockfd
-	// backlog is defines the maximum length to which the queue of pending connections for sockfd may grow.
-	listen(sockfd,5);
-	cout << "Listening\n";
-	//--------------------------------------------------------------------------------
+	////---------------------------------listen-----------------------------------------
 
-	//---------------------------------accept-----------------------------------------
+	//// int listen(int sockfd, int backlog);
+	//// sockfd is sockfd
+	//// backlog is defines the maximum length to which the queue of pending connections for sockfd may grow.
+	//listen(sockfd,5);
 
-	// int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
-	// addr points to a struct which gets filled with the peer address
-	// addrlen  soze of the struct (sizeof)
-	struct sockaddr_storage peer_addr;
-	// sockaddr_storage is a generic struct for all domain specific types
-	// read on in man 7 socket
-	socklen_t addr_size;
+	////--------------------------------------------------------------------------------
 
-	//char *buffer[256];
-	char buffer[256];
-	string quit = "quit";
+	////---------------------------------accept-----------------------------------------
 
-	addr_size = sizeof peer_addr;
-	while(1){
-		confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
-		cout << "Someone connected : D";
-		//send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
+	//// int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+	//// addr points to a struct which gets filled with the peer address
+	//// addrlen  soze of the struct (sizeof)
+	//struct sockaddr_storage peer_addr;
+	//// sockaddr_storage is a generic struct for all domain specific types
+	//// read on in man 7 socket
+	//socklen_t addr_size;
 
-		string str;
-		do{
-			memset(buffer,0,sizeof buffer);
-			recv(confd, buffer, 256, 0);
-			str = string(buffer);
-			cout << str;
-		}while(str.find(quit) == std::string::npos);
-		close(confd);
-		break;
-	}
+	////char *buffer[256];
+	//char buffer[256];
+	//string quit = "quit";
+
+	//addr_size = sizeof peer_addr;
+	//while(1){
+	//	confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
+	//	send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
+
+	//	string str;
+	//	do{
+	//		memset(buffer,0,sizeof buffer);
+	//		recv(confd, buffer, 256, 0);
+	//		str = string(buffer);
+	//		cout << str;
+	//	}while(str.find(quit) == std::string::npos);
+	//	close(confd);
+	//	break;
+	//}
 	//--------------------------------------------------------------------------------
 	//---------------------------------close or shutdown------------------------------
 	//--------------------------------------------------------------------------------
