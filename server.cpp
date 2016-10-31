@@ -27,6 +27,8 @@
 #include <netdb.h>
 #include <cstring>
 // for memset
+#include <unistd.h>
+// for close
 #include <string>
 using namespace std;
 
@@ -40,13 +42,13 @@ int main(int argc, char *argv[]){
 	// accept()
 	// close() or shutdown()
 
-//-------------------------getaddrinfo--------------------------------------------
+	//-------------------------getaddrinfo--------------------------------------------
 
-        // int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
-        // inode is the serveraddress, www.example.org or IP
-        // service is "http" or portnr
-        // hints is a addinfo struct which sets parameters like "use IPv4" "its a tcp stream socket" and so on...
-        // res is a pointer to a pointer which will point to the results...get it?
+	// int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
+	// inode is the serveraddress, www.example.org or IP
+	// service is "http" or portnr
+	// hints is a addinfo struct which sets parameters like "use IPv4" "its a tcp stream socket" and so on...
+	// res is a pointer to a pointer which will point to the results...get it?
 
 	struct addrinfo hints; // This contains infos for selecting the socket address structures in serverinfo
 	struct addrinfo *serverInfo; // This contains the Serverinfo later for binding to the socket
@@ -54,16 +56,16 @@ int main(int argc, char *argv[]){
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_INET; //IPv4
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE; // assign localhost
+	//hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo(NULL, "25003", &hints, &serverInfo);
+	getaddrinfo("127.0.0.1", "25003", &hints, &serverInfo);
 
-//--------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
 
-//-------------------------socket-------------------------------------------------
+	//-------------------------socket-------------------------------------------------
 
 	int sockfd, confd; // listen on socketfd, new connection on confd
-	
+
 	// int socket(int domain, int type, int protocol);
 	// domain is AF_INET
 	// type is SOCK_STREAM
@@ -72,9 +74,9 @@ int main(int argc, char *argv[]){
 	// instead use the values direct from getaddrinfo
 	sockfd = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
 
-//--------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
 
-//---------------------------------bind-------------------------------------------
+	//---------------------------------bind-------------------------------------------
 
 	// int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 	// sockfd is sockfd
@@ -82,18 +84,18 @@ int main(int argc, char *argv[]){
 	// addrlen is the length (sizeof)
 	bind(sockfd, serverInfo->ai_addr, serverInfo->ai_addrlen);
 
-//--------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
 
-//---------------------------------listen-----------------------------------------
+	//---------------------------------listen-----------------------------------------
 
 	// int listen(int sockfd, int backlog);
 	// sockfd is sockfd
 	// backlog is defines the maximum length to which the queue of pending connections for sockfd may grow.
 	listen(sockfd,5);
 
-//--------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
 
-//---------------------------------accept-----------------------------------------
+	//---------------------------------accept-----------------------------------------
 
 	// int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 	// addr points to a struct which gets filled with the peer address
@@ -105,6 +107,7 @@ int main(int argc, char *argv[]){
 
 	//char *buffer[256];
 	char buffer[256];
+	string quit = "quit";
 
 	addr_size = sizeof peer_addr;
 	while(1){
@@ -112,13 +115,16 @@ int main(int argc, char *argv[]){
 		send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
 
 		string str;
-		while(str.compare("quit")!=0){
-		recv(confd, buffer, 256, 0);
-		str = string(buffer);
-		cout << str;
-		}
+		do{
+			memset(buffer,0,sizeof buffer);
+			recv(confd, buffer, 256, 0);
+			str = string(buffer);
+			cout << str;
+		}while(str.find(quit) == std::string::npos);
+		close(confd);
+		break;
 	}
-//--------------------------------------------------------------------------------
-//---------------------------------close or shutdown------------------------------
-//--------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------
+	//---------------------------------close or shutdown------------------------------
+	//--------------------------------------------------------------------------------
 }
