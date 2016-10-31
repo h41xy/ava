@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
 	cout << "connecting worked\n";
 	string msg = "YES MUTHAFUCKA!\n";
 	int len = msg.size();
-	if(send(sockfd,msg,17,0) == -1)
+	if(send(sockfd,msg.data(),17,0) == -1)
 		cout << "send failed";
 	cout << "send succeded";
 	//--------------------------------------------------------------------------------
