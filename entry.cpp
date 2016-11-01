@@ -3,10 +3,13 @@
 #include "entry.h"
 
 Entry::Entry (int id, std::string ip, int port){
+	// maybe change to linked list so next can be used
 	this->id = id;
 	this->ip = ip;
 	this->port = port;
 }
+
+Entry::Entry(){}
 
 int Entry::getid(){
 	return this->id;

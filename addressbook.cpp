@@ -7,18 +7,20 @@ Addressbook::Addressbook(std::string fname){
 	// open file
 	std::ifstream ifile;
 	ifile.open(fname);
-	std::string line;
+	std::string line, ip;
+	int id, port;
 	while( getline(ifile,line)){
 		std::cout << line << '\n';
 		std::size_t pos_white = line.find(" ");
 		std::size_t pos_colo = line.find(":");
-		std::cout << pos_white << " " << pos_colo << "\n";
-		std::string id_str = line.substr(0, pos_white);
-		int id = std::stoi(id_str);
-		std::string ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
-		std::string port_str = line.substr(pos_colo+1,((line.size()-pos_colo)-1));
-		int port = std::stoi(pot_str);
-		std::cout << id << " " << ip << ":" << port << "\n";
+
+		id = std::stoi(line.substr(0, pos_white));
+		ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
+		port = std::stoi(line.substr(pos_colo+1,((line.size()-pos_colo)-1)));
+
+		Entry nentry(id,ip,port);
+		std::cout << nentry.getid() << " " << nentry.getip() << ":" << nentry.getport() << "\n";
+		this->add(nentry);
 	}
 	ifile.close();
 	// while != eof
@@ -29,6 +31,8 @@ Addressbook::Addressbook(std::string fname){
 
 // Fill the Addressbook from a file
 int Addressbook::add(Entry nentry){
+	// error is list is full
+	book[index++] = nentry;
 	return -1;
 }
 
