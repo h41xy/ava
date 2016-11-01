@@ -7,3 +7,13 @@ Entry::Entry (int id, std::string ip, int port){
 	this->ip = ip;
 	this->port = port;
 }
+
+int Entry::getid(){
+	return this->id;
+}
+std::string Entry::getip(){
+	return this->ip;
+}
+int Entry::getport(){
+	return this->port;
+}

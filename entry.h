@@ -7,5 +7,8 @@ class Entry{
 	std::string ip;
  public:
 	Entry (int,std::string,int);
+	int getid();
+	std::string getip();
+	int getport();
 };
 
