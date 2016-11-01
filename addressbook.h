@@ -1,6 +1,7 @@
 // The Addressbook which contains the IDs, IPs and Ports
 
 #include <string>
+#include <fstream>
 #include "entry.h"
 
 class Addressbook{
