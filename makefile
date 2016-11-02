@@ -1,23 +1,22 @@
 CC := g++
 SRCDIR := src
 BUILDDIR := build
+TARGET := bin/node
 
 SRCEXT := cpp
 CFLAGS := -Wall
 INC := -I include
 
-all: $(BUILDDIR)/*.o
-	@echo " Linking....."
-	$(CC) $(INC) $(BUILDDIR)/*.o -o bin/node
+MODULES := main addressbook entry
+OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 
-entry: $(SRCDIR)/entry.cpp include/entry.h
-	$(CC) $(CFLAGS) $(INC) -c $(SRCDIR)/entry.cpp -o $(BUILDDIR)/entry.o
+all: $(TARGET)
 
-addressbook: $(SRCDIR)/addressbook.cpp include/addressbook.h
-	$(CC) $(CFLAGS) $(INC) -c $(SRCDIR)/addressbook.cpp -o $(BUILDDIR)/addressbook.o
+$(TARGET): $(OBJECTS)
+	$(CC) $^ -o $@
 
-test: test.cpp $(SRCDIR)/entry.o $(SRCDIR)/addressbook.o
-	$(CC) $(CFLAGS) $(INC) test/test.cpp $(BUILDDIR)/*.o -o test/test
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
 clean:
 	rm bin/node $(BUILDDIR)/*.o
