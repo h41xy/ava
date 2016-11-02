@@ -5,6 +5,10 @@
 
 Addressbook::Addressbook(std::string fname){
 	// open file
+	// while != eof
+	// create entry from line
+	// add to addressbook
+	// close
 	std::ifstream ifile;
 	ifile.open(fname);
 	std::string line, ip;
@@ -23,16 +27,15 @@ Addressbook::Addressbook(std::string fname){
 		this->add(nentry);
 	}
 	ifile.close();
-	// while != eof
-	// create entry from line
-	// add to addressbook
-	// close
 }
 
 // Fill the Addressbook from a file
 int Addressbook::add(Entry nentry){
-	// error is list is full
-	book[index++] = nentry;
+	if (index < MAXNODES){
+		book[index++] = nentry;
+		return 0;
+	}
+	// Throw Error
 	return -1;
 }
 

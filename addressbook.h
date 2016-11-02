@@ -6,7 +6,8 @@
 
 class Addressbook{
 	// a storage method for entries
-	Entry book[10];
+	const int MAXNODES = 100;
+	Entry book[MAXNODES];
 	int index = 0;
  public:
 	Addressbook(std::string);
