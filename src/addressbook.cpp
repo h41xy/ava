@@ -6,7 +6,7 @@ Addressbook::Addressbook(std::string fname){
 	fillfromfile(fname);
 }
 
-int Addressbook::fillfromfile(std::string fname){
+void Addressbook::fillfromfile(std::string fname){
 	// open file
 	// while != eof
 	// create entry from line
@@ -25,27 +25,26 @@ int Addressbook::fillfromfile(std::string fname){
 		ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
 		port = std::stoi(line.substr(pos_colo+1,((line.size()-pos_colo)-1)));
 
-		//Entry nentry(id,ip,port);
 		this->add(Entry(id,ip,port));
 	}
 	ifile.close();
-	return -1;
 }
 
 // Fill the Addressbook from a file
-int Addressbook::add(Entry nentry){
-	if (index < MAXNODES){
-		book[index++] = nentry;
-		return 0;
-	}
-	// Throw Error
-	return -1;
+void Addressbook::add(Entry nentry){
+	book.push_back(nentry);
 }
 
 Entry Addressbook::getbyid(int id){
-	return Entry(1,"test",2);
+	std::list<Entry>::iterator it = book.begin();
+	while((*it).getid() != id){
+		it++;
+		if(it == book.end())
+			return Entry(-1,"",-1);
+	}
+	return (*it);
 }
 
 int Addressbook::entrycount(){
-	return index;
+	return book.size();
 }

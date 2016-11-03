@@ -12,9 +12,9 @@ int run(char *id_cstr){
 	Addressbook book("doc/example.txt");
 
 	// argv ID, lookup ID and listen on the port
-	int myport = book.getbyid(id).getport();
-	std::cout << myport << "\n";
 	//
+	int myport = book.getbyid(id).getport();
+	std::cout << "My port is: " << myport << "\n";
 	// choose three other IDs
 	//
 	// output msgs with timestamp

@@ -2,17 +2,15 @@
 
 #include <string>
 #include <fstream>
+#include <list>
 #include "entry.h"
 
 class Addressbook{
-	// a storage method for entries
-	static const int MAXNODES = 100;
-	Entry book[MAXNODES];
-	int index = 0;
+	std::list<Entry> book;
  public:
 	Addressbook(std::string);
-	int fillfromfile(std::string);
-	int add(Entry);
+	void fillfromfile(std::string);
+	void add(Entry);
 	Entry getbyid(int);
 	int entrycount();
 };
