@@ -5,6 +5,14 @@
 
 #include "addressbook.h"
 
+/* The run method actually starts the different steps to set up the node
+ * - Read one argument as a id
+ * - Read a textfile which contains an addressbook, <id, whitespace,IP, colon,port>
+ * - Open a port and listening on it. Port depends on ID in addressbook. If msgs arrive, they will be printed to stdout with timestamp.
+ * - Choose three random neigbors from the addressbook
+ * - Send the own ID once to these three.
+ * - Put all sended msgs also on stdout with timestamp
+ */
 int run(char *id_cstr){
 	std::string id_str(id_cstr);
 	int id = std::stoi(id_str);
@@ -35,7 +43,9 @@ int run(char *id_cstr){
 	// send msg with timestamp
 	return -1;
 }
-
+/* The main method to start a single node.
+ * It requires one argument which is used as the own ID
+ */
 int main ( int argc, char *argv[]) {
 	if(argc > 1)
 		run(argv[1]);
