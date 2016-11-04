@@ -22,8 +22,9 @@ class Listener{
 	int confd;
 	struct sockaddr_storage peer_addr;
 	socklen_t addr_size;
-	char buffer[256];
 
  public:
-	Listener(std::string,int); //ip and port
+	Listener(int); //port
+	int prepare_and_listen();
+	int accept_connection();
 };

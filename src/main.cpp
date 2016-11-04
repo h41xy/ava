@@ -2,9 +2,24 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <thread>
 
 #include "addressbook.h"
 #include "listener.h"
+
+void interact(int acc_confd){
+		char buffer[256];
+		std::string str;
+		std::string quit = "quit";
+		do{
+			memset(buffer,0,sizeof buffer);
+			recv(acc_confd, buffer, 256, 0);
+			str = std::string(buffer);
+			std::cout << str;
+		}while(str.find(quit) == std::string::npos);
+		close(acc_confd);
+
+}
 
 /* The run method actually starts the different steps to set up the node
  * - Read one argument as a id
@@ -24,7 +39,9 @@ int run(char *id_cstr){
 
 	// argv ID, lookup ID and listen on the port
 	//
-	int myport = book.getbyid(id).getport();
+	Entry myself = book.getbyid(id);
+	std::string myip = myself.getip();
+	int myport = myself.getport();
 	// remove "my" entry so it doent get chosen as neighbor
 	book.remove(id);
 	std::cout << "My port is: " << myport << "\n";
@@ -37,7 +54,17 @@ int run(char *id_cstr){
 	port_nb_two = std::get<1>(randoms).getport();
 	port_nb_three = std::get<2>(randoms).getport();
 	std::cout << "My neighbors ports are: " << port_nb_one << " " << port_nb_two << " " << port_nb_three << "\n";
-	Listener("localhost",25001);
+	Listener listener(myport);
+	listener.prepare_and_listen();
+	while(1){
+		int confd = listener.accept_connection();
+		std::thread con (interact, confd);
+		std::cout << "Thread started. Waiting for return...";
+		con.join();
+		std::cout << "success!\n";
+		break;
+	}
+	
 	// output msgs with timestamp
 	//
 	// send ID to neighbours

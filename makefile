@@ -13,7 +13,7 @@ OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $^ -o $@
+	$(CC) $^ -o $@ -lpthread
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
