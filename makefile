@@ -7,7 +7,7 @@ SRCEXT := cpp
 CFLAGS := -Wall
 INC := -I include
 
-MODULES := main addressbook entry
+MODULES := main addressbook entry listener
 OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 
 all: $(TARGET)
@@ -17,6 +17,9 @@ $(TARGET): $(OBJECTS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+listener.o: src/listener.cpp
+	$(CC) $(CFLAGS) $(INC) -c $< -o $(BUILDDIR)/$@
 
 clean:
 	rm bin/node $(BUILDDIR)/*.o
