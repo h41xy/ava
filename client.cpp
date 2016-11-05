@@ -82,10 +82,11 @@ int main(int argc, char *argv[]){
 		cout << "SHIEEEEET";
 	cout << "connecting worked\n";
 	string msg = "YES MUTHAFUCKA!\n";
-	int len = msg.size();
-	if(send(sockfd,msg,17,0) == -1)
+	//int len = msg.size();
+	if(send(sockfd,"Anus time. quit\n",17,0) == -1)
 		cout << "send failed";
 	cout << "send succeded";
+	close(sockfd);
 	//--------------------------------------------------------------------------------
 	//---------------------------------bind-------------------------------------------
 
