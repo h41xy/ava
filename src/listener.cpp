@@ -36,3 +36,8 @@ int Listener::prepare_and_listen(){
 int Listener::accept_connection(){
 	return accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
 }
+
+int Listener::close_socket(){
+	close(sockfd);
+	return -1;
+}

@@ -27,4 +27,5 @@ class Listener{
 	Listener(int); //port
 	int prepare_and_listen();
 	int accept_connection();
+	int close_socket();
 };

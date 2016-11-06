@@ -2,7 +2,8 @@
 #include <iostream>
 #include <string>
 #include <tuple>
-#include <thread>
+#include <ctime>
+#include <iomanip>
 
 #include "addressbook.h"
 #include "listener.h"
@@ -46,7 +47,7 @@ int run(char *id_cstr){
 	book.remove(id);
 	std::cout << "My port is: " << myport << "\n";
 
-	// choose three other IDs
+	// choose three random other IDs
 	//
 	std::tuple<Entry,Entry,Entry> randoms = book.return_three_random_entries(id);
 	int port_nb_one, port_nb_two, port_nb_three;
@@ -54,16 +55,33 @@ int run(char *id_cstr){
 	port_nb_two = std::get<1>(randoms).getport();
 	port_nb_three = std::get<2>(randoms).getport();
 	std::cout << "My neighbors ports are: " << port_nb_one << " " << port_nb_two << " " << port_nb_three << "\n";
+
+	// listen on the port
+	//
+	int confd;
+	char buffer[256];
+	std::string msg, time, quit, exit;
+	quit = "quit";
+	exit = "exit";
+
 	Listener listener(myport);
 	listener.prepare_and_listen();
-	while(1){
-		int confd = listener.accept_connection();
-		std::thread con (interact, confd);
-		std::cout << "Thread started. Waiting for return...";
-		con.join();
-		std::cout << "success!\n";
-		break;
-	}
+	do{
+		confd = listener.accept_connection();
+		// Receive msgs and react to them
+		do{
+			memset(buffer,0,sizeof buffer);
+			recv(confd, buffer, 256, 0);
+			msg = std::string(buffer);
+
+			// get time
+			std::time_t t = std::time(nullptr);
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message: " << msg;
+		}while(msg.find(quit) == std::string::npos);
+		close(confd);
+		
+	}while(msg.find(exit) == std::string::npos);
+	listener.close_socket();
 	
 	// output msgs with timestamp
 	//
