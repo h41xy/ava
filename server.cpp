@@ -106,14 +106,15 @@ int main(int argc, char *argv[]){
 	//char *buffer[256];
 	char buffer[256];
 	string quit = "quit";
+	string exit = "exit";
+	string str;
 
 	addr_size = sizeof peer_addr;
-	while(1){
+	do{
 		confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
 		cout << "Someone connected\n";
 		send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
 
-		string str;
 		do{
 			memset(buffer,0,sizeof buffer);
 			recv(confd, buffer, 256, 0);
@@ -121,8 +122,8 @@ int main(int argc, char *argv[]){
 			cout << str;
 		}while(str.compare("quit\n") != 0);
 		close(confd);
-		break;
-	}
+	}while(str.find(exit) == std::string::npos);
+	close(sockfd);
 	//--------------------------------------------------------------------------------
 	//---------------------------------close or shutdown------------------------------
 	//--------------------------------------------------------------------------------

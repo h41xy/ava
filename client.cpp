@@ -56,9 +56,9 @@ int main(int argc, char *argv[]){
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_INET; //IPv4
 	hints.ai_socktype = SOCK_STREAM;
-	//hints.ai_flags = AI_PASSIVE; // assign localhost
+	hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo("192.168.1.102", "25003", &hints, &serverInfo);
+	getaddrinfo(NULL, "25003", &hints, &serverInfo);
 
 	//--------------------------------------------------------------------------------
 
@@ -82,14 +82,53 @@ int main(int argc, char *argv[]){
 		cout << "SHIEEEEET";
 	cout << "connected\n";
 
-	string msg;
-	while(1){
-		cout << "What do you want to send?\n";
-		cin >> msg;
-		cout << msg.append("\n");
-		send(sockfd, msg.data(),msg.size(),0);
-		msg.clear();
-	}
+	cout << "connecting worked\n";
+	string msg = "YES MUTHAFUCKA!\n";
+	//int len = msg.size();
+	if(send(sockfd,"Anus time. quit\n",17,0) == -1)
+		cout << "send failed";
+	cout << "send succeded";
+	close(sockfd);
+	//--------------------------------------------------------------------------------
+	//---------------------------------bind-------------------------------------------
 
+	// int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+	// sockfd is sockfd
+	// addr is the address to be 
+	// addrlen is the length (sizeof)
+	//bind(sockfd, serverInfo->ai_addr, serverInfo->ai_addrlen);
+
+	////--------------------------------------------------------------------------------
+
+	////---------------------------------listen-----------------------------------------
+
+	//// int listen(int sockfd, int backlog);
+	//// sockfd is sockfd
+	//// backlog is defines the maximum length to which the queue of pending connections for sockfd may grow.
+	//listen(sockfd,5);
+
+	////--------------------------------------------------------------------------------
+
+	////---------------------------------accept-----------------------------------------
+
+	//string quit = "quit";
+
+	//addr_size = sizeof peer_addr;
+	//while(1){
+	//	confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
+	//	send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
+
+	//	string str;
+	//	do{
+	//		memset(buffer,0,sizeof buffer);
+	//		recv(confd, buffer, 256, 0);
+	//		str = string(buffer);
+	//		cout << str;
+	//	}while(str.find(quit) == std::string::npos);
+	//	close(confd);
+	//	break;
+	//}
+	//--------------------------------------------------------------------------------
+	//---------------------------------close or shutdown------------------------------
 	//--------------------------------------------------------------------------------
 }
