@@ -77,7 +77,7 @@ int run(char *id_cstr){
 			// get time
 			std::time_t t = std::time(nullptr);
 			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message: " << msg;
-		}while(msg.find(quit) == std::string::npos);
+		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
 		close(confd);
 		
 	}while(msg.find(exit) == std::string::npos);
