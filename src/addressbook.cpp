@@ -23,6 +23,7 @@ void Addressbook::fillfromfile(std::string fname){
 
 		id = std::stoi(line.substr(0, pos_white));
 		ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
+		ip = line.substr(pos_white+1,(line.size()-(pos_colo+pos_white)));
 		port = std::stoi(line.substr(pos_colo+1,((line.size()-pos_colo)-1)));
 
 		this->add(Entry(id,ip,port));
