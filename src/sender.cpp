@@ -15,17 +15,27 @@ void Sender::prepare_connection(){
 }
 
 int Sender::get_socket(){
-	return (sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol));
-}
-
-int Sender::send_msg(std::string msg){
-	connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen);
-	send(sockfd,msg.c_str(),msg.size(),0);
+	sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol);
+	if(sockfd == -1)
+		return -1;
 	return 0;
 }
 
+int Sender::get_connection(){
+	int result = connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen);
+	if (result == -1)
+		return -1;
+	return 0;
+}
+
+int Sender::send_msg(std::string msg){
+	send(sockfd,msg.c_str(),msg.size(),0);
+	return -1;
+}
+
 int Sender::close_connection(){
-	return close(sockfd);
+	close(sockfd);
+	return -1;
 }
 
 void Sender::connect_a(){
