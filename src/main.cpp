@@ -7,18 +7,19 @@
 
 #include "addressbook.h"
 #include "listener.h"
+#include "sender.h"
 
 void interact(int acc_confd){
-		char buffer[256];
-		std::string str;
-		std::string quit = "quit";
-		do{
-			memset(buffer,0,sizeof buffer);
-			recv(acc_confd, buffer, 256, 0);
-			str = std::string(buffer);
-			std::cout << str;
-		}while(str.find(quit) == std::string::npos);
-		close(acc_confd);
+	char buffer[256];
+	std::string str;
+	std::string quit = "quit";
+	do{
+		memset(buffer,0,sizeof buffer);
+		recv(acc_confd, buffer, 256, 0);
+		str = std::string(buffer);
+		std::cout << str;
+	}while(str.find(quit) == std::string::npos);
+	close(acc_confd);
 
 }
 
@@ -56,6 +57,14 @@ int run(char *id_cstr){
 	port_nb_three = std::get<2>(randoms).getport();
 	std::cout << "My neighbors ports are: " << port_nb_one << " " << port_nb_two << " " << port_nb_three << "\n";
 
+	// send ID to neighbours
+	//
+	// send msg with timestamp
+	//Sender sender("localhost",25002);
+	//sender.get_connection();
+	//sender.send_msg("hi, im norbert\n");
+	//sender.close_connection();
+
 	// listen on the port
 	//
 	int confd;
@@ -76,18 +85,15 @@ int run(char *id_cstr){
 
 			// get time
 			std::time_t t = std::time(nullptr);
+			// output msgs with timestamp
+			//
 			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message: " << msg;
 		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
 		close(confd);
-		
+
 	}while(msg.find(exit) == std::string::npos);
 	listener.close_socket();
-	
-	// output msgs with timestamp
-	//
-	// send ID to neighbours
-	//
-	// send msg with timestamp
+
 	return -1;
 }
 /* The main method to start a single node.
