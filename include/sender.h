@@ -19,8 +19,9 @@ class Sender{
 
  public:
 	Sender(std::string,int); // ip as string and port as int
-	int get_connection();
+	int get_socket();
+	//int get_connection();
 	int send_msg(std::string);
 	int close_connection();
-	//void connect_a();
+	void connect_a();
 };

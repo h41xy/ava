@@ -14,23 +14,20 @@ void Sender::prepare_connection(){
 	hints.ai_socktype = SOCK_STREAM;
 }
 
-int Sender::get_connection(){
-	if((sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol)) == -1){
-		return -1;
-	}
-	if(connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen) == -1)
-		return -1;
-	return 0;
+int Sender::get_socket(){
+	return (sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol));
 }
 
 int Sender::send_msg(std::string msg){
-	return send(sockfd,msg.c_str(),msg.size(),0);
+	connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen);
+	send(sockfd,msg.c_str(),msg.size(),0);
+	return 0;
 }
 
 int Sender::close_connection(){
 	return close(sockfd);
 }
-/*
+
 void Sender::connect_a(){
 	struct addrinfo hints;
 	struct addrinfo *serverinfo;
@@ -41,10 +38,9 @@ void Sender::connect_a(){
 	hints.ai_socktype = SOCK_STREAM;
 	getaddrinfo("127.0.0.1","25002", &hints, &serverinfo);
 	if((sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol)) == -1)
-		std::cout << "socket failed\n";
+		return;
 	if(connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen) == -1)
-		std::cout << "connection failed\n";
+		return;
 	send(sockfd,"ay quit\n",9,0);
 	close(sockfd);
 }
-*/

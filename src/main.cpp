@@ -4,6 +4,7 @@
 #include <tuple>
 #include <ctime>
 #include <iomanip>
+#include <cerrno>
 
 #include "addressbook.h"
 #include "listener.h"
@@ -80,7 +81,8 @@ int run(char *id_cstr){
 		// Receive msgs and react to them
 		do{
 			memset(buffer,0,sizeof buffer);
-			recv(confd, buffer, 256, 0);
+			if((recv(confd, buffer, 256, 0)) == -1)
+				break;
 			msg = std::string(buffer);
 
 			// get time
@@ -93,6 +95,7 @@ int run(char *id_cstr){
 
 	}while(msg.find(exit) == std::string::npos);
 	listener.close_socket();
+	std::cout << std::strerror(errno) << "\n";
 
 	return -1;
 }
