@@ -12,6 +12,9 @@ OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 
 all: $(TARGET)
 
+debug: CFLAGS += -g
+debug: $(TARGET)
+
 $(TARGET): $(OBJECTS)
 	$(CC) $^ -o $@
 
