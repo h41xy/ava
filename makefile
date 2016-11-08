@@ -4,7 +4,7 @@ BUILDDIR := build
 TARGET := bin/node
 
 SRCEXT := cpp
-CFLAGS := -Wall
+CFLAGS := -Wall -std=c++11
 INC := -I include
 
 MODULES := main addressbook entry listener sender
