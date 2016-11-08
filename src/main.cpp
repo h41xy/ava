@@ -1,6 +1,7 @@
 // The main file for the ava app
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <tuple>
 #include <ctime>
 #include <iomanip>
@@ -9,20 +10,6 @@
 #include "addressbook.h"
 #include "listener.h"
 #include "sender.h"
-
-void interact(int acc_confd){
-	char buffer[256];
-	std::string str;
-	std::string quit = "quit";
-	do{
-		memset(buffer,0,sizeof buffer);
-		recv(acc_confd, buffer, 256, 0);
-		str = std::string(buffer);
-		std::cout << str;
-	}while(str.find(quit) == std::string::npos);
-	close(acc_confd);
-
-}
 
 /* The run method actually starts the different steps to set up the node
  * - Read one argument as a id
@@ -61,9 +48,13 @@ int run(char *id_cstr){
 	// send ID to neighbours
 	//
 	// send msg with timestamp
+	std::ostringstream os;
+	os << "Hi, my ID is: " << myself.getid() << "quit\n";
+	std::string msg_id = os.str();
+
 	Sender sender("localhost",25002);
 	if((sender.get_connection()) != -1){
-		sender.send_msg("hi, im norbert. quit\n");
+		sender.send_msg(msg_id);
 		sender.close_connection();
 		std::cout << "I soliticed with my neighbors.\n";
 	}
