@@ -49,14 +49,15 @@ int run(char *id_cstr){
 	//
 	// send msg with timestamp
 	std::ostringstream os;
-	os << "Hi, my ID is: " << myself.getid() << "quit\n";
+	os << "Hi, my ID is: " << myself.getid() << " quit\n";
 	std::string msg_id = os.str();
 
 	Sender sender("localhost",25002);
 	if((sender.get_connection()) != -1){
 		sender.send_msg(msg_id);
+		std::time_t t = std::time(nullptr);
+		std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: " << msg_id;
 		sender.close_connection();
-		std::cout << "I soliticed with my neighbors.\n";
 	}
 
 	// listen on the port
@@ -82,7 +83,7 @@ int run(char *id_cstr){
 			std::time_t t = std::time(nullptr);
 			// output msgs with timestamp
 			//
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message: " << msg;
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: " << msg;
 		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
 		close(confd);
 
