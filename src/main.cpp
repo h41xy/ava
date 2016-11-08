@@ -1,4 +1,5 @@
-// The main file for the ava app
+// The node
+// If needed by other  classes I will create a header file
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -19,16 +20,18 @@
  * - Send the own ID once to these three.
  * - Put all send msgs also on stdout with timestamp
  */
+// this should be the order, currently he first sends messages and then listens
 int run(char *id_cstr){
-	std::string id_str(id_cstr);
-	int id = std::stoi(id_str);
-	// Read File
-	// ID IP:Port
+	//----Read File
 	Addressbook book("doc/example.txt");
 	std::cout << "Addressbuch eingelesen.\n";
+	//----
 
-	// argv ID, lookup ID and listen on the port
+	// Lookup the id from argv and get my associated port
 	//
+	std::string id_str(id_cstr);
+	int id = std::stoi(id_str);
+
 	Entry myself = book.getbyid(id);
 	std::string myip = myself.getip();
 	int myport = myself.getport();
@@ -36,9 +39,9 @@ int run(char *id_cstr){
 	book.remove(id);
 	std::cout << "My port is: " << myport << "\n";
 
-	// choose three random other IDs
+	// choose three random other IDs from the addressbook and get their ports
 	//
-	std::tuple<Entry,Entry,Entry> randoms = book.return_three_random_entries(id);
+	std::tuple<Entry,Entry,Entry> randoms = book.return_three_random_entries();
 	int port_nb_one, port_nb_two, port_nb_three;
 	port_nb_one = std::get<0>(randoms).getport();
 	port_nb_two = std::get<1>(randoms).getport();

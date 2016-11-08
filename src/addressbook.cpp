@@ -73,7 +73,7 @@ int Addressbook::entrycount(){
 }
 
 // Returns three random entries fomr the current addressbook as a tuple
-std::tuple<Entry,Entry,Entry> Addressbook::return_three_random_entries(int id){
+std::tuple<Entry,Entry,Entry> Addressbook::return_three_random_entries(){
 	// random seed...kinda ; )
 	std::srand(std::time(0));
 	

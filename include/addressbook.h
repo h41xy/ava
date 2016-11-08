@@ -20,5 +20,5 @@ class Addressbook{
 	int remove(int); // Removes an Entry identified by id, return -1 if not found
 	Entry getbyid(int); // Returns found Entry, if not found returns an Entry with (-1,"",-1). pretty ulgy
 	int entrycount();
-	std::tuple<Entry,Entry,Entry> return_three_random_entries(int); //Returns three random entries
+	std::tuple<Entry,Entry,Entry> return_three_random_entries(); //Returns three random entries
 };
