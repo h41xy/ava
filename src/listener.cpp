@@ -18,7 +18,7 @@ Listener::Listener(int port){
 	//----------------
 }
 
-int Listener::prepare_and_listen(){
+int Listener::create_and_listen(){
 
 	//--------socket()----------------------------------
 	sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol);

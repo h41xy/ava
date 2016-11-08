@@ -69,7 +69,7 @@ int run(char *id_cstr){
 	exit = "exit";
 
 	Listener listener(myport);
-	listener.prepare_and_listen();
+	listener.create_and_listen();
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them

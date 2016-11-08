@@ -1,7 +1,5 @@
 // A listener class which gets a port.
-// It opens a socket on this port and listens for inc msgs.
-// Those get send back with timestamps
-#include <tuple>
+// It opens a socket on this port and listens for incoming connections
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -25,7 +23,7 @@ class Listener{
 
  public:
 	Listener(int); //port
-	int prepare_and_listen();
+	int create_and_listen(); // Creates the socket, binds it to local and starts listening
 	int accept_connection();
 	int close_socket();
 };
