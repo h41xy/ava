@@ -61,10 +61,12 @@ int run(char *id_cstr){
 	// send ID to neighbours
 	//
 	// send msg with timestamp
-	//Sender sender("localhost",25002);
-	//sender.get_connection();
-	//sender.send_msg("hi, im norbert\n");
-	//sender.close_connection();
+	Sender sender("localhost",25002);
+	if((sender.get_connection()) != -1){
+		sender.send_msg("hi, im norbert. quit\n");
+		sender.close_connection();
+		std::cout << "I soliticed with my neighbors.\n";
+	}
 
 	// listen on the port
 	//

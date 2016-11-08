@@ -14,14 +14,10 @@ void Sender::prepare_connection(){
 	hints.ai_socktype = SOCK_STREAM;
 }
 
-int Sender::get_socket(){
+int Sender::get_connection(){
 	sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol);
 	if(sockfd == -1)
 		return -1;
-	return 0;
-}
-
-int Sender::get_connection(){
 	int result = connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen);
 	if (result == -1)
 		return -1;
@@ -36,21 +32,4 @@ int Sender::send_msg(std::string msg){
 int Sender::close_connection(){
 	close(sockfd);
 	return -1;
-}
-
-void Sender::connect_a(){
-	struct addrinfo hints;
-	struct addrinfo *serverinfo;
-	int sockfd;
-
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_INET; // ipv4
-	hints.ai_socktype = SOCK_STREAM;
-	getaddrinfo("127.0.0.1","25002", &hints, &serverinfo);
-	if((sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol)) == -1)
-		return;
-	if(connect(sockfd,serverinfo->ai_addr,serverinfo->ai_addrlen) == -1)
-		return;
-	send(sockfd,"ay quit\n",9,0);
-	close(sockfd);
 }
