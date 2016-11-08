@@ -1,7 +1,9 @@
 CC := g++
 SRCDIR := src
 BUILDDIR := build
-TARGET := bin/node
+BINDIR := bin
+PRGNAME := node
+TARGET := $(BINDIR)/$(PRGNAME)
 
 SRCEXT := cpp
 CFLAGS := -Wall
@@ -15,11 +17,19 @@ all: $(TARGET)
 debug: CFLAGS += -g
 debug: $(TARGET)
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) | $(BINDIR)
 	$(CC) $^ -o $@
+
+$(BINDIR):
+	mkdir $(BINDIR)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+
+$(OBJECTS): | $(BUILDDIR)
+
+$(BUILDDIR):
+	mkdir $(BUILDDIR)
 
 listener.o: src/listener.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $(BUILDDIR)/$@
@@ -31,4 +41,4 @@ thread: $(TARGET)
 	$(CC) $^ -o $@ -lpthread
 
 clean:
-	rm bin/node $(BUILDDIR)/*.o
+	rm $(TARGET) $(BUILDDIR)/*.o
