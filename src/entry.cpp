@@ -1,4 +1,5 @@
 // An Entry in the Addressbook
+// Contains the id and port as int, the ip as string
 
 #include "entry.h"
 
