@@ -4,10 +4,10 @@ BUILDDIR := build
 TARGET := bin/node
 
 SRCEXT := cpp
-CFLAGS := -Wall -std=c++11
+CFLAGS := -Wall -std=c++11 -lpthread
 INC := -I include
 
-MODULES := main addressbook entry listener sender
+MODULES := node addressbook entry listener sender
 OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 
 all: $(TARGET)
