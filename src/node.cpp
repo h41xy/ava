@@ -22,8 +22,8 @@ int send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 	os << "Hi, my ID is: " << myid << " quit\n";
 	std::string msg_id = os.str();
 
-	Sender sender("localhost",25002); // temp for testing
-	// Sender sender(recv_ip, recv_port);
+	//Sender sender("localhost",25002); // temp for testing
+	Sender sender(recv_ip, recv_port);
 	if((sender.get_connection()) != -1){
 		sender.send_msg(msg_id);
 		std::time_t t = std::time(nullptr);
@@ -31,6 +31,22 @@ int send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 		sender.close_connection();
 		return 0;
 	}
+	return -1;
+}
+
+int send_msg_to_all(Addressbook book, std::string msg){
+	std::list<Entry>::iterator it = book.get_iterator();
+	do{
+		Sender sender((*it).getip(),(*it).getport());
+		if((sender.get_connection()) != -1){
+			sender.send_msg(msg);
+			std::time_t t = std::time(nullptr);
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: " << msg;
+			sender.close_connection();
+			return 0;
+		}
+	
+	}while(++it != book.get_end());
 	return -1;
 }
 
@@ -44,14 +60,17 @@ int socialise_myself(Addressbook book, Entry myself){
 	nb_one = std::get<0>(randoms);
 	nb_two = std::get<1>(randoms);
 	nb_three = std::get<2>(randoms);
+	std::cout << nb_one.getip() << "\n";
 	std::cout << "My neighbors ports are: " << nb_one.getport() << " " << nb_two.getport() << " " << nb_three.getport() << "\n";
 
 	// send ID to neighbours
 	//
-	send_id_to_neighbor(myself.getid(), nb_one.getip(), nb_one.getport());
-	send_id_to_neighbor(myself.getid(), nb_two.getip(), nb_two.getport());
-	send_id_to_neighbor(myself.getid(), nb_three.getip(), nb_three.getport());
-
+	if(send_id_to_neighbor(myself.getid(), nb_one.getip(), nb_one.getport()) == -1)
+		std::cout << "A connect to neighbor failed.\n";
+	if(send_id_to_neighbor(myself.getid(), nb_two.getip(), nb_two.getport()) == -1)
+		std::cout << "A connect to neighbor failed.\n";
+	if(send_id_to_neighbor(myself.getid(), nb_three.getip(), nb_three.getport()) == -1)
+		std::cout << "A connect to neighbor failed.\n";
 	return -1;
 }
 
@@ -110,13 +129,17 @@ int run(char *id_cstr){
 			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: " << msg;
 
 			//Solicite with neighbors
-			if ( msg.find(socialise) != std::string::npos )
+			if ( msg.find(socialise) != std::string::npos ){
+				std::cout << "Socialising...\n";
 				socialise_myself(book, myself); // when header file exists, book and myself will be global
+			}
 
 		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
 		close(confd);
 
 	}while(msg.find(exit) == std::string::npos);
+	exit.append("\n");
+	send_msg_to_all(book, exit);
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 

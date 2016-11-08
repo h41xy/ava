@@ -29,7 +29,8 @@ void Addressbook::fillfromfile(std::string fname){
 		std::size_t pos_colo = line.find(":");
 
 		id = std::stoi(line.substr(0, pos_white));
-		ip = line.substr(pos_white+1,(line.size()-(pos_colo+pos_white)));
+		//ip = line.substr(pos_white+1,(line.size()-(pos_colo+pos_white)));
+		ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
 		port = std::stoi(line.substr(pos_colo+1,((line.size()-pos_colo)-1)));
 
 		this->add(Entry(id,ip,port));
@@ -70,6 +71,19 @@ Entry Addressbook::getbyid(int id){
 
 int Addressbook::entrycount(){
 	return book.size();
+}
+
+std::list<Entry>::iterator Addressbook::get_iterator(){
+	std::list<Entry>::iterator it = book.begin();
+	return it;
+}
+
+std::list<Entry>::iterator Addressbook::get_end(){
+	return book.end();
+}
+
+Entry Addressbook::get_entry_at(std::list<Entry>::iterator it){
+	return (*it);
 }
 
 // Returns three random entries fomr the current addressbook as a tuple
