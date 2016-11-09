@@ -75,6 +75,39 @@ int socialise_myself(Addressbook book, Entry myself){
 	return -1;
 }
 
+std::list<int> get_nb_ids(std::string gfname, int own_id){
+	std::ifstream gifile;
+	gifile.open(gfname);
+
+	std::string line;
+	std::list<int> ids_neighboring_me;
+	ids_neighboring_me.push_back(own_id); // I neighbor myself
+
+	std::string idstrA, sep, idstrB, end;
+	int idA, idB;
+
+	getline(gifile,line); // Ignore first line
+	while (getline(gifile,line)){
+		std::stringstream iss(line);
+		getline(iss,idstrA,' ');
+		if(idstrA != "}"){
+			getline(iss,sep,' ');
+			getline(iss,idstrB,';');
+			idA = std::stoi(idstrA);
+			idB = std::stoi(idstrB);
+			if(idA == own_id)
+				ids_neighboring_me.push_back(idB);
+			if(idB == own_id)
+				ids_neighboring_me.push_back(idA);
+		}
+	}
+	std::cout << "IDs neighboring me:";
+	for(auto v : ids_neighboring_me)
+		std::cout << " " << v;
+	std::cout << std::endl;
+	return ids_neighboring_me;
+}
+
 /* The run method actually starts the different steps to set up the node
  * - Read one argument as a id
  * - Read a textfile which contains an addressbook, <id, whitespace,IP, colon,port>
@@ -85,15 +118,17 @@ int socialise_myself(Addressbook book, Entry myself){
  */
 // this should be the order, currently he first sends messages and then listens
 int run(char *id_cstr){
+	std::string id_str(id_cstr);
+	int id = std::stoi(id_str);
 	//----Read File
-	Addressbook book("doc/example.txt");
+	// Create a addressbook based on the neighboring IDs found in 
+	// doc/example_graph.txt and the addresses found in doc/example.txt
+	Addressbook book("doc/example.txt", get_nb_ids("doc/example_graph.txt", id));
 	std::cout << "Addressbuch eingelesen.\n";
 	//----
 
 	// Lookup the id from argv and get my associated port
 	//
-	std::string id_str(id_cstr);
-	int id = std::stoi(id_str);
 
 	Entry myself = book.getbyid(id);
 	std::string myip = myself.getip();
