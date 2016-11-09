@@ -7,6 +7,7 @@
 #include <fstream>
 #include <list>
 #include <tuple>
+#include <algorithm>
 #include <ctime> // included for random seed
 
 #include "entry.h"
@@ -15,7 +16,9 @@ class Addressbook{
 	std::list<Entry> book;
  public:
 	Addressbook(std::string);
+	Addressbook(std::string, std::list<int>);
 	void fillfromfile(std::string);
+	void fillfromfile_nbs_only(std::string,std::list<int>);
 	void add(Entry);
 	int remove(int); // Removes an Entry identified by id, return -1 if not found
 	Entry getbyid(int); // Returns found Entry, if not found returns an Entry with (-1,"",-1). pretty ulgy

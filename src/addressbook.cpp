@@ -10,6 +10,41 @@ Addressbook::Addressbook(std::string fname){
 	fillfromfile(fname);
 }
 
+Addressbook::Addressbook(std::string fname, std::list<int> ids_neighboring_me){
+	fillfromfile_nbs_only(fname, ids_neighboring_me);
+}
+
+// Parser for translating the contains of the file to Entries.
+// Opens the file and looks for entries.
+// The entries have to be <id,whitespace,ip,colon,port>
+// Only adds entries which ID is found in the given list
+void Addressbook::fillfromfile_nbs_only(std::string fname, std::list<int> ids_neighboring_me){
+
+	std::ifstream ifile;
+	ifile.open(fname);
+
+	std::string line, ip;
+	int id, port;
+
+	// For every line
+	// find the seperating chars <whitespace, colon>
+	// build and store substrings based on the seperators
+	while( getline(ifile,line)){
+		std::size_t pos_white = line.find(" ");
+		std::size_t pos_colo = line.find(":");
+
+		id = std::stoi(line.substr(0, pos_white));
+		// Add only if the id is neighboring me
+		if ( std::find(ids_neighboring_me.begin(),ids_neighboring_me.end(),id) != ids_neighboring_me.end()){
+			ip = line.substr(pos_white+1,((line.size()-(line.size()-pos_colo)-pos_white)-1));
+			port = std::stoi(line.substr(pos_colo+1,((line.size()-pos_colo)-1)));
+
+			this->add(Entry(id,ip,port));
+		}
+	}
+	ifile.close();
+}
+
 // Parser for translating the contains of the file to Entries.
 // Opens the file and looks for entries.
 // The entries have to be <id,whitespace,ip,colon,port>

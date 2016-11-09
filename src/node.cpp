@@ -34,6 +34,7 @@ int send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 	return -1;
 }
 
+// Sends a string to all neighbors in the addressbook
 int send_msg_to_all(Addressbook book, std::string msg){
 	std::list<Entry>::iterator it = book.get_iterator();
 	do{
