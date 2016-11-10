@@ -75,6 +75,8 @@ int socialise_myself(Addressbook book, Entry myself){
 	return -1;
 }
 
+// Based on the Addressfile and the graphfile,
+// create the Addressbook only with known neighbors
 std::list<int> get_nb_ids(std::string gfname, int own_id){
 	std::ifstream gifile;
 	gifile.open(gfname);
@@ -116,7 +118,6 @@ std::list<int> get_nb_ids(std::string gfname, int own_id){
  * - Send the own ID once to these three.
  * - Put all send msgs also on stdout with timestamp
  */
-// this should be the order, currently he first sends messages and then listens
 int run(char *id_cstr){
 	std::string id_str(id_cstr);
 	int id = std::stoi(id_str);
