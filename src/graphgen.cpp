@@ -9,11 +9,11 @@
 int get_random_node(int range){
 	if(range == 0)
 		return 1;
-	std::srand(std::time(0));
 	return (std::rand() % range) + 1;
 }
 
 int run(char* m_cstr, char* n_cstr){
+	std::srand(std::time(0));
 	int nodes, edges, inserted_edges = 0;
 	edges = std::stoi(std::string(m_cstr)); // Kantenzahl
 	nodes = std::stoi(std::string(n_cstr)); // Knotenzahl
