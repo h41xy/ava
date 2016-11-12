@@ -2,6 +2,7 @@ CC := g++
 SRCDIR := src
 BUILDDIR := build
 BINDIR := bin
+PROTDIR := prototype
 PRGNAME := node
 TARGET := $(BINDIR)/$(PRGNAME)
 
@@ -40,5 +41,13 @@ $(BINDIR)/graphgen: $(BUILDDIR)/graphgen.o
 $(BUILDDIR)/graphgen.o: $(SRCDIR)/graphgen.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
+prototype: $(PROTDIR)/client $(PROTDIR)/server
+$(PROTDIR)/client: $(PROTDIR)/client.o
+	$(CC) $^ -o $@
+$(PROTDIR)/server: $(PROTDIR)/server.o
+	$(CC) $^ -o $@
+$(PROTDIR)/%.o: $(PROTDIR)/%.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
-	rm $(TARGET) $(BUILDDIR)/*.o
+	rm -vf $(TARGET) $(PROTDIR)/client $(PROTDIR)/server $(BUILDDIR)/*.o $(PROTDIR)/*.o
