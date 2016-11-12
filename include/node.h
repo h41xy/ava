@@ -12,10 +12,11 @@
 #include "sender.h"
 
 class Node{
+	Entry myself;
  public:
 	int run(char*); // own_id
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
-	int socialise_myself(Addressbook,Entry);//book, myself
+	int socialise_myself(Addressbook);//book
 	int send_msg_to_all(Addressbook,std::string); //book,msg
 	int send_id_to_neighbor(int,std::string,int); //myid,recv_ip,recv_port
 	

@@ -40,7 +40,7 @@ int Node::send_msg_to_all(Addressbook book, std::string msg){
 }
 
 // Choose three random ids aka ports from the addressbook and send the own id to them
-int Node::socialise_myself(Addressbook book, Entry myself){
+int Node::socialise_myself(Addressbook book){
 
 	// choose three random other IDs from the addressbook and get their ports
 	//
@@ -119,12 +119,11 @@ int Node::run(char *id_cstr){
 	// Lookup the id from argv and get my associated port
 	//
 
-	Entry myself = book.getbyid(id);
+	myself = book.getbyid(id);
 	std::string myip = myself.getip();
-	int myport = myself.getport();
 	// remove "my" entry so it doesnt get chosen as neighbor
 	book.remove(id);
-	std::cout << "My port is: " << myport << "\n";
+	std::cout << "My port is: " << myself.getport() << "\n";
 
 
 	// listen on the port
@@ -136,7 +135,7 @@ int Node::run(char *id_cstr){
 	exit = "exit";
 	socialise = "socialise";
 
-	Listener listener(myport);
+	Listener listener(myself.getport());
 	listener.create_and_listen();
 	do{
 		confd = listener.accept_connection();
@@ -156,7 +155,7 @@ int Node::run(char *id_cstr){
 			//Solicite with neighbors
 			if ( msg.find(socialise) != std::string::npos ){
 				std::cout << "Socialising...\n";
-				socialise_myself(book, myself); // when header file exists, book and myself will be global
+				socialise_myself(book); // when header file exists, book and myself will be global
 			}
 
 		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
