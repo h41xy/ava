@@ -34,9 +34,10 @@ thread: $(TARGET)
 	$(CC) $^ -o $@ -lpthread
 
 graphgen: $(BINDIR)/graphgen
+$(BINDIR)/graphgen: $(BUILDDIR)/graphgen.o
 	$(CC) $^ -o $@
 
-$(BINDIR)/graphgen: $(SRCDIR)/graphgen.cpp
+$(BUILDDIR)/graphgen.o: $(SRCDIR)/graphgen.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
