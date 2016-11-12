@@ -3,9 +3,12 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <ctime>
 
 int get_random_node(int range){
+	if(range == 0)
+		return 1;
 	std::srand(std::time(0));
 	return (std::rand() % range) + 1;
 }
@@ -21,14 +24,20 @@ int run(char* m_cstr, char* n_cstr){
 	std::ostringstream os;
 	os << "graph G{\n";
 
-	do{
-		for(int i=2;i<=nodes;i++){
-			os << get_random_node(i-1) << " -- " << i << ";\n";
-		}
-	}while(++inserted_edges < edges);
+	for(int i=2;i<=nodes;i++){
+		os << get_random_node(i-1) << " -- " << i << ";\n";
+		inserted_edges++;
+	}
+	while(inserted_edges++<edges){
+		os << get_random_node(nodes) << " -- " << get_random_node(nodes) << ";\n";
+	}
 
 	os << "}";
-	std::cout << os.str() << std::endl;
+	//std::cout << os.str() << std::endl;
+	std::ofstream ofs;
+	ofs.open("doc/genexample_graphviz.txt");
+	ofs << os.str();
+	ofs.close();
 	return 0;
 }
 
