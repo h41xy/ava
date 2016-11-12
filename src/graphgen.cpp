@@ -14,7 +14,7 @@ int get_random_node(int range){
 
 int run(char* m_cstr, char* n_cstr){
 	std::srand(std::time(0));
-	int nodes, edges, inserted_edges = 0;
+	int nodes, edges, candidate, candidate_two, inserted_edges = 0;
 	edges = std::stoi(std::string(m_cstr)); // Kantenzahl
 	nodes = std::stoi(std::string(n_cstr)); // Knotenzahl
 
@@ -25,11 +25,18 @@ int run(char* m_cstr, char* n_cstr){
 	os << "graph G{\n";
 
 	for(int i=2;i<=nodes;i++){
-		os << get_random_node(i-1) << " -- " << i << ";\n";
+		do{
+			candidate = get_random_node(i-1);
+		}while(candidate == i);
+		os << candidate << " -- " << i << ";\n";
 		inserted_edges++;
 	}
 	while(inserted_edges++<edges){
-		os << get_random_node(nodes) << " -- " << get_random_node(nodes) << ";\n";
+		do{
+			candidate = get_random_node(nodes);
+			candidate_two = get_random_node(nodes);
+		}while(candidate == candidate_two);
+		os << candidate << " -- " << candidate_two << ";\n";
 	}
 
 	os << "}";
