@@ -3,18 +3,24 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <ctime>
+
+int get_random_node(int nodecount){
+	std::srand(std::time(0));
+	return (std::rand() % nodecount) + 1;
+}
 
 int run(char* m_cstr, char* n_cstr){
 	int m,n;
-	m = std::stoi(std::string(m_cstr));
-	n = std::stoi(std::string(n_cstr));
+	m = std::stoi(std::string(m_cstr)); // Kantenzahl
+	n = std::stoi(std::string(n_cstr)); // Knotenzahl
 
 	if(m < n)
 		return -1;
 
 	std::ostringstream os;
 	os << "graph G{\n";
-	os << m << " " << n;
+	os << m << " " << n << " " << get_random_node(n);
 	os << "\n}";
 	std::cout << os.str() << std::endl;
 	return 0;
