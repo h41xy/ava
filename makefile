@@ -5,7 +5,6 @@ BINDIR := bin
 PRGNAME := node
 TARGET := $(BINDIR)/$(PRGNAME)
 
-SRCEXT := cpp
 CFLAGS := -Wall
 INC := -I include
 
@@ -31,14 +30,14 @@ $(OBJECTS): | $(BUILDDIR)
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
 
-listener.o: src/listener.cpp
-	$(CC) $(CFLAGS) $(INC) -c $< -o $(BUILDDIR)/$@
-
-sender.o: src/sender.cpp
-	$(CC) $(CFLAGS) $(INC) -c $< -o $(BUILDDIR)/$@
-
 thread: $(TARGET)
 	$(CC) $^ -o $@ -lpthread
+
+graphgen: $(BINDIR)/graphgen
+	$(CC) $^ -o $@
+
+$(BINDIR)/graphgen: $(SRCDIR)/graphgen.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm $(TARGET) $(BUILDDIR)/*.o
