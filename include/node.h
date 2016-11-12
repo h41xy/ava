@@ -14,7 +14,7 @@
 class Node{
 	Entry myself;
 	Addressbook book;
-	int myid;
+	int myid; //not pretty but I need it before I get Entry myself
  public:
 	Node(char*);
 	int run();
