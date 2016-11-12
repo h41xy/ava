@@ -1,22 +1,10 @@
 // The node
-// I will create a header file in the future ; )
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <tuple>
-#include <ctime>
-#include <iomanip>
-#include <cerrno>
-
-#include "addressbook.h"
-#include "listener.h"
-#include "sender.h"
-
+#include "node.h"
 // Sends the given id to three neighbor ports
 // Creates a Sender object which creates and connects
 // a socket on the localhost and a port.
 // Sends the message and closes the socket.
-int send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
+int Node::send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 	// send msg with timestamp
 	std::ostringstream os;
 	os << "Hi, my ID is: " << myid << " quit\n";
@@ -35,7 +23,7 @@ int send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 }
 
 // Sends a string to all neighbors in the addressbook
-int send_msg_to_all(Addressbook book, std::string msg){
+int Node::send_msg_to_all(Addressbook book, std::string msg){
 	std::list<Entry>::iterator it = book.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
@@ -52,7 +40,7 @@ int send_msg_to_all(Addressbook book, std::string msg){
 }
 
 // Choose three random ids aka ports from the addressbook and send the own id to them
-int socialise_myself(Addressbook book, Entry myself){
+int Node::socialise_myself(Addressbook book, Entry myself){
 
 	// choose three random other IDs from the addressbook and get their ports
 	//
@@ -77,7 +65,7 @@ int socialise_myself(Addressbook book, Entry myself){
 
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
-std::list<int> get_nb_ids(std::string gfname, int own_id){
+std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	std::ifstream gifile;
 	gifile.open(gfname);
 
@@ -118,7 +106,7 @@ std::list<int> get_nb_ids(std::string gfname, int own_id){
  * - Send the own ID once to these three.
  * - Put all send msgs also on stdout with timestamp
  */
-int run(char *id_cstr){
+int Node::run(char *id_cstr){
 	std::string id_str(id_cstr);
 	int id = std::stoi(id_str);
 	//----Read File
@@ -181,13 +169,4 @@ int run(char *id_cstr){
 	std::cout << std::strerror(errno) << "\n";
 
 	return -1;
-}
-/* The main method to start a single node.
- * It requires one argument which is used as the own ID
- */
-int main ( int argc, char *argv[]) {
-	if(argc > 1)
-		run(argv[1]);
-	else
-		std::cout << "Please give a ID as Argument.\n";
 }
