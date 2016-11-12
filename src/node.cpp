@@ -4,10 +4,10 @@
 // Creates a Sender object which creates and connects
 // a socket on the localhost and a port.
 // Sends the message and closes the socket.
-int Node::send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
+int Node::send_id_to_neighbor(std::string recv_ip, int recv_port){
 	// send msg with timestamp
 	std::ostringstream os;
-	os << "Hi, my ID is: " << myid << " quit\n";
+	os << "Hi, my ID is: " << myself.getid() << " quit\n";
 	std::string msg_id = os.str();
 
 	//Sender sender("localhost",25002); // temp for testing
@@ -23,7 +23,7 @@ int Node::send_id_to_neighbor(int myid, std::string recv_ip, int recv_port){
 }
 
 // Sends a string to all neighbors in the addressbook
-int Node::send_msg_to_all(Addressbook book, std::string msg){
+int Node::send_msg_to_all(std::string msg){
 	std::list<Entry>::iterator it = book.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
@@ -40,7 +40,7 @@ int Node::send_msg_to_all(Addressbook book, std::string msg){
 }
 
 // Choose three random ids aka ports from the addressbook and send the own id to them
-int Node::socialise_myself(Addressbook book){
+int Node::socialise_myself(){
 
 	// choose three random other IDs from the addressbook and get their ports
 	//
@@ -54,11 +54,11 @@ int Node::socialise_myself(Addressbook book){
 
 	// send ID to neighbours
 	//
-	if(send_id_to_neighbor(myself.getid(), nb_one.getip(), nb_one.getport()) == -1)
+	if(send_id_to_neighbor(nb_one.getip(), nb_one.getport()) == -1)
 		std::cout << "A connect to neighbor failed.\n";
-	if(send_id_to_neighbor(myself.getid(), nb_two.getip(), nb_two.getport()) == -1)
+	if(send_id_to_neighbor(nb_two.getip(), nb_two.getport()) == -1)
 		std::cout << "A connect to neighbor failed.\n";
-	if(send_id_to_neighbor(myself.getid(), nb_three.getip(), nb_three.getport()) == -1)
+	if(send_id_to_neighbor(nb_three.getip(), nb_three.getport()) == -1)
 		std::cout << "A connect to neighbor failed.\n";
 	return -1;
 }
@@ -106,23 +106,16 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
  * - Send the own ID once to these three.
  * - Put all send msgs also on stdout with timestamp
  */
-int Node::run(char *id_cstr){
-	std::string id_str(id_cstr);
-	int id = std::stoi(id_str);
-	//----Read File
-	// Create a addressbook based on the neighboring IDs found in 
-	// doc/example_graph.txt and the addresses found in doc/example.txt
-	Addressbook book("doc/example.txt", get_nb_ids("doc/example_graph.txt", id));
-	std::cout << "Addressbuch eingelesen.\n";
-	//----
+int Node::run(){
+//----
 
 	// Lookup the id from argv and get my associated port
 	//
 
-	myself = book.getbyid(id);
+	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
 	// remove "my" entry so it doesnt get chosen as neighbor
-	book.remove(id);
+	book.remove(myid);
 	std::cout << "My port is: " << myself.getport() << "\n";
 
 
@@ -155,7 +148,7 @@ int Node::run(char *id_cstr){
 			//Solicite with neighbors
 			if ( msg.find(socialise) != std::string::npos ){
 				std::cout << "Socialising...\n";
-				socialise_myself(book); // when header file exists, book and myself will be global
+				socialise_myself();
 			}
 
 		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
@@ -163,9 +156,18 @@ int Node::run(char *id_cstr){
 
 	}while(msg.find(exit) == std::string::npos);
 	exit.append("\n");
-	send_msg_to_all(book, exit);
+	send_msg_to_all(exit);
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 
 	return -1;
+}
+
+Node::Node(char* id_cstr){
+	std::string id_str(id_cstr);
+	myid = std::stoi(id_str);
+	//----Read File
+	// Create a addressbook based on the neighboring IDs found in 
+	// doc/example_graph.txt and the addresses found in doc/example.txt
+	book = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
 }

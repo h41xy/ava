@@ -5,6 +5,8 @@
 
 #include "addressbook.h"
 
+Addressbook::Addressbook(){};
+
 // Read from given filename
 Addressbook::Addressbook(std::string fname){
 	fillfromfile(fname);

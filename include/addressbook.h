@@ -15,6 +15,7 @@
 class Addressbook{
 	std::list<Entry> book;
  public:
+	Addressbook();
 	Addressbook(std::string);
 	Addressbook(std::string, std::list<int>);
 	void fillfromfile(std::string);

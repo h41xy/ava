@@ -13,12 +13,15 @@
 
 class Node{
 	Entry myself;
+	Addressbook book;
+	int myid;
  public:
-	int run(char*); // own_id
+	Node(char*);
+	int run();
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
-	int socialise_myself(Addressbook);//book
-	int send_msg_to_all(Addressbook,std::string); //book,msg
-	int send_id_to_neighbor(int,std::string,int); //myid,recv_ip,recv_port
+	int socialise_myself();
+	int send_msg_to_all(std::string); //msg
+	int send_id_to_neighbor(std::string,int); //recv_ip,recv_port
 	
 };
 /* The main method to start a single node.
@@ -26,8 +29,8 @@ class Node{
  */
 int main ( int argc, char *argv[]) {
 	if(argc > 1){
-		Node node;
-		node.run(argv[1]);
+		Node node(argv[1]);
+		node.run();
 	}else
 		std::cout << "Please give a ID as Argument.\n";
 }
