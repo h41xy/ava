@@ -5,23 +5,29 @@
 #include <sstream>
 #include <ctime>
 
-int get_random_node(int nodecount){
+int get_random_node(int range){
 	std::srand(std::time(0));
-	return (std::rand() % nodecount) + 1;
+	return (std::rand() % range) + 1;
 }
 
 int run(char* m_cstr, char* n_cstr){
-	int m,n;
-	m = std::stoi(std::string(m_cstr)); // Kantenzahl
-	n = std::stoi(std::string(n_cstr)); // Knotenzahl
+	int nodes, edges, inserted_edges = 0;
+	edges = std::stoi(std::string(m_cstr)); // Kantenzahl
+	nodes = std::stoi(std::string(n_cstr)); // Knotenzahl
 
-	if(m < n)
+	if(edges < nodes)
 		return -1;
 
 	std::ostringstream os;
 	os << "graph G{\n";
-	os << m << " " << n << " " << get_random_node(n);
-	os << "\n}";
+
+	do{
+		for(int i=2;i<=nodes;i++){
+			os << get_random_node(i-1) << " -- " << i << ";\n";
+		}
+	}while(++inserted_edges < edges);
+
+	os << "}";
 	std::cout << os.str() << std::endl;
 	return 0;
 }
