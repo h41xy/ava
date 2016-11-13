@@ -113,14 +113,17 @@ int main(int argc, char *argv[]){
 	do{
 		confd = accept(sockfd, (struct sockaddr *)&peer_addr, &addr_size);
 		cout << "Someone connected\n";
-		send(confd, "What a time to be alive!", strlen("What a time to be alive!"), 0);
-
+/*
 		do{
 			memset(buffer,0,sizeof buffer);
 			recv(confd, buffer, 256, 0);
 			str = string(buffer);
 			cout << str;
 		}while(str.compare("quit\n") != 0);
+*/
+		int recv;
+		read(confd,&recv,sizeof(recv));
+		std::cout << recv + 1 << std::endl;
 		close(confd);
 	}while(str.find(exit) == std::string::npos);
 	close(sockfd);

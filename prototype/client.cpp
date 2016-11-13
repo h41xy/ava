@@ -29,8 +29,8 @@
 // for memset
 #include <unistd.h>
 // for close
+// and write
 #include <string>
-#include <unistd.h>
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -89,7 +89,11 @@ int main(int argc, char *argv[]){
 	//if(send(sockfd,"Anus time. quit\n",17,0) == -1)
 	//	cout << "send failed";
 	//cout << "send succeded";
-	write(sockfd,"Anus time. quit\n",17);
+	//write(sockfd,"Anus time. quit\n",17);
+	int send = 3333;
+	const void* cvp;
+	cvp = &send;
+	write(sockfd,cvp,sizeof(send));
 	close(sockfd);
 	//--------------------------------------------------------------------------------
 	//---------------------------------bind-------------------------------------------
