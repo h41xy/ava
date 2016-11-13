@@ -12,6 +12,7 @@
 #include "listener.h"
 #include "sender.h"
 
+const int EXIT_NODE = 0;
 class Node{
 	Entry myself;
 	Addressbook book;
@@ -19,6 +20,8 @@ class Node{
  public:
 	Node(char*); // own ID
 	int run(); // Main loop
+
+	int send_all_signal(int);
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 	int socialise_myself();

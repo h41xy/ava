@@ -22,5 +22,6 @@ class Sender{
 	Sender(std::string,int); // ip as string and port as int
 	int get_connection();
 	int send_msg(std::string); //Message muist contain the word "quit" and end with \n
+	int send_signalid(int);
 	int close_connection();
 };

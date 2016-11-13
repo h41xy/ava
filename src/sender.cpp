@@ -36,6 +36,11 @@ int Sender::send_msg(std::string msg){
 	return -1;
 }
 
+int Sender::send_signalid(int signalid){
+	write(sockfd,&signalid,sizeof(signalid));
+	return -1;
+}
+
 int Sender::close_connection(){
 	close(sockfd);
 	return -1;

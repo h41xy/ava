@@ -108,6 +108,21 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	return ids_neighboring_me;
 }
 
+int Node::send_all_signal(int signalid){
+	std::list<Entry>::iterator it = book.get_iterator();
+	do{
+		Sender sender((*it).getip(),(*it).getport());
+		if((sender.get_connection()) != -1){
+			sender.send_signalid(signalid);
+			std::time_t t = std::time(nullptr);
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit all neighbors.";
+			sender.close_connection();
+			return 0;
+		}
+	
+	}while(++it != book.get_end());
+	return -1;
+}
 /* The run method actually starts the different steps to set up the node
  * - Read one argument as a id
  * - Read a textfile which contains an addressbook, <id, whitespace,IP, colon,port>
@@ -139,8 +154,9 @@ int Node::run(){
 		int msg_id = -1;
 		read(confd,&msg_id,sizeof(msg_id));
 		switch(msg_id){
-			case 1 : 
-				std::cout << "Case 1 happend.\n";
+			case EXIT_NODE : 
+				std::cout << "Node exit.\n";
+				send_all_signal(EXIT_NODE);
 				listen_more = false;
 				break;
 			case 2 :

@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
 	//	cout << "send failed";
 	//cout << "send succeded";
 	//write(sockfd,"Anus time. quit\n",17);
-	int send = 2;
+	int send = 0;
 	const void* cvp;
 	cvp = &send;
 	write(sockfd,cvp,sizeof(send));
