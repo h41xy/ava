@@ -30,6 +30,7 @@
 #include <unistd.h>
 // for close
 #include <string>
+#include <unistd.h>
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -85,9 +86,10 @@ int main(int argc, char *argv[]){
 	cout << "connecting worked\n";
 	string msg = "YES MUTHAFUCKA!\n";
 	//int len = msg.size();
-	if(send(sockfd,"Anus time. quit\n",17,0) == -1)
-		cout << "send failed";
-	cout << "send succeded";
+	//if(send(sockfd,"Anus time. quit\n",17,0) == -1)
+	//	cout << "send failed";
+	//cout << "send succeded";
+	write(sockfd,"Anus time. quit\n",17);
 	close(sockfd);
 	//--------------------------------------------------------------------------------
 	//---------------------------------bind-------------------------------------------
