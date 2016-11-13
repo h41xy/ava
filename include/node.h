@@ -6,6 +6,7 @@
 #include <ctime>
 #include <iomanip>
 #include <cerrno>
+#include <unistd.h>
 
 #include "addressbook.h"
 #include "listener.h"
@@ -14,16 +15,18 @@
 class Node{
 	Entry myself;
 	Addressbook book;
-	int myid; //not pretty but I need it before I get Entry myself
+	int myid; //not pretty but I need it before I get myself
  public:
-	Node(char*);
-	int run();
+	Node(char*); // own ID
+	int run(); // Main loop
+
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 	int socialise_myself();
 	int send_msg_to_all(std::string); //msg
 	int send_id_to_neighbor(std::string,int); //recv_ip,recv_port
 	
 };
+
 /* The main method to start a single node.
  * It requires one argument which is used as the own ID
  */

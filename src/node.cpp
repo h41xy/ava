@@ -1,5 +1,15 @@
 // The node
 #include "node.h"
+
+Node::Node(char* id_cstr){
+	std::string id_str(id_cstr);
+	myid = std::stoi(id_str);
+	//----Read File
+	// Create a addressbook based on the neighboring IDs found in 
+	// doc/example_graph.txt and the addresses found in doc/example.txt
+	book = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
+}
+
 // Sends the given id to three neighbor ports
 // Creates a Sender object which creates and connects
 // a socket on the localhost and a port.
@@ -107,11 +117,8 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
  * - Put all send msgs also on stdout with timestamp
  */
 int Node::run(){
-//----
 
 	// Lookup the id from argv and get my associated port
-	//
-
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
 	// remove "my" entry so it doesnt get chosen as neighbor
@@ -120,54 +127,35 @@ int Node::run(){
 
 
 	// listen on the port
-	//
 	int confd;
-	char buffer[256];
-	std::string msg, time, quit, exit, socialise;
-	quit = "quit";
-	exit = "exit";
-	socialise = "socialise";
-
 	Listener listener(myself.getport());
 	listener.create_and_listen();
+
+	// listener loop
+	bool listen_more = true;
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
-		do{
-			memset(buffer,0,sizeof buffer);
-			if((recv(confd, buffer, 256, 0)) == -1)
+		int msg_id = -1;
+		read(confd,&msg_id,sizeof(msg_id));
+		switch(msg_id){
+			case 1 : 
+				std::cout << "Case 1 happend.\n";
+				listen_more = false;
 				break;
-			msg = std::string(buffer);
-
-			// get time
-			std::time_t t = std::time(nullptr);
-			// output msgs with timestamp
-			//
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: " << msg;
-
-			//Solicite with neighbors
-			if ( msg.find(socialise) != std::string::npos ){
-				std::cout << "Socialising...\n";
-				socialise_myself();
-			}
-
-		}while(msg.find(quit) == std::string::npos && msg.find(exit) == std::string::npos);
+			case 2 :
+				std::cout << "Case 2 happend.\n";
+				break;
+			default :
+				std::cout << "I don't know this signal id. Close connection.\n";
+				break;
+		}
 		close(confd);
 
-	}while(msg.find(exit) == std::string::npos);
-	exit.append("\n");
-	send_msg_to_all(exit);
+	}while(listen_more);
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 
 	return -1;
 }
 
-Node::Node(char* id_cstr){
-	std::string id_str(id_cstr);
-	myid = std::stoi(id_str);
-	//----Read File
-	// Create a addressbook based on the neighboring IDs found in 
-	// doc/example_graph.txt and the addresses found in doc/example.txt
-	book = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
-}
