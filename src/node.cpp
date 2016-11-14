@@ -10,30 +10,8 @@ Node::Node(char* id_cstr){
 	book = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
 }
 
-// Sends the given id to three neighbor ports
-// Creates a Sender object which creates and connects
-// a socket on the localhost and a port.
-// Sends the message and closes the socket.
-int Node::send_id_to_neighbor(std::string recv_ip, int recv_port){
-	// send msg with timestamp
-	std::ostringstream os;
-	os << "Hi, my ID is: " << myself.getid() << " quit\n";
-	std::string msg_id = os.str();
-
-	//Sender sender("localhost",25002); // temp for testing
-	Sender sender(recv_ip, recv_port);
-	if((sender.get_connection()) != -1){
-		sender.send_msg(msg_id);
-		std::time_t t = std::time(nullptr);
-		std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: " << msg_id;
-		sender.close_connection();
-		return 0;
-	}
-	return -1;
-}
-
 // Sends a string to all neighbors in the addressbook
-int Node::send_msg_to_all(std::string msg){
+int Node::send_all_msg(std::string msg){
 	std::list<Entry>::iterator it = book.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
@@ -46,30 +24,6 @@ int Node::send_msg_to_all(std::string msg){
 		}
 	
 	}while(++it != book.get_end());
-	return -1;
-}
-
-// Choose three random ids aka ports from the addressbook and send the own id to them
-int Node::socialise_myself(){
-
-	// choose three random other IDs from the addressbook and get their ports
-	//
-	std::tuple<Entry,Entry,Entry> randoms = book.return_three_random_entries();
-	Entry nb_one, nb_two, nb_three;
-	nb_one = std::get<0>(randoms);
-	nb_two = std::get<1>(randoms);
-	nb_three = std::get<2>(randoms);
-	std::cout << nb_one.getip() << "\n";
-	std::cout << "My neighbors ports are: " << nb_one.getport() << " " << nb_two.getport() << " " << nb_three.getport() << "\n";
-
-	// send ID to neighbours
-	//
-	if(send_id_to_neighbor(nb_one.getip(), nb_one.getport()) == -1)
-		std::cout << "A connect to neighbor failed.\n";
-	if(send_id_to_neighbor(nb_two.getip(), nb_two.getport()) == -1)
-		std::cout << "A connect to neighbor failed.\n";
-	if(send_id_to_neighbor(nb_three.getip(), nb_three.getport()) == -1)
-		std::cout << "A connect to neighbor failed.\n";
 	return -1;
 }
 
@@ -152,20 +106,30 @@ int Node::run(){
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
 		int msg_id = -1;
+		std::time_t t = std::time(nullptr);
 		read(confd,&msg_id,sizeof(msg_id));
 		switch(msg_id){
-			case EXIT_NODE : 
+
+			case EXIT_NODE : {
+				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me and all neighbors.";
 				send_all_signal(EXIT_NODE);
-				std::cout << "Node is exiting...";
 				listen_more = false;
 				break;
-			case RECV_MSG :
-				std::cout << "Reveiving message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+				}
+			case RECV_MSG : {
+				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
 				char a[MSG_BUFFER_SIZE];
 				memset(&a[0],0,sizeof(a));
 				read(confd,&a,sizeof(a));
 				std::cout << "message received." << std::endl << "Content: " << a << std::endl;
 				break;
+				}
+			case SOCIALISE : {
+				std::stringstream ss;
+				ss << "My ID is: " << myself.getid();
+				send_all_msg(ss.str());
+				break;
+				}
 			default :
 				std::cout << "I don't know this signal id. Close connection.\n";
 				break;

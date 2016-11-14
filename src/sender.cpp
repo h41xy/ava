@@ -32,7 +32,8 @@ int Sender::get_connection(){
 // Sends a messxage on the established connection
 // Currently the message must contain the word "quit" and has to end with a \n
 int Sender::send_msg(std::string msg){
-	send(sockfd,msg.c_str(),msg.size(),0);
+	Sender::send_signalid(1); // should be the global RECV_MSG, no idea why out of scope
+	write(sockfd,msg.c_str(),msg.size() + 1);
 	return -1;
 }
 
