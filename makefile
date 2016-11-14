@@ -9,7 +9,7 @@ TARGET := $(BINDIR)/$(PRGNAME)
 CFLAGS := -Wall
 INC := -I include
 
-MODULES := node addressbook entry listener sender
+MODULES := node addressbook entry listener sender controller
 OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
 
 all: $(TARGET)
@@ -18,6 +18,10 @@ debug: CFLAGS += -g
 debug: $(TARGET)
 
 $(TARGET): $(OBJECTS) | $(BINDIR)
+	$(CC) $^ -o $@
+
+controller: $(BINDIR)/controller
+$(BINDIR)/controller: $(OBJECTS) | $(BINDIR)
 	$(CC) $^ -o $@
 
 $(BINDIR):

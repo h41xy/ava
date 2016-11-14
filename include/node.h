@@ -37,6 +37,7 @@ class Node{
 /* The main method to start a single node.
  * It requires one argument which is used as the own ID
  */
+/*
 int main ( int argc, char *argv[]) {
 	if(argc > 1){
 		Node node(argv[1]);
@@ -44,3 +45,4 @@ int main ( int argc, char *argv[]) {
 	}else
 		std::cout << "Please give a ID as Argument.\n";
 }
+*/
