@@ -13,6 +13,9 @@
 #include "sender.h"
 
 const int EXIT_NODE = 0;
+const int RECV_MSG = 1;
+
+const int MSG_BUFFER_SIZE = 256;
 class Node{
 	Entry myself;
 	Addressbook book;

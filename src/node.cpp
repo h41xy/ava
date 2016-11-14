@@ -159,12 +159,12 @@ int Node::run(){
 				std::cout << "Node is exiting...";
 				listen_more = false;
 				break;
-			case 1 :
-				std::cout << "Case 2 happend.\n";
-				char a[256];
+			case RECV_MSG :
+				std::cout << "Reveiving message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+				char a[MSG_BUFFER_SIZE];
 				memset(&a[0],0,sizeof(a));
-				read(confd,&a,256);
-				std::cout << a << std::endl;
+				read(confd,&a,sizeof(a));
+				std::cout << "message received." << std::endl << "Content: " << a << std::endl;
 				break;
 			default :
 				std::cout << "I don't know this signal id. Close connection.\n";
