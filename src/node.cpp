@@ -155,12 +155,16 @@ int Node::run(){
 		read(confd,&msg_id,sizeof(msg_id));
 		switch(msg_id){
 			case EXIT_NODE : 
-				std::cout << "Node exit.\n";
 				send_all_signal(EXIT_NODE);
+				std::cout << "Node is exiting...";
 				listen_more = false;
 				break;
-			case 2 :
+			case 1 :
 				std::cout << "Case 2 happend.\n";
+				char a[256];
+				memset(&a[0],0,sizeof(a));
+				read(confd,&a,256);
+				std::cout << a << std::endl;
 				break;
 			default :
 				std::cout << "I don't know this signal id. Close connection.\n";
@@ -169,6 +173,7 @@ int Node::run(){
 		close(confd);
 
 	}while(listen_more);
+	std::cout << "Node exited." << std::endl;
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 

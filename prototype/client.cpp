@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE; // assign localhost
 
-	getaddrinfo(NULL, "25003", &hints, &serverInfo);
+	getaddrinfo(NULL, "25004", &hints, &serverInfo);
 
 	//--------------------------------------------------------------------------------
 
@@ -84,16 +84,26 @@ int main(int argc, char *argv[]){
 	cout << "connected\n";
 
 	cout << "connecting worked\n";
-	string msg = "YES MUTHAFUCKA!\n";
+	//string msg = "YES MUTHAFUCKA!\n";
 	//int len = msg.size();
 	//if(send(sockfd,"Anus time. quit\n",17,0) == -1)
 	//	cout << "send failed";
 	//cout << "send succeded";
 	//write(sockfd,"Anus time. quit\n",17);
-	int send = 0;
+	int send = 1;
 	const void* cvp;
 	cvp = &send;
 	write(sockfd,cvp,sizeof(send));
+	std::string msg = "I need some Whiskey WAAAAABALAGAGABGAB.";
+	std::cout << argv[1] << std::endl;
+	const char* msg_cstr = argv[1];
+	//const char* msg_cstr = msg.c_str();
+	std::cout << sizeof(msg.c_str()) << " " << msg.size();
+	write(sockfd,msg_cstr,msg.size() + 1);
+	//write(sockfd,msg_cstr,sizeof(*msg_cstr));
+	//char a = 'A';
+	//cvp = &a;
+	//write(sockfd,cvp,sizeof(a));
 	close(sockfd);
 	//--------------------------------------------------------------------------------
 	//---------------------------------bind-------------------------------------------
