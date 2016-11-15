@@ -1,12 +1,7 @@
 #include <iostream>
 
-#include <sender.h>
-//#include <node.h>
-const int EXIT_NODE = 0;
-const int EXIT_ALL = 1;
-const int RECV_MSG = 2;
-const int SOCIALISE = 3;
-const int RUMOR = 4;
+#include "sender.h"
+#include "constants.h"
 
 int main(int argc, char* argv[]){
 	int port, signal;

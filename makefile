@@ -3,28 +3,43 @@ SRCDIR := src
 BUILDDIR := build
 BINDIR := bin
 PROTDIR := prototype
-PRGNAME := node
-TARGET := $(BINDIR)/$(PRGNAME)
+
+PRGNAME_NODE := node
+TARGET_NODE := $(BINDIR)/$(PRGNAME_NODE)
+PRGNAME_CTRL := controller
+TARGET_CTRL := $(BINDIR)/$(PRGNAME_CTRL)
+PRGNAME_GG := graphgen
+TARGET_GG := $(BINDIR)/$(PRGNAME_GG)
+
+TARGETS := $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 
 CFLAGS := -Wall
 INC := -I include
 
-MODULES := node addressbook entry listener sender
-OBJECTS := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES))
+MODULES_NODE := node addressbook entry listener sender
+OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
 MODULES_CTRL := controller sender
 OBJECTS_CTRL := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_CTRL))
 
-all: $(TARGET)
+MODULES_GG := graphgen
+OBJECTS_GG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_GG))
+
+all: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 
 debug: CFLAGS += -g
 debug: $(TARGET)
 
-$(TARGET): $(OBJECTS) | $(BINDIR)
+$(PRGNAME_NODE): $(TARGET_NODE)
+$(TARGET_NODE): $(OBJECTS_NODE) | $(BINDIR)
 	$(CC) $^ -o $@
 
-controller: $(BINDIR)/controller
-$(BINDIR)/controller: $(OBJECTS_CTRL) | $(BINDIR)
+$(PRGNAME_CTRL): $(TARGET_CTRL)
+$(TARGET_CTRL): $(OBJECTS_CTRL) | $(BINDIR)
+	$(CC) $^ -o $@
+
+$(PRGNAME_GG): $(TARGET_GG)
+$(TARGET_GG): $(OBJECTS_GG) | $(BINDIR)
 	$(CC) $^ -o $@
 
 $(BINDIR):
@@ -38,16 +53,6 @@ $(OBJECTS): | $(BUILDDIR)
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
 
-thread: $(TARGET)
-	$(CC) $^ -o $@ -lpthread
-
-graphgen: $(BINDIR)/graphgen
-$(BINDIR)/graphgen: $(BUILDDIR)/graphgen.o
-	$(CC) $^ -o $@
-
-$(BUILDDIR)/graphgen.o: $(SRCDIR)/graphgen.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
 prototype: $(PROTDIR)/client $(PROTDIR)/server
 $(PROTDIR)/client: $(PROTDIR)/client.o
 	$(CC) $^ -o $@
@@ -57,4 +62,4 @@ $(PROTDIR)/%.o: $(PROTDIR)/%.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -vf $(TARGET) $(PROTDIR)/client $(PROTDIR)/server $(BUILDDIR)/*.o $(PROTDIR)/*.o
+	rm -vf $(TARGETS) $(PROTDIR)/client $(PROTDIR)/server $(BUILDDIR)/*.o $(PROTDIR)/*.o
