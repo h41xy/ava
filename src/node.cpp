@@ -2,6 +2,9 @@
 #include "node.h"
 
 Node::Node(char* id_cstr){
+	heard_rumor = false;
+	believe_rumor = false;
+
 	std::string id_str(id_cstr);
 	myid = std::stoi(id_str);
 	//----Read File
@@ -13,6 +16,9 @@ Node::Node(char* id_cstr){
 
 // Delegating constructors is c++11 only, I want to stay away from that
 Node::Node(char* id_cstr, char* belive_border_cstr){
+	heard_rumor = false;
+	believe_rumor = false;
+
 	std::string believe_border_str(belive_border_cstr);
 	believe_border = std::stoi(believe_border_str);
 	std::string id_str(id_cstr);
@@ -47,10 +53,10 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 		if((sender.get_connection()) != -1){
 			sender.send_signalid(signalid);
 			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit neighbor " << (*it).getport() << std::endl;
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send to " << (*it).getport() << std::endl << std::flush;
 			sender.close_connection();
 		} else {
-			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl;
+			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
 		}
 	
 	}while(++it != receivers.get_end());
@@ -106,7 +112,7 @@ int Node::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "My port is: " << myself.getport() << "\n";
+	std::cout << "My port is: " << myself.getport() << std::endl << "I believe a rumor if heard " << believe_border << " times." << std::endl;
 
 
 	// listen on the port
@@ -125,7 +131,12 @@ int Node::run(){
 		switch(msg_id){
 
 			case EXIT_NODE : {
-				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me and all neighbors." << std::endl;
+				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
+				listen_more = false;
+				break;
+				}
+			case EXIT_ALL : {
+				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
 				send_all_signal(book,EXIT_NODE);
 				listen_more = false;
 				break;
@@ -135,7 +146,7 @@ int Node::run(){
 				char a[MSG_BUFFER_SIZE];
 				memset(&a[0],0,sizeof(a));
 				read(confd,&a,sizeof(a));
-				std::cout << "message received." << std::endl << "Content: " << a << std::endl;
+				std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
 				break;
 				}
 			case SOCIALISE : {
@@ -145,14 +156,15 @@ int Node::run(){
 				break;
 				}
 			case RUMOR : {
-				std::cout << "I heard a rumor...." << std::endl;
 				rumor_counter++;
 				if(!heard_rumor){
+					std::cout << "I heard a new rumor...." << std::endl << std::flush;
 					heard_rumor = true;
 					send_all_signal(neighbors, RUMOR);
 				}
 				if(rumor_counter >= believe_border){
 					believe_rumor = true;
+					std::cout << "I belive a rumor." << std::endl << std::flush;
 				}
 				break;
 				}

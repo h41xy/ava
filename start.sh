@@ -13,6 +13,8 @@ echo -n "Please enter the number of nodes: "
 read NODES
 echo -n "And the number of edges: "
 read EDGES
+echo -n "When should a rumor be believable?"
+read RUMOR
 
 $GRAPHGEN $EDGES $NODES
 dot -Tpng $GRAPHFILE > $GRAPHPNG
@@ -26,6 +28,6 @@ then
 	for (( i=1; i<=$NODES; i++))
 	do
 		echo "Starting node with ID $i..."
-		urxvt -e ./bin/node $i &
+		urxvt -e ./bin/node $i $RUMOR &
 	done
 fi

@@ -13,9 +13,10 @@
 #include "sender.h"
 
 const int EXIT_NODE = 0;
-const int RECV_MSG = 1;
-const int SOCIALISE = 2;
-const int RUMOR = 3;
+const int EXIT_ALL = 1;
+const int RECV_MSG = 2;
+const int SOCIALISE = 3;
+const int RUMOR = 4;
 
 const int MSG_BUFFER_SIZE = 256;
 
