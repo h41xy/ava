@@ -3,9 +3,9 @@
 GRAPHGEN=bin/graphgen
 NODE=bin/node
 
-ADDRESSFILE=doc/example.txt
-GRAPHFILE=doc/example_graph.txt
-GRAPHPNG=doc/example_graph.png
+ADDRESSFILE=doc/addresses.txt
+GRAPHFILE=doc/graph.txt
+GRAPHPNG=doc/graph.png
 
 EXEC=n
 

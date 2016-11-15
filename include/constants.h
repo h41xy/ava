@@ -11,4 +11,7 @@ static const int RUMOR = 4;
 
 static const int MSG_BUFFER_SIZE = 256;
 
+static const std::string ADDRESSFILE = "doc/addresses.txt";
+static const std::string GRAPHFILE = "doc/graph.txt";
+
 #endif
