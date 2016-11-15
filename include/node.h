@@ -26,18 +26,19 @@ class Node{
 	int myid; //not pretty but I need it before I get myself
 
 	int believe_border, rumor_counter;
-	bool heard_rumor, belive_rumor;
-
- public:
-	Node(char*); // own ID
-	Node(char*,char*); // own ID, believe_border
-	int run(); // Main loop
+	bool heard_rumor, believe_rumor;
 
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
-	
+
+	int spread_rumor(Addressbook); //Neighbors
+
+ public:
+	Node(char*); // own ID
+	Node(char*,char*); // own ID, believe_border
+	int run(); // Main loop
 };
 
 /* The main method to start a single node.

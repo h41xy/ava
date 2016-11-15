@@ -40,6 +40,28 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 	return -1;
 }
 
+int Node::send_all_signal(Addressbook receivers, int signalid){
+	std::list<Entry>::iterator it = receivers.get_iterator();
+	do{
+		Sender sender((*it).getip(),(*it).getport());
+		if((sender.get_connection()) != -1){
+			sender.send_signalid(signalid);
+			std::time_t t = std::time(nullptr);
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit neighbor " << (*it).getport() << std::endl;
+			sender.close_connection();
+		} else {
+			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl;
+		}
+	
+	}while(++it != receivers.get_end());
+	return -1;
+}
+
+int Node::spread_rumor(Addressbook receivers){
+
+	return -1;
+}
+
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
 std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
@@ -76,22 +98,6 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	return ids_neighboring_me;
 }
 
-int Node::send_all_signal(Addressbook receivers, int signalid){
-	std::list<Entry>::iterator it = receivers.get_iterator();
-	do{
-		Sender sender((*it).getip(),(*it).getport());
-		if((sender.get_connection()) != -1){
-			sender.send_signalid(signalid);
-			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit neighbor " << (*it).getport() << std::endl;
-			sender.close_connection();
-		} else {
-			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl;
-		}
-	
-	}while(++it != receivers.get_end());
-	return -1;
-}
 /* The run method actually starts the different steps to set up the node
  * - Read one argument as a id
  * - Read a textfile which contains an addressbook, <id, whitespace,IP, colon,port>
@@ -145,6 +151,14 @@ int Node::run(){
 				}
 			case RUMOR : {
 				std::cout << "I heard a rumor...." << std::endl;
+				rumor_counter++;
+				if(!heard_rumor){
+					heard_rumor = true;
+					spread_rumor(neighbors);
+				}
+				if(rumor_counter >= believe_border){
+					believe_rumor = true;
+				}
 				break;
 				}
 			default :
