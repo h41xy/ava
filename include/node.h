@@ -33,8 +33,6 @@ class Node{
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 
-	int spread_rumor(Addressbook); //Neighbors
-
  public:
 	Node(char*); // own ID
 	Node(char*,char*); // own ID, believe_border

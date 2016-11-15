@@ -57,11 +57,6 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 	return -1;
 }
 
-int Node::spread_rumor(Addressbook receivers){
-
-	return -1;
-}
-
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
 std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
@@ -154,7 +149,7 @@ int Node::run(){
 				rumor_counter++;
 				if(!heard_rumor){
 					heard_rumor = true;
-					spread_rumor(neighbors);
+					send_all_signal(neighbors, RUMOR);
 				}
 				if(rumor_counter >= believe_border){
 					believe_rumor = true;
