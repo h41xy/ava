@@ -15,6 +15,7 @@
 const int EXIT_NODE = 0;
 const int RECV_MSG = 1;
 const int SOCIALISE = 2;
+const int RUMOR = 3;
 
 const int MSG_BUFFER_SIZE = 256;
 
@@ -43,10 +44,10 @@ class Node{
  * It requires one argument which is used as the own ID
  */
 int main ( int argc, char *argv[]) {
-	if(argc == 1){
+	if(argc == 2){
 		Node node(argv[1]);
 		node.run();
-	}else if(argc == 2){
+	}else if(argc == 3){
 		Node node(argv[1], argv[2]);
 		node.run();
 	}else

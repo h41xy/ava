@@ -143,6 +143,10 @@ int Node::run(){
 				send_all_msg(neighbors, ss.str());
 				break;
 				}
+			case RUMOR : {
+				std::cout << "I heard a rumor...." << std::endl;
+				break;
+				}
 			default :
 				std::cout << "I don't know this signal id. Close connection.\n";
 				break;
