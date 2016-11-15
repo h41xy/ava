@@ -21,14 +21,15 @@ const int MSG_BUFFER_SIZE = 256;
 class Node{
 	Entry myself;
 	Addressbook book;
+	Addressbook neighbors;
 	int myid; //not pretty but I need it before I get myself
 
  public:
 	Node(char*); // own ID
 	int run(); // Main loop
 
-	int send_all_signal(int);
-	int send_all_msg(std::string);
+	int send_all_signal(Addressbook,int);
+	int send_all_msg(Addressbook,std::string);
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 	

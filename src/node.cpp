@@ -5,25 +5,25 @@ Node::Node(char* id_cstr){
 	std::string id_str(id_cstr);
 	myid = std::stoi(id_str);
 	//----Read File
+	book = Addressbook("doc/example.txt");
 	// Create a addressbook based on the neighboring IDs found in 
 	// doc/example_graph.txt and the addresses found in doc/example.txt
-	book = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
+	neighbors = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
 }
 
 // Sends a string to all neighbors in the addressbook
-int Node::send_all_msg(std::string msg){
-	std::list<Entry>::iterator it = book.get_iterator();
+int Node::send_all_msg(Addressbook receivers, std::string msg){
+	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
 			sender.send_msg(msg);
 			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: " << msg;
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
 			sender.close_connection();
-			return 0;
 		}
 	
-	}while(++it != book.get_end());
+	}while(++it != receivers.get_end());
 	return -1;
 }
 
@@ -35,7 +35,7 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 
 	std::string line;
 	std::list<int> ids_neighboring_me;
-	ids_neighboring_me.push_back(own_id); // I neighbor myself
+	//ids_neighboring_me.push_back(own_id); // I neighbor myself // why? //because inf loop Oo
 
 	std::string idstrA, sep, idstrB, end;
 	int idA, idB;
@@ -55,6 +55,7 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 				ids_neighboring_me.push_back(idA);
 		}
 	}
+	gifile.close();
 	std::cout << "IDs neighboring me:";
 	for(auto v : ids_neighboring_me)
 		std::cout << " " << v;
@@ -62,19 +63,20 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	return ids_neighboring_me;
 }
 
-int Node::send_all_signal(int signalid){
-	std::list<Entry>::iterator it = book.get_iterator();
+int Node::send_all_signal(Addressbook receivers, int signalid){
+	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
 			sender.send_signalid(signalid);
 			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit all neighbors.";
+			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Exit neighbor " << (*it).getport() << std::endl;
 			sender.close_connection();
-			return 0;
+		} else {
+			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl;
 		}
 	
-	}while(++it != book.get_end());
+	}while(++it != receivers.get_end());
 	return -1;
 }
 /* The run method actually starts the different steps to set up the node
@@ -90,8 +92,6 @@ int Node::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	// remove "my" entry so it doesnt get chosen as neighbor
-	book.remove(myid);
 	std::cout << "My port is: " << myself.getport() << "\n";
 
 
@@ -111,8 +111,8 @@ int Node::run(){
 		switch(msg_id){
 
 			case EXIT_NODE : {
-				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me and all neighbors.";
-				send_all_signal(EXIT_NODE);
+				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me and all neighbors." << std::endl;
+				send_all_signal(book,EXIT_NODE);
 				listen_more = false;
 				break;
 				}
@@ -127,7 +127,7 @@ int Node::run(){
 			case SOCIALISE : {
 				std::stringstream ss;
 				ss << "My ID is: " << myself.getid();
-				send_all_msg(ss.str());
+				send_all_msg(neighbors, ss.str());
 				break;
 				}
 			default :

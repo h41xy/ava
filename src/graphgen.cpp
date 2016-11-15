@@ -42,7 +42,7 @@ int run(char* m_cstr, char* n_cstr){
 	os << "}";
 	//std::cout << os.str() << std::endl;
 	std::ofstream ofs;
-	ofs.open("doc/genexample_graphviz.txt");
+	ofs.open("doc/example_graph.txt");
 	ofs << os.str();
 	ofs.close();
 	return 0;
