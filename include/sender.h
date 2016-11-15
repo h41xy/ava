@@ -7,6 +7,8 @@
 #include <string>
 #include <cstring>
 
+#include "constants.h"
+
 class Sender{
 	//----getaddrinfo----
 	struct addrinfo hints;

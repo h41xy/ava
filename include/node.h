@@ -8,17 +8,10 @@
 #include <cerrno>
 #include <unistd.h>
 
+#include "constants.h"
 #include "addressbook.h"
 #include "listener.h"
 #include "sender.h"
-
-const int EXIT_NODE = 0;
-const int EXIT_ALL = 1;
-const int RECV_MSG = 2;
-const int SOCIALISE = 3;
-const int RUMOR = 4;
-
-const int MSG_BUFFER_SIZE = 256;
 
 class Node{
 	Entry myself;
