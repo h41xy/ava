@@ -11,6 +11,19 @@ Node::Node(char* id_cstr){
 	neighbors = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
 }
 
+// Delegating constructors is c++11 only, I want to stay away from that
+Node::Node(char* id_cstr, char* belive_border_cstr){
+	std::string believe_border_str(belive_border_cstr);
+	believe_border = std::stoi(believe_border_str);
+	std::string id_str(id_cstr);
+	myid = std::stoi(id_str);
+	//----Read File
+	book = Addressbook("doc/example.txt");
+	// Create a addressbook based on the neighboring IDs found in 
+	// doc/example_graph.txt and the addresses found in doc/example.txt
+	neighbors = Addressbook("doc/example.txt", get_nb_ids("doc/example_graph.txt", myid));
+}
+
 // Sends a string to all neighbors in the addressbook
 int Node::send_all_msg(Addressbook receivers, std::string msg){
 	std::list<Entry>::iterator it = receivers.get_iterator();

@@ -24,8 +24,12 @@ class Node{
 	Addressbook neighbors;
 	int myid; //not pretty but I need it before I get myself
 
+	int believe_border, rumor_counter;
+	bool heard_rumor, belive_rumor;
+
  public:
 	Node(char*); // own ID
+	Node(char*,char*); // own ID, believe_border
 	int run(); // Main loop
 
 	int send_all_signal(Addressbook,int);
@@ -39,8 +43,11 @@ class Node{
  * It requires one argument which is used as the own ID
  */
 int main ( int argc, char *argv[]) {
-	if(argc > 1){
+	if(argc == 1){
 		Node node(argv[1]);
+		node.run();
+	}else if(argc == 2){
+		Node node(argv[1], argv[2]);
 		node.run();
 	}else
 		std::cout << "Please give a ID as Argument.\n";
