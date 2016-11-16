@@ -6,6 +6,8 @@
 #include <fstream>
 #include <ctime>
 
+#include "constants.h"
+
 int get_random_node(int range){
 	if(range == 0)
 		return 1;
@@ -42,7 +44,7 @@ int run(char* m_cstr, char* n_cstr){
 	os << "}";
 	//std::cout << os.str() << std::endl;
 	std::ofstream ofs;
-	ofs.open("doc/example_graph.txt");
+	ofs.open(GRAPHFILE);
 	ofs << os.str();
 	ofs.close();
 	return 0;
