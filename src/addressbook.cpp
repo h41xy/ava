@@ -12,6 +12,7 @@ Addressbook::Addressbook(std::string fname){
 	fillfromfile(fname);
 }
 
+// Read from given filename but only add addresses in the ids_neighboring me list
 Addressbook::Addressbook(std::string fname, std::list<int> ids_neighboring_me){
 	fillfromfile_nbs_only(fname, ids_neighboring_me);
 }
@@ -81,6 +82,7 @@ void Addressbook::add(Entry nentry){
 
 // Removes an Entry from the addressbook identified by his id
 // returns -1 if not found.
+// TODO change to return iterator
 int Addressbook::remove(int id){
 	// Iterates over the list until the last entry is reached
 	std::list<Entry>::iterator it = book.begin();
@@ -124,6 +126,7 @@ Entry Addressbook::get_entry_at(std::list<Entry>::iterator it){
 }
 
 // Returns three random entries fomr the current addressbook as a tuple
+// Deprecated
 std::tuple<Entry,Entry,Entry> Addressbook::return_three_random_entries(){
 	// random seed...kinda ; )
 	std::srand(std::time(0));
