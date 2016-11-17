@@ -1,6 +1,10 @@
 // The node
+// TODO get better string handling on cout
 #include "node.h"
 
+// Creates a Node object
+// Reads all addresses and in a seperate list all neighbors
+// reason to know all addresses is the exit
 Node::Node(char* id_cstr){
 	heard_rumor = false;
 	believe_rumor = false;
@@ -15,6 +19,7 @@ Node::Node(char* id_cstr){
 }
 
 // Delegating constructors is c++11 only, I want to stay away from that
+// so it is the same contsructor but the beliveing border parameter can be set
 Node::Node(char* id_cstr, char* belive_border_cstr){
 	heard_rumor = false;
 	believe_rumor = false;
@@ -30,7 +35,7 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 }
 
-// Sends a string to all neighbors in the addressbook
+// Sends a string to all addresses in the given book
 int Node::send_all_msg(Addressbook receivers, std::string msg){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
@@ -46,6 +51,7 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 	return -1;
 }
 
+// Sends a signal to all addresses in the given book
 int Node::send_all_signal(Addressbook receivers, int signalid){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
@@ -93,20 +99,15 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	}
 	gifile.close();
 	std::cout << "IDs neighboring me:";
+	// TODO eliminate duplicates
 	for(auto v : ids_neighboring_me)
 		std::cout << " " << v;
 	std::cout << std::endl;
 	return ids_neighboring_me;
 }
 
-/* The run method actually starts the different steps to set up the node
- * - Read one argument as a id
- * - Read a textfile which contains an addressbook, <id, whitespace,IP, colon,port>
- * - Open a port and listening on it. Port depends on ID in addressbook. If msgs arrive, they will be printed to stdout with timestamp.
- * - Choose three random neigbors from the addressbook
- * - Send the own ID once to these three.
- * - Put all send msgs also on stdout with timestamp
- */
+// The main loop of the node
+// do until receive the exit signal
 int Node::run(){
 
 	// Lookup the id from argv and get my associated port
@@ -130,17 +131,21 @@ int Node::run(){
 		read(confd,&msg_id,sizeof(msg_id));
 		switch(msg_id){
 
+			// exit single node
 			case EXIT_NODE : {
 				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
 				listen_more = false;
 				break;
 				}
+			// exit all nodes
 			case EXIT_ALL : {
 				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
 				send_all_signal(book,EXIT_NODE);
 				listen_more = false;
 				break;
 				}
+			// recv msgs with max length of 256 chars
+			// TODO check on length
 			case RECV_MSG : {
 				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
 				char a[MSG_BUFFER_SIZE];
@@ -149,12 +154,15 @@ int Node::run(){
 				std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
 				break;
 				}
+			// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
 				std::stringstream ss;
 				ss << "My ID is: " << myself.getid();
 				send_all_msg(neighbors, ss.str());
 				break;
 				}
+			// start spreading a rumor
+			// TODO dont send it to the node I heard it from
 			case RUMOR : {
 				rumor_counter++;
 				if(!heard_rumor){
@@ -162,7 +170,7 @@ int Node::run(){
 					heard_rumor = true;
 					send_all_signal(neighbors, RUMOR);
 				}
-				if(rumor_counter >= believe_border){
+				if(rumor_counter >= believe_border && !believe_rumor){
 					believe_rumor = true;
 					std::cout << "I belive a rumor." << std::endl << std::flush;
 				}
