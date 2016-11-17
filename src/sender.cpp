@@ -1,5 +1,6 @@
 #include "sender.h"
 
+// Prepares a connection with given parameters
 Sender::Sender(std::string ip, int port){
 	prepare_connection();
 	// getaddrinfo dont like strings...
@@ -29,14 +30,16 @@ int Sender::get_connection(){
 	return 0;
 }
 
-// Sends a messxage on the established connection
-// Currently the message must contain the word "quit" and has to end with a \n
+// Sends a string messxage on the established connection
+// TODO check on 256 char limit
 int Sender::send_msg(std::string msg){
 	Sender::send_signalid(RECV_MSG);
 	write(sockfd,msg.c_str(),msg.size() + 1);
 	return -1;
 }
 
+// Sends a integer in binary to the connection of the object
+// TODO check if connected
 int Sender::send_signalid(int signalid){
 	write(sockfd,&signalid,sizeof(signalid));
 	return -1;
