@@ -1,9 +1,11 @@
+// Controller to send signals to ports
 #include <iostream>
 #include <sstream>
 
 #include "sender.h"
 #include "constants.h"
 
+// Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
 	int port = -1, signal = -1;
 	if( argc >= 2 ){
@@ -22,6 +24,7 @@ int main(int argc, char* argv[]){
 		std::stringstream ss;
 		ss << "Welches Signal?" << std::endl;
 		ss << EXIT_ALL << ") Exit all nodes." << std::endl;
+		// TODO send msg, not just signal
 		ss << RECV_MSG << ") Send a text message to this node." << std::endl;
 		ss << SOCIALISE << ") Send ID to neighbors." << std::endl;
 		ss << RUMOR << ") Spread a rumor." << std::endl;
