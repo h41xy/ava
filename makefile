@@ -48,7 +48,9 @@ $(BINDIR):
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
-$(OBJECTS): | $(BUILDDIR)
+$(OBJECTS_NODE): | $(BUILDDIR)
+$(OBJECTS_CTRL): | $(BUILDDIR)
+$(OBJECTS_GG): | $(BUILDDIR)
 
 $(BUILDDIR):
 	mkdir $(BUILDDIR)
