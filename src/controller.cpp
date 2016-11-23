@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "sender.h"
+#include "listener.h"
 #include "constants.h"
 
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
@@ -32,8 +33,26 @@ int main(int argc, char* argv[]){
 		std::cin >> signal;
 	}
 	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
+	Listener listener(WATCHER_PORT);
+	listener.create_and_listen();
 	Sender sender("localhost",port);
 	sender.get_connection();
 	sender.send_signalid(signal);
 	sender.close_connection();
+	int confd, msg_id;
+	bool listen_more = true;
+	do{ 
+		msg_id = -1;
+		confd = listener.accept_connection();
+		read(confd,&msg_id,sizeof(msg_id));
+
+		// Only receivable signals are RECV_MSG so break if else
+		if(msg_id != RECV_MSG)
+			break;
+
+		char a[MSG_BUFFER_SIZE];
+		memset(&a[0],0,sizeof(a));
+		read(confd,&a,sizeof(a));
+		std::cout << a;
+	}while(listen_more);
 }

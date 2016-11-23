@@ -19,7 +19,7 @@ INC := -I include
 MODULES_NODE := node addressbook entry listener sender
 OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
-MODULES_CTRL := controller sender
+MODULES_CTRL := controller sender listener
 OBJECTS_CTRL := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_CTRL))
 
 MODULES_GG := graphgen
