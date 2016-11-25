@@ -6,6 +6,7 @@ NODE=bin/node
 ADDRESSFILE=doc/addresses.txt
 GRAPHFILE=doc/graph.txt
 GRAPHPNG=doc/graph.png
+RESULTFILE=doc/results.txt
 
 EXEC=n
 
@@ -51,6 +52,11 @@ fi
 
 if [[ $EXEC =~ ^[Yy]$ ]]
 then
+	echo "########## New testrun" >> $RESULTFILE
+	echo "Nodecount: 	$NODES" >> $RESULTFILE
+	echo "Edgecount: 	$EDGES" >> $RESULTFILE
+	echo "Believingborder:	$RUMOR" >> $RESULTFILE
+
 	for (( i=1; i<=$NODES; i++))
 	do
 		echo "Starting node with ID $i..."
