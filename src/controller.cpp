@@ -1,6 +1,7 @@
 // Controller to send signals to ports
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include "sender.h"
 #include "listener.h"
@@ -41,11 +42,14 @@ int main(int argc, char* argv[]){
 	sender.close_connection();
 	int confd, msg_id;
 	bool listen_more = true;
+	std::ostringstream rumorresponses;
 	do{ 
 		msg_id = -1;
 		confd = listener.accept_connection();
 		read(confd,&msg_id,sizeof(msg_id));
 
+		if(msg_id == EXIT_NODE)
+			listen_more = false;
 		// Only receivable signals are RECV_MSG so break if else
 		if(msg_id != RECV_MSG)
 			break;
@@ -54,5 +58,12 @@ int main(int argc, char* argv[]){
 		memset(&a[0],0,sizeof(a));
 		read(confd,&a,sizeof(a));
 		std::cout << a;
+		rumorresponses << a;
+		close(confd);
 	}while(listen_more);
+	std::ofstream ofs;
+	ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
+	ofs << rumorresponses.str();
+	ofs.close();
+	listener.close_socket();
 }
