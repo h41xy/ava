@@ -53,8 +53,8 @@ fi
 if [[ $EXEC =~ ^[Yy]$ ]]
 then
 	echo "########## New testrun" >> $RESULTFILE
-	echo "Nodecount: 	$NODES" >> $RESULTFILE
-	echo "Edgecount: 	$EDGES" >> $RESULTFILE
+	echo "Nodecount: 		$NODES" >> $RESULTFILE
+	echo "Edgecount: 		$EDGES" >> $RESULTFILE
 	echo "Believingborder:	$RUMOR" >> $RESULTFILE
 
 	for (( i=1; i<=$NODES; i++))

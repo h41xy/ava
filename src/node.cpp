@@ -172,11 +172,11 @@ int Node::run(){
 				}
 				if(rumor_counter >= believe_border && !believe_rumor){
 					believe_rumor = true;
-					std::cout << "I belive a rumor." << std::endl << std::flush;
 					Sender sender("localhost",WATCHER_PORT);
 					sender.get_connection();
 					std::stringstream ss;
-					ss << "I (" << myid << ") believe a rumor." << std::endl;
+					ss << "Node " << myid << " believes a rumor." << std::endl;
+					std::cout << ss.str();
 					sender.send_msg(ss.str());
 					sender.close_connection();
 				}

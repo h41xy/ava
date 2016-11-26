@@ -40,7 +40,7 @@ int main(int argc, char* argv[]){
 	sender.get_connection();
 	sender.send_signalid(signal);
 	sender.close_connection();
-	int confd, msg_id;
+	int confd, msg_id, believing_counter = 0;
 	bool listen_more = true;
 	std::ostringstream rumorresponses;
 	do{ 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]){
 		confd = listener.accept_connection();
 		read(confd,&msg_id,sizeof(msg_id));
 
-		if(msg_id == EXIT_NODE)
+		if(msg_id == EXIT_NODE || msg_id == EXIT_ALL)
 			listen_more = false;
 		// Only receivable signals are RECV_MSG so break if else
 		if(msg_id != RECV_MSG)
@@ -59,8 +59,10 @@ int main(int argc, char* argv[]){
 		read(confd,&a,sizeof(a));
 		std::cout << a;
 		rumorresponses << a;
+		believing_counter++;
 		close(confd);
 	}while(listen_more);
+	rumorresponses << "---------------------" << std::endl << "Total believes: " << believing_counter << std::endl << "----------------------" << std::endl;
 	std::ofstream ofs;
 	ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
 	ofs << rumorresponses.str();
