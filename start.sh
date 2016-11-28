@@ -60,6 +60,7 @@ then
 	for (( i=1; i<=$NODES; i++))
 	do
 		echo "Starting node with ID $i..."
-		urxvt -e ./bin/node $i $RUMOR &
+		#urxvt -e ./bin/node $i $RUMOR &
+		./bin/node $i $RUMOR &
 	done
 fi
