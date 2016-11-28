@@ -10,6 +10,7 @@
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
 	int port = -1, signal = -1;
+	bool start_watcher = false;
 	if( argc >= 2 ){
 	std::string port_str(argv[1]);
 	port = std::stoi(port_str);
@@ -33,39 +34,50 @@ int main(int argc, char* argv[]){
 		std::cout << ss.str();
 		std::cin >> signal;
 	}
-	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
+	if (!start_watcher){
+		int i = -1;
+		std::cout << "Start watcher? 0 is yes ";
+		std::cin >> i;
+		if(i==0)
+			start_watcher = true;
+	}
 	Listener listener(WATCHER_PORT);
-	listener.create_and_listen();
+	if(start_watcher){
+		listener.create_and_listen();
+	}
+	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
 	Sender sender("localhost",port);
 	sender.get_connection();
 	sender.send_signalid(signal);
 	sender.close_connection();
-	int confd, msg_id, believing_counter = 0;
-	bool listen_more = true;
-	std::ostringstream rumorresponses;
-	do{ 
-		msg_id = -1;
-		confd = listener.accept_connection();
-		read(confd,&msg_id,sizeof(msg_id));
+	if(start_watcher){
+		int confd, msg_id, believing_counter = 0;
+		bool listen_more = true;
+		std::ostringstream rumorresponses;
+		do{ 
+			msg_id = -1;
+			confd = listener.accept_connection();
+			read(confd,&msg_id,sizeof(msg_id));
 
-		if(msg_id == EXIT_NODE || msg_id == EXIT_ALL)
-			listen_more = false;
-		// Only receivable signals are RECV_MSG so break if else
-		if(msg_id != RECV_MSG)
-			break;
+			if(msg_id == EXIT_NODE || msg_id == EXIT_ALL)
+				listen_more = false;
+			// Only receivable signals are RECV_MSG so break if else
+			if(msg_id != RECV_MSG)
+				break;
 
-		char a[MSG_BUFFER_SIZE];
-		memset(&a[0],0,sizeof(a));
-		read(confd,&a,sizeof(a));
-		std::cout << a;
-		rumorresponses << a;
-		believing_counter++;
-		close(confd);
-	}while(listen_more);
-	rumorresponses << "---------------------" << std::endl << "Total believes: " << believing_counter << std::endl << "----------------------" << std::endl;
-	std::ofstream ofs;
-	ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
-	ofs << rumorresponses.str();
-	ofs.close();
-	listener.close_socket();
+			char a[MSG_BUFFER_SIZE];
+			memset(&a[0],0,sizeof(a));
+			read(confd,&a,sizeof(a));
+			std::cout << a;
+			rumorresponses << a;
+			believing_counter++;
+			close(confd);
+		}while(listen_more);
+		rumorresponses << "---------------------" << std::endl << "Total believes: " << believing_counter << std::endl << "----------------------" << std::endl;
+		std::ofstream ofs;
+		ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
+		ofs << rumorresponses.str();
+		ofs.close();
+		listener.close_socket();
+	}
 }

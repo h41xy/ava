@@ -29,7 +29,7 @@ int Listener::create_and_listen(){
 	//--------------
 
 	//----listen()----
-	return listen(sockfd,10);
+	return listen(sockfd,SOMAXCONN);
 	//----------------
 }
 
