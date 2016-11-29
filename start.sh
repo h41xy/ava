@@ -3,7 +3,8 @@
 GRAPHGEN=bin/graphgen
 NODE=bin/node
 
-ADDRESSFILE=doc/addresses.txt
+ADDRESSFILE=doc/addresses_all.txt
+ADDRESSFILE_THISRUN=doc/addresses.txt
 GRAPHFILE=doc/graph.txt
 GRAPHPNG=doc/graph.png
 RESULTFILE=doc/results.txt
@@ -38,9 +39,13 @@ fi
 
 echo "I will now generate a graph with $NODES nodes, $EDGES edges. Thereupon, nodes will be started which believe a rumor if heard $RUMOR times."
 
+# Reduce the addressbook of 5000 Entries to just the number of nodes
+LINES=`cat $ADDRESSFILE | wc -l`
+cat $ADDRESSFILE | sed $((NODES+1)),${LINES}d > $ADDRESSFILE_THISRUN
+
 $GRAPHGEN $EDGES $NODES
-dot -Tpng $GRAPHFILE > $GRAPHPNG
-feh -. $GRAPHPNG &
+#dot -Tpng $GRAPHFILE > $GRAPHPNG
+#feh -. $GRAPHPNG &
 
 if [ -z ${4+x} ]
 then
