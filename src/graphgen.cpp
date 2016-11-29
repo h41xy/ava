@@ -39,7 +39,8 @@ int run(char* m_cstr, char* n_cstr){
 		do{
 			candidate = get_random_node(nodes);
 			candidate_two = get_random_node(nodes);
-		}while(candidate == candidate_two);
+		// TODO if more edges than pssible -> deadlock
+		}while(candidate == candidate_two || edge_exists[candidate][candidate_two]);
 		os << candidate << " -- " << candidate_two << ";\n";
 	}
 
