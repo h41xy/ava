@@ -26,10 +26,12 @@ int run(char* m_cstr, char* n_cstr){
 	std::ostringstream os;
 	os << "graph G{\n";
 
+	bool edge_exists[nodes][nodes];
 	for(int i=2;i<=nodes;i++){
 		do{
 			candidate = get_random_node(i-1);
-		}while(candidate == i);
+		}while(candidate == i || edge_exists[candidate][i]);
+		edge_exists[candidate][i] = true;
 		os << candidate << " -- " << i << ";\n";
 		inserted_edges++;
 	}
