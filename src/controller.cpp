@@ -9,7 +9,7 @@
 
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
-	int port = -1, signal = -1;
+	int port = -1, signal = -1, watcher = -1;
 	bool start_watcher = false;
 	if( argc >= 2 ){
 	std::string port_str(argv[1]);
@@ -18,6 +18,12 @@ int main(int argc, char* argv[]){
 	if(argc >= 3){
 		std::string signal_str(argv[2]);
 		signal = std::stoi(signal_str);
+	}
+	if(argc >= 4){
+		std::string watcher_str(argv[3]);
+		watcher = std::stoi(watcher_str);
+		if(watcher == 0)
+			start_watcher = true;
 	}
 	if (port == -1) {
 		std::cout << "Welcher Port? ";
@@ -34,7 +40,7 @@ int main(int argc, char* argv[]){
 		std::cout << ss.str();
 		std::cin >> signal;
 	}
-	if (!start_watcher){
+	if (watcher == -1){
 		int i = -1;
 		std::cout << "Start watcher? 0 is yes ";
 		std::cin >> i;
@@ -69,11 +75,12 @@ int main(int argc, char* argv[]){
 			memset(&a[0],0,sizeof(a));
 			read(confd,&a,sizeof(a));
 			std::cout << a;
-			rumorresponses << a;
+			//rumorresponses << a;
 			believing_counter++;
 			close(confd);
 		}while(listen_more);
-		rumorresponses << "---------------------" << std::endl << "Total believes: " << believing_counter << std::endl << "----------------------" << std::endl;
+		rumorresponses << "Total believes: \t" << believing_counter << " #" << std::endl;
+		rumorresponses << "###################################################################################################" << std::endl;
 		std::ofstream ofs;
 		ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
 		ofs << rumorresponses.str();

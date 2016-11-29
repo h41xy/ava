@@ -154,64 +154,64 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
-				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
-				listen_more = false;
-				break;
-				}
-			// exit all nodes
+						 std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
+						 listen_more = false;
+						 break;
+					 }
+			 // exit all nodes
 			case EXIT_ALL : {
-				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
-				send_all_signal(book,EXIT_NODE);
-				listen_more = false;
-				break;
-				}
+						std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
+						send_all_signal(book,EXIT_NODE);
+						listen_more = false;
+						break;
+					}
 			// recv msgs with max length of 256 chars
 			// TODO check on length
 			case RECV_MSG : {
-				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
-				char a[MSG_BUFFER_SIZE];
-				memset(&a[0],0,sizeof(a));
-				read(confd,&a,sizeof(a));
-				std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
-				break;
-				}
+						std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+						char a[MSG_BUFFER_SIZE];
+						memset(&a[0],0,sizeof(a));
+						read(confd,&a,sizeof(a));
+						std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
+						break;
+					}
 			// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
-				std::stringstream ss;
-				ss << "My ID is: " << myself.getid();
-				send_all_msg(neighbors, ss.str());
-				break;
-				}
-			// start spreading a rumor
+						 std::stringstream ss;
+						 ss << "My ID is: " << myself.getid();
+						 send_all_msg(neighbors, ss.str());
+						 break;
+					 }
+			 // start spreading a rumor
 			case RUMOR : {
-int sender_id = -1;
-read(confd,&sender_id,sizeof(sender_id));
-				rumor_counter++;
-				if(!heard_rumor){
-					std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
-					heard_rumor = true;
-					send_all_rumor(neighbors, sender_id, RUMOR);
-				}
-				if(rumor_counter >= believe_border && !believe_rumor){
-					believe_rumor = true;
-					Sender sender("localhost",WATCHER_PORT);
-					sender.get_connection();
-					std::stringstream ss;
-					ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
-					std::cout << ss.str();
-					sender.send_msg(ss.str());
-					sender.close_connection();
-				}
-				break;
-				}
+					     int sender_id = -1;
+					     read(confd,&sender_id,sizeof(sender_id));
+					     rumor_counter++;
+					     if(!heard_rumor){
+						     std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
+						     heard_rumor = true;
+						     send_all_rumor(neighbors, sender_id, RUMOR);
+					     }
+					     if(rumor_counter >= believe_border && !believe_rumor){
+						     believe_rumor = true;
+						     Sender sender("localhost",WATCHER_PORT);
+						     sender.get_connection();
+						     std::stringstream ss;
+						     ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
+						     std::cout << ss.str();
+						     sender.send_msg(ss.str());
+						     sender.close_connection();
+					     }
+					     break;
+				     }
 			default :
-				std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
-				break;
+				     std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
+				     break;
 		}
 		close(confd);
 
 	}while(listen_more);
-	std::cout << "ID: " << myid << "Node exited." << std::endl;
+	std::cout << "ID: " << myid << " Node exited." << std::endl;
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 

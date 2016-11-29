@@ -22,6 +22,9 @@ int Listener::create_and_listen(){
 
 	//--------socket()----------------------------------
 	sockfd = socket(serverinfo->ai_family, serverinfo->ai_socktype, serverinfo->ai_protocol);
+	// REUSEADDR so the timeout on socketclose gets skipped
+	int enable = 1;
+	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
 	//--------------------------------------------------
 
 	//----bind()----
