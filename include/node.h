@@ -24,6 +24,7 @@ class Node{
 
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);
+	int send_all_rumor(Addressbook,int,int);
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 

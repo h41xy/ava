@@ -45,6 +45,11 @@ int Sender::send_signalid(int signalid){
 	return -1;
 }
 
+int Sender::send_id(int id){
+	write(sockfd,&id,sizeof(id));
+	return -1;
+}
+
 int Sender::close_connection(){
 	close(sockfd);
 	return -1;

@@ -25,5 +25,6 @@ class Sender{
 	int get_connection();
 	int send_msg(std::string); //Message muist contain the word "quit" and end with \n
 	int send_signalid(int);
+	int send_id(int);
 	int close_connection();
 };

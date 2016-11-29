@@ -43,7 +43,7 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 		if((sender.get_connection()) != -1){
 			sender.send_msg(msg);
 			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
+			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
 			sender.close_connection();
 		}
 	
@@ -59,10 +59,31 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 		if((sender.get_connection()) != -1){
 			sender.send_signalid(signalid);
 			std::time_t t = std::time(nullptr);
-			std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send to " << (*it).getport() << std::endl << std::flush;
+			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send from " << myid << " to " << (*it).getport() << std::endl << std::flush;
 			sender.close_connection();
 		} else {
-			std::cout << "Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
+			std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
+		}
+	
+	}while(++it != receivers.get_end());
+	return -1;
+}
+
+int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
+	std::list<Entry>::iterator it = receivers.get_iterator();
+	do{
+		// Don't send it to the one I received it
+		if((*it).getid() != sender_id){
+			Sender sender((*it).getip(),(*it).getport());
+			if((sender.get_connection()) != -1){
+				sender.send_signalid(signalid);
+				sender.send_id(myid);
+				std::time_t t = std::time(nullptr);
+				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send to " << (*it).getport() << std::endl << std::flush;
+				sender.close_connection();
+			} else {
+				std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
+			}
 		}
 	
 	}while(++it != receivers.get_end());
@@ -98,7 +119,7 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 		}
 	}
 	gifile.close();
-	std::cout << "IDs neighboring me:";
+	std::cout << "ID: " << myid << "IDs neighboring me:";
 	// TODO eliminate duplicates
 	for(auto v : ids_neighboring_me)
 		std::cout << " " << v;
@@ -113,15 +134,15 @@ int Node::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "My port is: " << myself.getport() << std::endl << "I believe a rumor if heard " << believe_border << " times." << std::endl;
+	std::cout << "My ID is " << myid << ", my port is: " << myself.getport() << std::endl << "I believe a rumor if heard " << believe_border << " times." << std::endl;
 
 
 	// listen on the port
-	int confd;
 	Listener listener(myself.getport());
 	listener.create_and_listen();
 
 	// listener loop
+	int confd = -1;
 	bool listen_more = true;
 	do{
 		confd = listener.accept_connection();
@@ -133,13 +154,13 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
-				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
+				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
 				listen_more = false;
 				break;
 				}
 			// exit all nodes
 			case EXIT_ALL : {
-				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
+				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
 				send_all_signal(book,EXIT_NODE);
 				listen_more = false;
 				break;
@@ -147,7 +168,7 @@ int Node::run(){
 			// recv msgs with max length of 256 chars
 			// TODO check on length
 			case RECV_MSG : {
-				std::cout << std::put_time(std::localtime(&t), "Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
 				char a[MSG_BUFFER_SIZE];
 				memset(&a[0],0,sizeof(a));
 				read(confd,&a,sizeof(a));
@@ -162,20 +183,21 @@ int Node::run(){
 				break;
 				}
 			// start spreading a rumor
-			// TODO dont send it to the node I heard it from
 			case RUMOR : {
+int sender_id = -1;
+read(confd,&sender_id,sizeof(sender_id));
 				rumor_counter++;
 				if(!heard_rumor){
-					std::cout << "I heard a new rumor...." << std::endl << std::flush;
+					std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
 					heard_rumor = true;
-					send_all_signal(neighbors, RUMOR);
+					send_all_rumor(neighbors, sender_id, RUMOR);
 				}
 				if(rumor_counter >= believe_border && !believe_rumor){
 					believe_rumor = true;
 					Sender sender("localhost",WATCHER_PORT);
 					sender.get_connection();
 					std::stringstream ss;
-					ss << "Node " << myid << " believes a rumor." << std::endl;
+					ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
 					std::cout << ss.str();
 					sender.send_msg(ss.str());
 					sender.close_connection();
@@ -183,16 +205,15 @@ int Node::run(){
 				break;
 				}
 			default :
-				std::cout << "I don't know this signal id. Close connection.\n";
+				std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
 				break;
 		}
 		close(confd);
 
 	}while(listen_more);
-	std::cout << "Node exited." << std::endl;
+	std::cout << "ID: " << myid << "Node exited." << std::endl;
 	listener.close_socket();
 	std::cout << std::strerror(errno) << "\n";
 
 	return -1;
 }
-

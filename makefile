@@ -28,7 +28,7 @@ OBJECTS_GG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_GG))
 all: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 
 debug: CFLAGS += -g
-debug: $(TARGET)
+debug: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 
 $(PRGNAME_NODE): $(TARGET_NODE)
 $(TARGET_NODE): $(OBJECTS_NODE) | $(BINDIR)
