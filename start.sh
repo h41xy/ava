@@ -64,6 +64,6 @@ then
 	do
 		echo "Starting node with ID $i..."
 		#urxvt -e ./bin/node $i $RUMOR &
-		./bin/node $i $RUMOR &
+		./bin/node $i $RUMOR >/dev/null 2>&1 &
 	done
 fi
