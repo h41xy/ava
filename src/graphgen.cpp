@@ -23,6 +23,9 @@ int run(char* m_cstr, char* n_cstr){
 	if(edges < nodes)
 		return -1;
 
+	if (edges > (nodes*(nodes-1)/2))
+		edges = (nodes*(nodes-1)/2);
+
 	std::ostringstream os;
 	os << "graph G{\n";
 
@@ -30,8 +33,9 @@ int run(char* m_cstr, char* n_cstr){
 	for(int i=2;i<=nodes;i++){
 		do{
 			candidate = get_random_node(i-1);
-		}while(candidate == i || edge_exists[candidate][i]);
+		}while(candidate == i || edge_exists[candidate][i] || edge_exists[i][candidate]);
 		edge_exists[candidate][i] = true;
+		edge_exists[i][candidate] = true;
 		os << candidate << " -- " << i << ";\n";
 		inserted_edges++;
 	}
@@ -40,8 +44,10 @@ int run(char* m_cstr, char* n_cstr){
 			candidate = get_random_node(nodes);
 			candidate_two = get_random_node(nodes);
 		// TODO if more edges than pssible -> deadlock
-		}while(candidate == candidate_two || edge_exists[candidate][candidate_two]);
+		}while(candidate == candidate_two || edge_exists[candidate][candidate_two] || edge_exists[candidate_two][candidate] );
 		os << candidate << " -- " << candidate_two << ";\n";
+		edge_exists[candidate][candidate_two] = true;
+		edge_exists[candidate_two][candidate] = true;
 	}
 
 	os << "}";

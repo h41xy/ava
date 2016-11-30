@@ -144,6 +144,7 @@ int Node::run(){
 	// listener loop
 	int confd = -1;
 	bool listen_more = true;
+	rumor_counter = 0;
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
