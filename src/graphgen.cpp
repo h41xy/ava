@@ -29,7 +29,13 @@ int run(char* m_cstr, char* n_cstr){
 	std::ostringstream os;
 	os << "graph G{\n";
 
-	bool edge_exists[nodes][nodes];
+	// Array init
+	// TODO Currently the array is one bigger than actual nodes exist.
+	// This is due to the off by one of arrays
+	bool** edge_exists = new bool*[nodes+1];
+	for (int i = 0; i < nodes+1; i++)
+		edge_exists[i] = new bool[nodes+1];
+
 	for(int i=2;i<=nodes;i++){
 		do{
 			candidate = get_random_node(i-1);
@@ -43,12 +49,16 @@ int run(char* m_cstr, char* n_cstr){
 		do{
 			candidate = get_random_node(nodes);
 			candidate_two = get_random_node(nodes);
-		// TODO if more edges than pssible -> deadlock
 		}while(candidate == candidate_two || edge_exists[candidate][candidate_two] || edge_exists[candidate_two][candidate] );
 		os << candidate << " -- " << candidate_two << ";\n";
 		edge_exists[candidate][candidate_two] = true;
 		edge_exists[candidate_two][candidate] = true;
 	}
+
+	// dealloc array
+	for (int i = 0; i < nodes+1; i++)
+		delete[] edge_exists[i];
+	delete[] edge_exists;
 
 	os << "}";
 	//std::cout << os.str() << std::endl;
