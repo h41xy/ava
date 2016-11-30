@@ -1,4 +1,5 @@
 // The node
+// TODO rework initialization
 // TODO get better string handling on cout
 #include "node.h"
 
@@ -69,6 +70,7 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 	return -1;
 }
 
+// Sends a rumor to all neighbors except the one this node heard it from
 int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
@@ -144,6 +146,7 @@ int Node::run(){
 	// listener loop
 	int confd = -1;
 	bool listen_more = true;
+	// The rumor counter has to be initialized, unexpected behaviour is the result otherwise
 	rumor_counter = 0;
 	do{
 		confd = listener.accept_connection();
@@ -184,6 +187,7 @@ int Node::run(){
 						 break;
 					 }
 			 // start spreading a rumor
+			// TODO own function
 			case RUMOR : {
 					     int sender_id = -1;
 					     read(confd,&sender_id,sizeof(sender_id));
