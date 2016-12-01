@@ -44,8 +44,8 @@ LINES=`cat $ADDRESSFILE | wc -l`
 cat $ADDRESSFILE | sed $((NODES+1)),${LINES}d > $ADDRESSFILE_THISRUN
 
 $GRAPHGEN $EDGES $NODES
-#dot -Tpng $GRAPHFILE > $GRAPHPNG
-#feh -. $GRAPHPNG &
+dot -Tpng $GRAPHFILE > $GRAPHPNG
+feh -. $GRAPHPNG &
 
 if [ -z ${4+x} ]
 then
