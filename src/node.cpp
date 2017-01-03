@@ -17,6 +17,13 @@ Node::Node(char* id_cstr){
 	// Create a addressbook based on the neighboring IDs found in 
 	// doc/example_graph.txt and the addresses found in doc/example.txt
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
+
+	// initialise vector clock
+	time = new int[neighbors.entrycount()];
+	for (int i = 0; i < neighbors.entrycount(); i++){
+		time[i] = 0;
+	}
+
 }
 
 // Delegating constructors is c++11 only, I want to stay away from that
@@ -34,6 +41,16 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	// Create a addressbook based on the neighboring IDs found in 
 	// doc/example_graph.txt and the addresses found in doc/example.txt
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
+
+	// initialise vector clock
+	time = new int[neighbors.entrycount()];
+	for (int i = 0; i < neighbors.entrycount(); i++){
+		time[i] = 0;
+	}
+}
+
+Node::~Node(){
+	delete[] time;
 }
 
 // Sends a string to all addresses in the given book

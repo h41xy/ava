@@ -22,6 +22,9 @@ class Node{
 	int believe_border, rumor_counter;
 	bool heard_rumor, believe_rumor;
 
+	// Vector clock
+	int* time;
+
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);
 	int send_all_rumor(Addressbook,int,int);
@@ -32,6 +35,10 @@ class Node{
 	Node(char*); // own ID
 	Node(char*,char*); // own ID, believe_border
 	int run(); // Main loop
+	
+	// Desctructor isneeded because the vectortime array get dynamicaly allocated and
+	// I haven't found a way to initialise it without the new operator
+	~Node();
 };
 
 /* The main method to start a single node.
