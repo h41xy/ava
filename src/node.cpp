@@ -19,8 +19,8 @@ Node::Node(char* id_cstr){
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
 	// initialise vector clock
-	time = new int[neighbors.entrycount()];
-	for (int i = 0; i < neighbors.entrycount(); i++){
+	time = new int[book.entrycount()];
+	for (int i = 0; i < book.entrycount(); i++){
 		time[i] = 0;
 	}
 
@@ -43,8 +43,8 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
 	// initialise vector clock
-	time = new int[neighbors.entrycount()];
-	for (int i = 0; i < neighbors.entrycount(); i++){
+	time = new int[book.entrycount()];
+	for (int i = 0; i < book.entrycount(); i++){
 		time[i] = 0;
 	}
 }
@@ -170,6 +170,11 @@ int Node::run(){
 		// Receive msgs and react to them
 		int msg_id = -1;
 		std::time_t t = std::time(nullptr);
+		read(confd,&msg_id,sizeof(msg_id));
+		int timestamp[book.entrycount()];
+		for (int i = 0; i < book.entrycount(); i++){
+			timestamp[i] = 0;
+		}
 		read(confd,&msg_id,sizeof(msg_id));
 		switch(msg_id){
 

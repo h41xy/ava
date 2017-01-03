@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GRAPHGEN=bin/graphgen
-NODE=bin/node
+NODE=bin/node_exec
 
 ADDRESSFILE=doc/addresses_all.txt
 ADDRESSFILE_THISRUN=doc/addresses.txt

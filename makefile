@@ -4,7 +4,7 @@ BUILDDIR := build
 BINDIR := bin
 PROTDIR := prototype
 
-PRGNAME_NODE := node
+PRGNAME_NODE := node_exec
 TARGET_NODE := $(BINDIR)/$(PRGNAME_NODE)
 PRGNAME_CTRL := controller
 TARGET_CTRL := $(BINDIR)/$(PRGNAME_CTRL)
@@ -16,7 +16,7 @@ TARGETS := $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 CFLAGS := -Wall
 INC := -I include
 
-MODULES_NODE := node addressbook entry listener sender
+MODULES_NODE := node_exec node addressbook entry listener sender
 OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
 MODULES_CTRL := controller sender listener
