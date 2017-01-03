@@ -19,11 +19,10 @@ Node::Node(char* id_cstr){
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
 	// initialise vector clock
-	time = new int[book.entrycount()];
-	for (int i = 0; i < book.entrycount(); i++){
-		time[i] = 0;
-	}
-
+	// resize the vector to the size of the addressbook
+	vtime.resize(book.entrycount());
+	// fill all values with 0
+	std::fill(vtime.begin(),vtime.end(),0);
 }
 
 // Delegating constructors is c++11 only, I want to stay away from that
@@ -43,14 +42,10 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
 	// initialise vector clock
-	time = new int[book.entrycount()];
-	for (int i = 0; i < book.entrycount(); i++){
-		time[i] = 0;
-	}
-}
-
-Node::~Node(){
-	delete[] time;
+	// resize the vector to the size of the addressbook
+	vtime.resize(book.entrycount());
+	// fill all values with 0
+	std::fill(vtime.begin(),vtime.end(),0);
 }
 
 // Sends a string to all addresses in the given book
@@ -146,6 +141,11 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 	return ids_neighboring_me;
 }
 
+// Return the current vectorclock array
+std::vector<int> Node::get_vectortime(){
+	return vtime;
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -171,16 +171,20 @@ int Node::run(){
 		int msg_id = -1;
 		std::time_t t = std::time(nullptr);
 		read(confd,&msg_id,sizeof(msg_id));
-		int timestamp[book.entrycount()];
-		for (int i = 0; i < book.entrycount(); i++){
-			timestamp[i] = 0;
-		}
-		read(confd,&msg_id,sizeof(msg_id));
+
+		std::vector<int> vtimestamp;
+		vtimestamp.resize(book.entrycount());
+		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
+
+		// TODO make the sizeof more safe
+		//read(confd,&vtimestamp,sizeof(vtimestamp) + sizeof(int)*vtimestamp.size());
+
 		switch(msg_id){
 
 			// exit single node
 			case EXIT_NODE : {
 						 std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
+						 // TODO increase the vectortime
 						 listen_more = false;
 						 break;
 					 }
@@ -206,7 +210,15 @@ int Node::run(){
 						 std::stringstream ss;
 						 ss << "My ID is: " << myself.getid();
 						 send_all_msg(neighbors, ss.str());
-						 break;
+	
+// increase the vectortime
+vtime[myid - 1] = vtime[myid -1] + 1;
+//vtime[myid - 25000 - 1] = vtime[myid - 25000 -1] + 1;
+std::cout << "time increased" << std::endl;
+//for (int i = 0; i < book.entrycount(); i++){
+//	vtime[i] = max(vtime[i], vtimestamp[i]);
+//}
+					 break;
 					 }
 			 // start spreading a rumor
 			// TODO own function
@@ -231,6 +243,14 @@ int Node::run(){
 					     }
 					     break;
 				     }
+			case PRINT_VTIME : {
+						   for (int i = 0; i < vtime.size(); i++){
+							   std::cout << vtime[i] << " ";
+						   }
+						   std::cout << std::endl;
+				 }
+				 break;
+
 			default :
 				     std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
 				     break;

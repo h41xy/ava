@@ -8,6 +8,7 @@ const int EXIT_ALL = 1;
 const int RECV_MSG = 2;
 const int SOCIALISE = 3;
 const int RUMOR = 4;
+const int PRINT_VTIME = 5;
 
 const int MSG_BUFFER_SIZE = 256;
 const int WATCHER_PORT = 25000;
