@@ -65,3 +65,9 @@ $(PROTDIR)/%.o: $(PROTDIR)/%.cpp
 
 clean:
 	rm -vf $(TARGETS) $(PROTDIR)/client $(PROTDIR)/server $(BUILDDIR)/*.o $(PROTDIR)/*.o
+
+test_vectorclock_arrays: test_vectorclock_arrays_obj 
+	g++ build/node.o build/addressbook.o build/entry.o build/listener.o build/sender.o build/test_vectorclock_arrays.o -o test/test_vectorclock_arrays
+
+test_vectorclock_arrays_obj: test/test_vectorclock_arrays.cpp
+	g++ -Wall -I include -c test/test_vectorclock_arrays.cpp -o build/test_vectorclock_arrays.o
