@@ -209,6 +209,14 @@ int Node::sc_rumor(){
 	}
 }
 
+// Case PRINT_VTIME
+int Node::sc_print_vtime(){
+	for (int i = 0; i < vtime.size(); i++){
+		std::cout << vtime[i] << " ";
+	}
+	std::cout << std::endl;
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -257,39 +265,35 @@ int Node::run(){
 						 sc_exit_node();
 						 break;
 					 }
-			 // exit all nodes
+					 // exit all nodes
 			case EXIT_ALL : {
 						sc_exit_all();
 						break;
 					}
-			// recv msgs with max length of 256 chars
-			// TODO check on length
+					// recv msgs with max length of 256 chars
+					// TODO check on length
 			case RECV_MSG : {
 						sc_recv_msg();
 						break;
 					}
-			// send a string msg to all my neighbors with my id
+					// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
 						 sc_socialise();
 						 break;
 					 }
-			 // start spreading a rumor
-			// TODO own function
+					 // start spreading a rumor
 			case RUMOR : {
 					     sc_rumor();
 					     break;
 				     }
 			case PRINT_VTIME : {
-						   for (int i = 0; i < vtime.size(); i++){
-							   std::cout << vtime[i] << " ";
-						   }
-						   std::cout << std::endl;
-				 }
-				 break;
+						   sc_print_vtime();
+						   break;
+					   }
 
 			default :
-				     std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
-				     break;
+					   std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
+					   break;
 		}
 		close(confd);
 
