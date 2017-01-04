@@ -178,8 +178,6 @@ int Node::sc_recv_msg(std::time_t& t, int& confd){
 int Node::sc_socialise(){
 	std::stringstream ss;
 	ss << "My ID is: " << myself.getid();
-	// increase the vectortime
-	vtime[myid - 1] = vtime[myid -1] + 1;
 
 	send_all_msg(neighbors, ss.str());
 
@@ -221,6 +219,11 @@ int Node::sc_print_vtime(){
 	}
 	std::cout << std::endl;
 	return -1;
+}
+
+// Count the vectortime up
+int Node::vtime_up(){
+	vtime[myid - 1] = vtime[myid -1] + 1;
 }
 
 // The main loop of the node
