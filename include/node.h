@@ -15,6 +15,7 @@
 #include "sender.h"
 
 class Node{
+private:
 	Entry myself;
 	Addressbook book;
 	Addressbook neighbors;
@@ -29,6 +30,14 @@ class Node{
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);
 	int send_all_rumor(Addressbook,int,int);
+
+	// switch case methods
+	int sc_exit_node();
+	int sc_exit_all();
+	int sc_recv_msg();
+	int sc_socialise();
+	int sc_rumor();
+	int sc_print_vtime();
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 

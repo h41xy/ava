@@ -146,6 +146,15 @@ std::vector<int> Node::get_vectortime(){
 	return vtime;
 }
 
+// Switch case methods
+
+// Case EXIT_NODE
+int Node::sc_exit_node(){
+	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
+	// TODO increase the vectortime
+	listen_more = false;
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -161,17 +170,25 @@ int Node::run(){
 	listener.create_and_listen();
 
 	// listener loop
+
+	// Init values
 	int confd = -1;
 	bool listen_more = true;
 	// The rumor counter has to be initialized, unexpected behaviour is the result otherwise
 	rumor_counter = 0;
+
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
 		int msg_id = -1;
+
+		// Pepare the time struct
 		std::time_t t = std::time(nullptr);
+
+		// Read the msgid from an active connection
 		read(confd,&msg_id,sizeof(msg_id));
 
+		// Vectortimestamp from active connection
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
@@ -183,10 +200,7 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
-						 std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
-						 // TODO increase the vectortime
-						 listen_more = false;
-						 break;
+sc_exit_node();						 break;
 					 }
 			 // exit all nodes
 			case EXIT_ALL : {
