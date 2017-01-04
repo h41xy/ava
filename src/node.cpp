@@ -187,6 +187,28 @@ int Node::sc_socialise(){
 
 }
 
+// Case RUMOR
+int Node::sc_rumor(){
+	int sender_id = -1;
+	read(confd,&sender_id,sizeof(sender_id));
+	rumor_counter++;
+	if(!heard_rumor){
+		std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
+		heard_rumor = true;
+		send_all_rumor(neighbors, sender_id, RUMOR);
+	}
+	if(rumor_counter >= believe_border && !believe_rumor){
+		believe_rumor = true;
+		Sender sender("localhost",WATCHER_PORT);
+		sender.get_connection();
+		std::stringstream ss;
+		ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
+		std::cout << ss.str();
+		sender.send_msg(ss.str());
+		sender.close_connection();
+	}
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -254,24 +276,7 @@ int Node::run(){
 			 // start spreading a rumor
 			// TODO own function
 			case RUMOR : {
-					     int sender_id = -1;
-					     read(confd,&sender_id,sizeof(sender_id));
-					     rumor_counter++;
-					     if(!heard_rumor){
-						     std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
-						     heard_rumor = true;
-						     send_all_rumor(neighbors, sender_id, RUMOR);
-					     }
-					     if(rumor_counter >= believe_border && !believe_rumor){
-						     believe_rumor = true;
-						     Sender sender("localhost",WATCHER_PORT);
-						     sender.get_connection();
-						     std::stringstream ss;
-						     ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
-						     std::cout << ss.str();
-						     sender.send_msg(ss.str());
-						     sender.close_connection();
-					     }
+					     sc_rumor();
 					     break;
 				     }
 			case PRINT_VTIME : {
