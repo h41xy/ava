@@ -162,6 +162,15 @@ int Node::sc_exit_all(){
 	listen_more = false;
 }
 
+// Case RECV_MSG
+int Node::sc_recv_msg(){
+	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+	char a[MSG_BUFFER_SIZE];
+	memset(&a[0],0,sizeof(a));
+	read(confd,&a,sizeof(a));
+	std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -218,11 +227,7 @@ int Node::run(){
 			// recv msgs with max length of 256 chars
 			// TODO check on length
 			case RECV_MSG : {
-						std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
-						char a[MSG_BUFFER_SIZE];
-						memset(&a[0],0,sizeof(a));
-						read(confd,&a,sizeof(a));
-						std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
+						sc_recv_msg();
 						break;
 					}
 			// send a string msg to all my neighbors with my id
