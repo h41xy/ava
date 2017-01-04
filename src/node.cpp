@@ -171,6 +171,22 @@ int Node::sc_recv_msg(){
 	std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
 }
 
+// Case SOCIALISE
+int Node::sc_socialise(){
+	std::stringstream ss;
+	ss << "My ID is: " << myself.getid();
+	send_all_msg(neighbors, ss.str());
+
+	// increase the vectortime
+	vtime[myid - 1] = vtime[myid -1] + 1;
+	//vtime[myid - 25000 - 1] = vtime[myid - 25000 -1] + 1;
+	std::cout << "time increased" << std::endl;
+	//for (int i = 0; i < book.entrycount(); i++){
+	//	vtime[i] = max(vtime[i], vtimestamp[i]);
+	//}
+
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -232,18 +248,8 @@ int Node::run(){
 					}
 			// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
-						 std::stringstream ss;
-						 ss << "My ID is: " << myself.getid();
-						 send_all_msg(neighbors, ss.str());
-	
-// increase the vectortime
-vtime[myid - 1] = vtime[myid -1] + 1;
-//vtime[myid - 25000 - 1] = vtime[myid - 25000 -1] + 1;
-std::cout << "time increased" << std::endl;
-//for (int i = 0; i < book.entrycount(); i++){
-//	vtime[i] = max(vtime[i], vtimestamp[i]);
-//}
-					 break;
+						 sc_socialise();
+						 break;
 					 }
 			 // start spreading a rumor
 			// TODO own function
