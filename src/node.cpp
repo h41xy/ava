@@ -149,26 +149,29 @@ std::vector<int> Node::get_vectortime(){
 // Switch case methods
 
 // Case EXIT_NODE
-int Node::sc_exit_node(){
+int Node::sc_exit_node(std::time_t& t, bool& listen_more){
 	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
 	// TODO increase the vectortime
 	listen_more = false;
+	return -1;
 }
 
 // Case EXIT_ALL
-int Node::sc_exit_all(){
+int Node::sc_exit_all(std::time_t& t, bool& listen_more){
 	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
 	send_all_signal(book,EXIT_NODE);
 	listen_more = false;
+	return -1;
 }
 
 // Case RECV_MSG
-int Node::sc_recv_msg(){
+int Node::sc_recv_msg(std::time_t& t, int& confd){
 	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
 	char a[MSG_BUFFER_SIZE];
 	memset(&a[0],0,sizeof(a));
 	read(confd,&a,sizeof(a));
 	std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
+	return -1;
 }
 
 // Case SOCIALISE
@@ -184,11 +187,11 @@ int Node::sc_socialise(){
 	//for (int i = 0; i < book.entrycount(); i++){
 	//	vtime[i] = max(vtime[i], vtimestamp[i]);
 	//}
-
+	return -1;
 }
 
 // Case RUMOR
-int Node::sc_rumor(){
+int Node::sc_rumor(std::time_t& t, int& confd){
 	int sender_id = -1;
 	read(confd,&sender_id,sizeof(sender_id));
 	rumor_counter++;
@@ -207,6 +210,7 @@ int Node::sc_rumor(){
 		sender.send_msg(ss.str());
 		sender.close_connection();
 	}
+	return -1;
 }
 
 // Case PRINT_VTIME
@@ -215,6 +219,7 @@ int Node::sc_print_vtime(){
 		std::cout << vtime[i] << " ";
 	}
 	std::cout << std::endl;
+	return -1;
 }
 
 // The main loop of the node
@@ -262,18 +267,18 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
-						 sc_exit_node();
+						 sc_exit_node(t,listen_more);
 						 break;
 					 }
 					 // exit all nodes
 			case EXIT_ALL : {
-						sc_exit_all();
+						sc_exit_all(t,listen_more);
 						break;
 					}
 					// recv msgs with max length of 256 chars
 					// TODO check on length
 			case RECV_MSG : {
-						sc_recv_msg();
+						sc_recv_msg(t, confd);
 						break;
 					}
 					// send a string msg to all my neighbors with my id
@@ -283,7 +288,7 @@ int Node::run(){
 					 }
 					 // start spreading a rumor
 			case RUMOR : {
-					     sc_rumor();
+					     sc_rumor(t, confd);
 					     break;
 				     }
 			case PRINT_VTIME : {
