@@ -59,7 +59,7 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
 			sender.close_connection();
 		}
-	
+
 	}while(++it != receivers.get_end());
 	return -1;
 }
@@ -77,7 +77,7 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 		} else {
 			std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
 		}
-	
+
 	}while(++it != receivers.get_end());
 	return -1;
 }
@@ -99,7 +99,7 @@ int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
 				std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
 			}
 		}
-	
+
 	}while(++it != receivers.get_end());
 	return -1;
 }
@@ -181,11 +181,6 @@ int Node::sc_socialise(){
 
 	send_all_msg(neighbors, ss.str());
 
-	// TODO Remove debug cout
-	std::cout << "time increased" << std::endl;
-	//for (int i = 0; i < book.entrycount(); i++){
-	//	vtime[i] = max(vtime[i], vtimestamp[i]);
-	//}
 	return -1;
 }
 
@@ -222,8 +217,11 @@ int Node::sc_print_vtime(){
 }
 
 // Count the vectortime up
-int Node::vtime_up(){
+int Node::vtime_up(std::vector<int>& vtimestamp){
 	vtime[myid - 1] = vtime[myid -1] + 1;
+	for (int i = 0; i < vtime.size(); i++){
+		vtime[i] = max(vtime[i], vtimestamp[i]);
+	}
 }
 
 // The main loop of the node
@@ -273,27 +271,32 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
+						 vtime_up(vtimestamp);
 						 sc_exit_node(t,listen_more);
 						 break;
 					 }
 					 // exit all nodes
 			case EXIT_ALL : {
+						vtime_up(vtimestamp);
 						sc_exit_all(t,listen_more);
 						break;
 					}
 					// recv msgs with max length of 256 chars
 					// TODO check on length
 			case RECV_MSG : {
+						vtime_up(vtimestamp);
 						sc_recv_msg(t, confd);
 						break;
 					}
 					// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
+						 vtime_up(vtimestamp);
 						 sc_socialise();
 						 break;
 					 }
 					 // start spreading a rumor
 			case RUMOR : {
+					     vtime_up(vtimestamp);
 					     sc_rumor(t, confd);
 					     break;
 				     }
