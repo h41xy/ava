@@ -155,6 +155,13 @@ int Node::sc_exit_node(){
 	listen_more = false;
 }
 
+// Case EXIT_ALL
+int Node::sc_exit_all(){
+	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
+	send_all_signal(book,EXIT_NODE);
+	listen_more = false;
+}
+
 // The main loop of the node
 // do until receive the exit signal
 int Node::run(){
@@ -200,13 +207,12 @@ int Node::run(){
 
 			// exit single node
 			case EXIT_NODE : {
-sc_exit_node();						 break;
+						 sc_exit_node();
+						 break;
 					 }
 			 // exit all nodes
 			case EXIT_ALL : {
-						std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
-						send_all_signal(book,EXIT_NODE);
-						listen_more = false;
+						sc_exit_all();
 						break;
 					}
 			// recv msgs with max length of 256 chars
