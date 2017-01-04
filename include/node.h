@@ -32,11 +32,11 @@ private:
 	int send_all_rumor(Addressbook,int,int);
 
 	// switch case methods
-	int sc_exit_node();
-	int sc_exit_all();
-	int sc_recv_msg();
+	int sc_exit_node(std::time_t&, bool&);
+	int sc_exit_all(std::time_t&, bool&);
+	int sc_recv_msg(std::time_t&, int&);
 	int sc_socialise();
-	int sc_rumor();
+	int sc_rumor(std::time_t&, int&);
 	int sc_print_vtime();
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id

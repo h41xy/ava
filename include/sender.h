@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string>
 #include <cstring>
+#include <vector>
 
 #include "constants.h"
 
@@ -23,8 +24,9 @@ class Sender{
  public:
 	Sender(std::string,int); // ip as string and port as int
 	int get_connection();
-	int send_msg(std::string); //Message muist contain the word "quit" and end with \n
+	int send_msg(std::vector<int>&, std::string); //Message muist contain the word "quit" and end with \n
 	int send_signalid(int);
+	int send_vtimestamp(std::vector<int>&);
 	int send_id(int);
 	int close_connection();
 };

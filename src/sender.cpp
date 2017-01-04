@@ -32,8 +32,9 @@ int Sender::get_connection(){
 
 // Sends a string messxage on the established connection
 // TODO check on 256 char limit
-int Sender::send_msg(std::string msg){
+int Sender::send_msg(std::vector<int>& vtimestamp, std::string msg){
 	Sender::send_signalid(RECV_MSG);
+	Sender::send_vtimestamp(vtimestamp);
 	write(sockfd,msg.c_str(),msg.size() + 1);
 	return -1;
 }
@@ -42,6 +43,16 @@ int Sender::send_msg(std::string msg){
 // TODO check if connected
 int Sender::send_signalid(int signalid){
 	write(sockfd,&signalid,sizeof(signalid));
+	return -1;
+}
+
+// Does not work
+// Sends the vtimestamp
+int Sender::send_vtimestamp(std::vector<int>& vtimestamp){
+	//write(sockfd,&vtimestamp.front(),vtimestamp.size() * sizeof(int));
+	for(int i = 0; i < vtimestamp.size(); i++){
+		Sender::send_id(vtimestamp[i]);
+	}
 	return -1;
 }
 

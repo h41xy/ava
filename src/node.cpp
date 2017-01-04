@@ -54,7 +54,7 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 	do{
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
-			sender.send_msg(msg);
+			sender.send_msg(vtime, msg);
 			std::time_t t = std::time(nullptr);
 			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
 			sender.close_connection();
@@ -178,11 +178,12 @@ int Node::sc_recv_msg(std::time_t& t, int& confd){
 int Node::sc_socialise(){
 	std::stringstream ss;
 	ss << "My ID is: " << myself.getid();
-	send_all_msg(neighbors, ss.str());
-
 	// increase the vectortime
 	vtime[myid - 1] = vtime[myid -1] + 1;
-	//vtime[myid - 25000 - 1] = vtime[myid - 25000 -1] + 1;
+
+	send_all_msg(neighbors, ss.str());
+
+	// TODO Remove debug cout
 	std::cout << "time increased" << std::endl;
 	//for (int i = 0; i < book.entrycount(); i++){
 	//	vtime[i] = max(vtime[i], vtimestamp[i]);
@@ -207,7 +208,7 @@ int Node::sc_rumor(std::time_t& t, int& confd){
 		std::stringstream ss;
 		ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
 		std::cout << ss.str();
-		sender.send_msg(ss.str());
+		sender.send_msg(vtime, ss.str());
 		sender.close_connection();
 	}
 	return -1;
@@ -260,8 +261,10 @@ int Node::run(){
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
 
-		// TODO make the sizeof more safe
-		//read(confd,&vtimestamp,sizeof(vtimestamp) + sizeof(int)*vtimestamp.size());
+		// TODO Thats so unsafe its insane...
+		for(int i = 0; i < vtimestamp.size(); i++){
+			read(confd,&vtimestamp[i],sizeof(int));
+		}
 
 		switch(msg_id){
 
