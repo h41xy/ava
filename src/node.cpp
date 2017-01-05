@@ -7,41 +7,51 @@
 // Reads all addresses and in a seperate list all neighbors
 // reason to know all addresses is the exit
 Node::Node(char* id_cstr){
+
+	// Args get passed as cstring so I am converting first to String and then to int
+	std::string id_str(id_cstr);
+
+	// init starting values
+	myid = std::stoi(id_str);
 	heard_rumor = false;
 	believe_rumor = false;
 
-	std::string id_str(id_cstr);
-	myid = std::stoi(id_str);
 	//----Read File
+	// book knows all addresses because it is easier to terminate them all with one signal
 	book = Addressbook(ADDRESSFILE);
+
 	// Create a addressbook based on the neighboring IDs found in 
 	// doc/example_graph.txt and the addresses found in doc/example.txt
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
-	// initialise vector clock
 	// resize the vector to the size of the addressbook
 	vtime.resize(book.entrycount());
-	// fill all values with 0
+	// for the init fill all values with 0
 	std::fill(vtime.begin(),vtime.end(),0);
 }
 
 // Delegating constructors is c++11 only, I want to stay away from that
 // so it is the same contsructor but the beliveing border parameter can be set
 Node::Node(char* id_cstr, char* belive_border_cstr){
+
+	// Args get passed as cstring so I am converting first to String and then to int
+	std::string believe_border_str(belive_border_cstr);
+	std::string id_str(id_cstr);
+
+	// init starting values
+	believe_border = std::stoi(believe_border_str);
+	myid = std::stoi(id_str);
 	heard_rumor = false;
 	believe_rumor = false;
 
-	std::string believe_border_str(belive_border_cstr);
-	believe_border = std::stoi(believe_border_str);
-	std::string id_str(id_cstr);
-	myid = std::stoi(id_str);
 	//----Read File
+	// book knows all addresses because it is easier to terminate them all with one signal
 	book = Addressbook(ADDRESSFILE);
+
 	// Create a addressbook based on the neighboring IDs found in 
 	// doc/example_graph.txt and the addresses found in doc/example.txt
 	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
 
-	// initialise vector clock
 	// resize the vector to the size of the addressbook
 	vtime.resize(book.entrycount());
 	// fill all values with 0
@@ -50,15 +60,59 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 
 // Sends a string to all addresses in the given book
 int Node::send_all_msg(Addressbook receivers, std::string msg){
+
+	// TODO Prototype for better message handling
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+	std::stringstream ss;
+
+	// Iterate over all entries in the addressbook
+	// - build up a connection
+	// - send the stringmsg
+	// - send the logging message to the logger on succesful connection
+	// - print the logging message to cout on unsuccessful logger connection
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
+
+		std::time_t t = std::time(nullptr);
+		// std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
+
+		ss << "NODE_ID: " << myid;
+		ss << " ";
+		ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+		ss << " ";
+		ss << "Message Type: OUT";
+		ss << " ";
+		ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
+		ss << " ";
+		ss << "String sended: >>\"" << msg << "\"<<";
+		ss << " ";
+		ss << "Sending status: ";
+
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
 			sender.send_msg(vtime, msg);
-			std::time_t t = std::time(nullptr);
-			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
 			sender.close_connection();
+
+			ss << "SUCCESS";
+		} else {
+			ss << "FAILED";
 		}
+
+
+		if (logger.get_connection() != -1) {
+			ss << std::endl;
+			logger.send_msg(ss.str());
+			logger.close_connection();
+		} else {
+			ss << " ";
+			ss << "Connection to logger failed.";
+			ss << std::endl;
+			std::cout << ss.str();
+		}
+
+		// clearing the stringstream
+		ss.str(std::string());
+		ss.clear();
 
 	}while(++it != receivers.get_end());
 	return -1;
@@ -196,7 +250,7 @@ int Node::sc_rumor(std::time_t& t, int& confd){
 	}
 	if(rumor_counter >= believe_border && !believe_rumor){
 		believe_rumor = true;
-		Sender sender("localhost",WATCHER_PORT);
+		Sender sender(WATCHER_IP,WATCHER_PORT);
 		// TODO get connection is never cheked? Lul
 		std::stringstream ss;
 		ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;

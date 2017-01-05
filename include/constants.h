@@ -11,7 +11,13 @@ const int RUMOR = 4;
 const int PRINT_VTIME = 5;
 
 const int MSG_BUFFER_SIZE = 256;
+
+const std::string WATCHER_IP = "localhost";
 const int WATCHER_PORT = 25000;
+
+const std::string LOGGER_IP = "localhost";
+const int LOGGER_PORT = 25000;
+
 
 const std::string ADDRESSFILE = "doc/addresses.txt";
 const std::string GRAPHFILE = "doc/graph.txt";

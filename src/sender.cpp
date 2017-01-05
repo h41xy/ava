@@ -30,8 +30,18 @@ int Sender::get_connection(){
 	return 0;
 }
 
-// Sends a string messxage on the established connection
+// Sends a string message on the established connection
 // TODO check on 256 char limit
+// TODO check if connected
+int Sender::send_msg(std::string msg){
+	Sender::send_signalid(RECV_MSG);
+	write(sockfd,msg.c_str(),msg.size() + 1);
+	return -1;
+}
+
+// Sends a string message on the established connection
+// TODO check on 256 char limit
+// TODO check if connected
 int Sender::send_msg(std::vector<int>& vtimestamp, std::string msg){
 	Sender::send_signalid(RECV_MSG);
 	Sender::send_vtimestamp(vtimestamp);
@@ -41,27 +51,37 @@ int Sender::send_msg(std::vector<int>& vtimestamp, std::string msg){
 
 // Sends a integer in binary to the connection of the object
 // TODO check if connected
-int Sender::send_signalid(int signalid){
-	write(sockfd,&signalid,sizeof(signalid));
+int Sender::send_signalid(const int& signalid){
+	send_int(signalid);
 	return -1;
 }
 
-// Does not work
 // Sends the vtimestamp
+// TODO check if connected
 int Sender::send_vtimestamp(std::vector<int>& vtimestamp){
-	//write(sockfd,&vtimestamp.front(),vtimestamp.size() * sizeof(int));
+	// write every value sequentially to the socket
+	// the read on the other side will pick them up the same way and write
+	// them in a new vector
 	for(int i = 0; i < vtimestamp.size(); i++){
 		Sender::send_id(vtimestamp[i]);
 	}
 	return -1;
 }
 
-int Sender::send_id(int id){
-	write(sockfd,&id,sizeof(id));
+// TODO check if connected
+int Sender::send_id(const int& id){
+	send_int(id);
 	return -1;
 }
 
+// TODO check if connected
 int Sender::close_connection(){
 	close(sockfd);
+	return -1;
+}
+
+// TODO check if connected
+int Sender::send_int(const int& i){
+	write(sockfd,&i,sizeof(i));
 	return -1;
 }
