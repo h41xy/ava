@@ -27,7 +27,7 @@ private:
 	// Vector clock
 	std::vector<int> vtime;
 
-	int vtime_up();
+	int vtime_up(std::vector<int>&);
 
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);

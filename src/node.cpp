@@ -197,12 +197,14 @@ int Node::sc_rumor(std::time_t& t, int& confd){
 	if(rumor_counter >= believe_border && !believe_rumor){
 		believe_rumor = true;
 		Sender sender("localhost",WATCHER_PORT);
-		sender.get_connection();
+		// TODO get connection is never cheked? Lul
 		std::stringstream ss;
 		ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
 		std::cout << ss.str();
-		sender.send_msg(vtime, ss.str());
-		sender.close_connection();
+		if(sender.get_connection() != -1){
+			sender.send_msg(vtime, ss.str());
+			sender.close_connection();
+		}
 	}
 	return -1;
 }
@@ -220,7 +222,7 @@ int Node::sc_print_vtime(){
 int Node::vtime_up(std::vector<int>& vtimestamp){
 	vtime[myid - 1] = vtime[myid -1] + 1;
 	for (int i = 0; i < vtime.size(); i++){
-		vtime[i] = max(vtime[i], vtimestamp[i]);
+		vtime[i] = std::max(vtime[i], vtimestamp[i]);
 	}
 }
 
