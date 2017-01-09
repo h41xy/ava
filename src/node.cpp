@@ -61,13 +61,13 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 }
 
 // Message handling
-int Node::msg_out(int& id, std::list<Entry>::iterator& it, std::string& msg, const bool& connection){
+int Node::msg_out(std::list<Entry>::iterator& it, std::string& msg, const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	std::time_t t = std::time(nullptr);
 
-	ss << "NODE_ID: " << id;
+	ss << "NODE_ID: " << myid;
 	ss << "\n\t";
 	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
 	ss << "\n\t";
@@ -76,6 +76,47 @@ int Node::msg_out(int& id, std::list<Entry>::iterator& it, std::string& msg, con
 	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
 	ss << "\n\t";
 	ss << "String sended: >>\"" << msg << "\"<<";
+	ss << "\n\t";
+	ss << "Sending status: ";
+
+	if (connection) {
+		ss << "SUCCESS";
+		ss << "\n\t";
+	} else {
+		ss << "FAILED";
+		ss << "\n\t";
+	}
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_msg(ss.str());
+		logger.close_connection();
+	} else {
+		ss << "Connection to logger failed.";
+		ss << "\n\t";
+		std::cout << ss.str() << std::endl;
+	}
+
+	clear_stringstream(ss);
+	return -1;
+}
+
+
+int Node::signal_out(std::list<Entry>::iterator& it,int& signalid,const bool& connection){
+
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	std::time_t t = std::time(nullptr);
+
+	ss << "NODE_ID: " << myid;
+	ss << "\n\t";
+	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+	ss << "\n\t";
+	ss << "Message Type: OUT";
+	ss << "\n\t";
+	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
+	ss << "\n\t";
+	ss << "Signal ID: " << signalid;
 	ss << "\n\t";
 	ss << "Sending status: ";
 
@@ -111,10 +152,6 @@ int Node::clear_stringstream(std::stringstream& ss){
 // Sends a string to all addresses in the given book
 int Node::send_all_msg(Addressbook receivers, std::string msg){
 
-	// TODO Prototype for better message handling
-	Sender logger(LOGGER_IP, LOGGER_PORT);
-	std::stringstream ss;
-
 	// Iterate over all entries in the addressbook
 	// - build up a connection
 	// - send the stringmsg
@@ -129,9 +166,9 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 			sender.send_msg(vtime, msg);
 			sender.close_connection();
 
-			Node::msg_out(myid,it,msg,true);
+			Node::msg_out(it,msg,true);
 		} else {
-			Node::msg_out(myid,it,msg,false);
+			Node::msg_out(it,msg,false);
 		}
 
 	}while(++it != receivers.get_end());
@@ -145,11 +182,10 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
 			sender.send_signalid(signalid);
-			std::time_t t = std::time(nullptr);
-			std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send from " << myid << " to " << (*it).getport() << std::endl << std::flush;
+			Node::signal_out(it,signalid,true);
 			sender.close_connection();
 		} else {
-			std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
+			Node::signal_out(it,signalid,false);
 		}
 
 	}while(++it != receivers.get_end());
@@ -166,11 +202,10 @@ int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
 			if((sender.get_connection()) != -1){
 				sender.send_signalid(signalid);
 				sender.send_id(myid);
-				std::time_t t = std::time(nullptr);
-				std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Signal id " << signalid << " send to " << (*it).getport() << std::endl << std::flush;
 				sender.close_connection();
+				Node::signal_out(it,signalid,true);
 			} else {
-				std::cout << "ID: " << myid << " Connection to " << (*it).getport() << " failed." << std::endl << std::flush;
+				Node::signal_out(it,signalid,false);
 			}
 		}
 

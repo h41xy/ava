@@ -45,7 +45,8 @@ private:
 
 	// msg handling
 	std::stringstream ss;
-	int msg_out(int&,std::list<Entry>::iterator&,std::string&,const bool&); // OwnID, iterator for ip and Port, msg
+	int msg_out(std::list<Entry>::iterator&,std::string&,const bool&); // iterator for receiver ip and Port, msg
+	int signal_out(std::list<Entry>::iterator&,int&,const bool&); // iterator for receiverID, signalid
 	int clear_stringstream(std::stringstream&);
 
  public:
