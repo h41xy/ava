@@ -43,6 +43,11 @@ private:
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 
+	// msg handling
+	std::stringstream ss;
+	int msg_out(int&,std::list<Entry>::iterator&,std::string&,const bool&); // OwnID, iterator for ip and Port, msg
+	int clear_stringstream(std::stringstream&);
+
  public:
 	Node(char*); // own ID
 	Node(char*,char*); // own ID, believe_border

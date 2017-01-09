@@ -15,6 +15,7 @@ Node::Node(char* id_cstr){
 	myid = std::stoi(id_str);
 	heard_rumor = false;
 	believe_rumor = false;
+	clear_stringstream(ss);
 
 	//----Read File
 	// book knows all addresses because it is easier to terminate them all with one signal
@@ -43,6 +44,7 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	myid = std::stoi(id_str);
 	heard_rumor = false;
 	believe_rumor = false;
+	clear_stringstream(ss);
 
 	//----Read File
 	// book knows all addresses because it is easier to terminate them all with one signal
@@ -56,6 +58,53 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 	vtime.resize(book.entrycount());
 	// fill all values with 0
 	std::fill(vtime.begin(),vtime.end(),0);
+}
+
+// Message handling
+int Node::msg_out(int& id, std::list<Entry>::iterator& it, std::string& msg, const bool& connection){
+
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	std::time_t t = std::time(nullptr);
+
+	ss << "NODE_ID: " << id;
+	ss << " ";
+	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+	ss << " ";
+	ss << "Message Type: OUT";
+	ss << " ";
+	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
+	ss << " ";
+	ss << "String sended: >>\"" << msg << "\"<<";
+	ss << " ";
+	ss << "Sending status: ";
+
+	if (connection) {
+		ss << "SUCCESS";
+	} else {
+		ss << "FAILED";
+	}
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_msg(ss.str());
+		logger.close_connection();
+	} else {
+		ss << " ";
+		ss << "Connection to logger failed.";
+		ss << std::endl;
+		std::cout << ss.str();
+	}
+
+	clear_stringstream(ss);
+	return -1;
+}
+
+// Deletes the content in the stringstream
+int Node::clear_stringstream(std::stringstream& ss){
+	ss.str(std::string());
+	ss.clear();
+	return -1;
 }
 
 // Sends a string to all addresses in the given book
@@ -73,46 +122,16 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
 
-		std::time_t t = std::time(nullptr);
-		// std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Receiver: IP: " << (*it).getip() << " Port: " << (*it).getport() << " Message: " << msg << std::endl << std::flush;
-
-		ss << "NODE_ID: " << myid;
-		ss << " ";
-		ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-		ss << " ";
-		ss << "Message Type: OUT";
-		ss << " ";
-		ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
-		ss << " ";
-		ss << "String sended: >>\"" << msg << "\"<<";
-		ss << " ";
-		ss << "Sending status: ";
 
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
 			sender.send_msg(vtime, msg);
 			sender.close_connection();
 
-			ss << "SUCCESS";
+			Node::msg_out(myid,it,msg,true);
 		} else {
-			ss << "FAILED";
+			Node::msg_out(myid,it,msg,false);
 		}
-
-
-		if (logger.get_connection() != -1) {
-			ss << std::endl;
-			logger.send_msg(ss.str());
-			logger.close_connection();
-		} else {
-			ss << " ";
-			ss << "Connection to logger failed.";
-			ss << std::endl;
-			std::cout << ss.str();
-		}
-
-		// clearing the stringstream
-		ss.str(std::string());
-		ss.clear();
 
 	}while(++it != receivers.get_end());
 	return -1;
