@@ -61,7 +61,7 @@ Node::Node(char* id_cstr, char* belive_border_cstr){
 }
 
 // Message handling
-int Node::msg_out(std::list<Entry>::iterator& it, std::string& msg, const bool& connection){
+int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
@@ -101,6 +101,45 @@ int Node::msg_out(std::list<Entry>::iterator& it, std::string& msg, const bool& 
 	return -1;
 }
 
+int Node::msg_out(const std::string& ip, const int& port, const std::string& msg, const bool& connection){
+
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	std::time_t t = std::time(nullptr);
+
+	ss << "NODE_ID: " << myid;
+	ss << "\n\t";
+	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+	ss << "\n\t";
+	ss << "Message Type: OUT";
+	ss << "\n\t";
+	ss << "Receiver IP/Port: " << ip << "/" << port;
+	ss << "\n\t";
+	ss << "String sended: >>\"" << msg << "\"<<";
+	ss << "\n\t";
+	ss << "Sending status: ";
+
+	if (connection) {
+		ss << "SUCCESS";
+		ss << "\n\t";
+	} else {
+		ss << "FAILED";
+		ss << "\n\t";
+	}
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_msg(ss.str());
+		logger.close_connection();
+	} else {
+		ss << "Connection to logger failed.";
+		ss << "\n\t";
+		std::cout << ss.str() << std::endl;
+	}
+
+	clear_stringstream(ss);
+	return -1;
+}
 
 int Node::signal_out(std::list<Entry>::iterator& it,int& signalid,const bool& connection){
 
@@ -140,6 +179,69 @@ int Node::signal_out(std::list<Entry>::iterator& it,int& signalid,const bool& co
 
 	clear_stringstream(ss);
 	return -1;
+}
+
+int Node::signal_in(const int& signalid){
+
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	std::time_t t = std::time(nullptr);
+
+	ss << "NODE_ID: " << myid;
+	ss << "\n\t";
+	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+	ss << "\n\t";
+	ss << "Message Type: IN";
+	ss << "\n\t";
+	ss << "Signal ID: " << signalid;
+	ss << "\n\t";
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_msg(ss.str());
+		logger.close_connection();
+	} else {
+		ss << "Connection to logger failed.";
+		ss << "\n\t";
+		std::cout << ss.str() << std::endl;
+	}
+
+	clear_stringstream(ss);
+	return -1;
+}
+
+int Node::msg_in(const int& signalid, const std::string& msg){
+	
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	std::time_t t = std::time(nullptr);
+
+	ss << "NODE_ID: " << myid;
+	ss << "\n\t";
+	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
+	ss << "\n\t";
+	ss << "Message Type: IN";
+	ss << "\n\t";
+	ss << "Signal ID: " << signalid;
+	ss << "\n\t";
+	ss << "Content:";
+	ss << "\n\t";
+	ss << msg;
+	ss << "\n\t";
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_msg(ss.str());
+		logger.close_connection();
+	} else {
+		ss << "Connection to logger failed.";
+		ss << "\n\t";
+		std::cout << ss.str() << std::endl;
+	}
+
+	clear_stringstream(ss);
+	return -1;
+
 }
 
 // Deletes the content in the stringstream
@@ -258,61 +360,59 @@ std::vector<int> Node::get_vectortime(){
 // Switch case methods
 
 // Case EXIT_NODE
-int Node::sc_exit_node(std::time_t& t, bool& listen_more){
-	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit me." << std::endl << std::flush;
-	// TODO increase the vectortime
+int Node::sc_exit_node(bool& listen_more){
+	Node::signal_in(EXIT_NODE);
 	listen_more = false;
 	return -1;
 }
 
 // Case EXIT_ALL
-int Node::sc_exit_all(std::time_t& t, bool& listen_more){
-	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Exit all." << std::endl << std::flush;
+int Node::sc_exit_all(bool& listen_more){
+	Node::signal_in(EXIT_ALL);
 	send_all_signal(book,EXIT_NODE);
 	listen_more = false;
 	return -1;
 }
 
 // Case RECV_MSG
-int Node::sc_recv_msg(std::time_t& t, int& confd){
-	std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: Receive message, buffer size is " << MSG_BUFFER_SIZE << " characters...";
+int Node::sc_recv_msg(int& confd){
 	char a[MSG_BUFFER_SIZE];
 	memset(&a[0],0,sizeof(a));
 	read(confd,&a,sizeof(a));
-	std::cout << "message received." << std::endl << "Content: " << a << std::endl << std::flush;
+	std::string msg_str(a);
+	Node::msg_in(RECV_MSG,msg_str);
 	return -1;
 }
 
 // Case SOCIALISE
 int Node::sc_socialise(){
-	std::stringstream ss;
-	ss << "My ID is: " << myself.getid();
-
 	send_all_msg(neighbors, ss.str());
 
 	return -1;
 }
 
 // Case RUMOR
-int Node::sc_rumor(std::time_t& t, int& confd){
+int Node::sc_rumor(int& confd){
 	int sender_id = -1;
 	read(confd,&sender_id,sizeof(sender_id));
 	rumor_counter++;
 	if(!heard_rumor){
-		std::cout << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message IN: A new Rumor." << std::endl << std::flush;
+		Node::signal_in(RUMOR);
 		heard_rumor = true;
 		send_all_rumor(neighbors, sender_id, RUMOR);
 	}
 	if(rumor_counter >= believe_border && !believe_rumor){
 		believe_rumor = true;
+
 		Sender sender(WATCHER_IP,WATCHER_PORT);
-		// TODO get connection is never cheked? Lul
-		std::stringstream ss;
-		ss << "ID: " << myid << std::put_time(std::localtime(&t), " Time > %H:%M:%S ") << "Message OUT: Node " << myid << " believes the rumor." << std::endl;
-		std::cout << ss.str();
+
+		std::string ibelieve = "I believe the rumor.";
 		if(sender.get_connection() != -1){
-			sender.send_msg(vtime, ss.str());
+			sender.send_msg(vtime, ibelieve);
 			sender.close_connection();
+			Node::msg_out(WATCHER_IP,WATCHER_PORT,ibelieve,true);
+		} else {
+			Node::msg_out(WATCHER_IP,WATCHER_PORT,ibelieve,false);
 		}
 	}
 	return -1;
@@ -362,9 +462,6 @@ int Node::run(){
 		// Receive msgs and react to them
 		int msg_id = -1;
 
-		// Pepare the time struct
-		std::time_t t = std::time(nullptr);
-
 		// Read the msgid from an active connection
 		read(confd,&msg_id,sizeof(msg_id));
 
@@ -380,35 +477,35 @@ int Node::run(){
 
 		switch(msg_id){
 
-			// exit single node
 			case EXIT_NODE : {
+						 // exit single node
 						 vtime_up(vtimestamp);
-						 sc_exit_node(t,listen_more);
+						 sc_exit_node(listen_more);
 						 break;
 					 }
-					 // exit all nodes
 			case EXIT_ALL : {
+						// exit all nodes
 						vtime_up(vtimestamp);
-						sc_exit_all(t,listen_more);
+						sc_exit_all(listen_more);
 						break;
 					}
-					// recv msgs with max length of 256 chars
-					// TODO check on length
 			case RECV_MSG : {
+						// recv msgs with max length of 256 chars
+						// TODO check on length
 						vtime_up(vtimestamp);
-						sc_recv_msg(t, confd);
+						sc_recv_msg(confd);
 						break;
 					}
-					// send a string msg to all my neighbors with my id
 			case SOCIALISE : {
+						 // send a string msg to all my neighbors with my id
 						 vtime_up(vtimestamp);
 						 sc_socialise();
 						 break;
 					 }
-					 // start spreading a rumor
 			case RUMOR : {
+					     // start spreading a rumor
 					     vtime_up(vtimestamp);
-					     sc_rumor(t, confd);
+					     sc_rumor(confd);
 					     break;
 				     }
 			case PRINT_VTIME : {
