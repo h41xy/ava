@@ -10,6 +10,12 @@ const int SOCIALISE = 3;
 const int RUMOR = 4;
 const int PRINT_VTIME = 5;
 
+const int VOTE_ME = 6;
+const int CAMPAIGN = 7;
+
+const int KEEP_ON = 8;
+const int NOT_YOU = 9;
+
 const int MSG_BUFFER_SIZE = 256;
 
 const std::string WATCHER_IP = "localhost";

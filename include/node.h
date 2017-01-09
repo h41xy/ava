@@ -15,7 +15,7 @@
 #include "sender.h"
 
 class Node{
-private:
+protected:
 	Entry myself;
 	Addressbook book;
 	Addressbook neighbors;
