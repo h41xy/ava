@@ -68,21 +68,23 @@ int Node::msg_out(int& id, std::list<Entry>::iterator& it, std::string& msg, con
 	std::time_t t = std::time(nullptr);
 
 	ss << "NODE_ID: " << id;
-	ss << " ";
+	ss << "\n\t";
 	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << " ";
+	ss << "\n\t";
 	ss << "Message Type: OUT";
-	ss << " ";
+	ss << "\n\t";
 	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
-	ss << " ";
+	ss << "\n\t";
 	ss << "String sended: >>\"" << msg << "\"<<";
-	ss << " ";
+	ss << "\n\t";
 	ss << "Sending status: ";
 
 	if (connection) {
 		ss << "SUCCESS";
+		ss << "\n\t";
 	} else {
 		ss << "FAILED";
+		ss << "\n\t";
 	}
 
 	if (logger.get_connection() != -1) {
@@ -90,10 +92,9 @@ int Node::msg_out(int& id, std::list<Entry>::iterator& it, std::string& msg, con
 		logger.send_msg(ss.str());
 		logger.close_connection();
 	} else {
-		ss << " ";
 		ss << "Connection to logger failed.";
-		ss << std::endl;
-		std::cout << ss.str();
+		ss << "\n\t";
+		std::cout << ss.str() << std::endl;
 	}
 
 	clear_stringstream(ss);
