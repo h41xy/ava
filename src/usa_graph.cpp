@@ -1,9 +1,11 @@
+// TODO if voterfreindcount is too high it becomes an endlessloop
 // TODO iostream not needed if print array gets removed
 #include <iostream>
 
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <ctime>
 
 #include "constants.h"
 
@@ -20,10 +22,10 @@ void print_array(int **m, int& size){
 
 // returns a random value in the range starting at 1
 // zero is never returned
-int get_random_node(int range){
-	if(range == 0)
+int get_random_node(const int& max, const int& min){
+	if(max == 0)
 		return 1;
-	return (std::rand() % range) + 1;
+	return (std::rand() % max) + min;
 }
 
 // Prints a given 2D array to the file GRAPHFILE in graphviz format
@@ -70,6 +72,10 @@ int print_matrix_to_graphviz(int **m, int& size, int& candidates){
 // TODO
 // every voter has <voterfriendcount> neighbor nodes to whom he is connected
 int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfriendcount){
+
+	// init random
+	std::srand(std::time(0));
+
 	// int n // Nodecount
 	// int c // Candidates // c <= n
 	// int pb // PartyBuddies // n - c - (c * pb) > 0
@@ -120,31 +126,29 @@ int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfr
 	}
 
 	// Construct a connected graph for all Nodes except the candidates
-	for (int i = candidates; i < people ; i++) {
+	for (int i = candidates + 1; i < people ; i++) {
 		do{
-			ncandidate = get_random_node(i-1) + 2;
-			std::cout << "Check " << ncandidate << " and " << i << "\n";
+			ncandidate = get_random_node(i-1, 2);
 		}while(ncandidate == i || m[ncandidate][i] == 1 || m[i][ncandidate] == 1);
 
-		std::cout << "Set " << ncandidate << " and " << i << "\n";
-		
 		m[ncandidate][i] = 1;
 		m[i][ncandidate] = 1;
 	}
 
-	int friends = 0;
-	for (int i = candidates; i < people; i++) {
-		if ( m[2][i] == 1 )
-			friends++;
-	}
-	while ( friends != voter_friends ) {
-		int possible_neighbor = get_random_node(people - candidates) + candidates - 1;
-		if ( m[2][possible_neighbor] != 1 && m[possible_neighbor][2] != 1){
-			m[2][possible_neighbor] = 1;
-			m[possible_neighbor][2] = 1;
-			friends++;
+	// insert the ordered number of friends (neighbors) per voternode
+	for (int j = candidates; j < people; j++) {
+		int friends = 0;
+		for (int i = candidates; i < people; i++) {
+			if ( m[j][i] == 1 )
+				friends++;
 		}
-		std::cout << "friends: " << friends << "\nvoter freinds: " << voter_friends << "\n";
+		while ( friends < voter_friends ) {
+			int possible_neighbor = get_random_node(people - candidates - 1, candidates + 1);
+			if ( m[j][possible_neighbor] != 1 && m[possible_neighbor][j] != 1 && possible_neighbor != j){
+				m[j][possible_neighbor] = 1;
+				friends++;
+			}
+		}
 	}
 
 	print_array(m, people);
@@ -161,7 +165,6 @@ int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfr
 
 int main(int argc, char* argv[]){
 
-	std::cout << "argc: " << argc << "\n";
 	if ( argc != 5 ){
 		std::cout << "Usage: graph <Nodecount> <candidatecount> <partybuddiecount> <voterfriendcount>\n";
 
