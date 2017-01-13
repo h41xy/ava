@@ -86,6 +86,8 @@ int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfr
 	// if there are more candidates than nodes, exit
 	if ( candidatecount >= nodecount)
 		return -1;
+	if (candidatecount == 0)
+		candidatecount = -1;
 	int candidates = candidatecount;
 
 	// if the number of partybuddies for each candidate exceeds teh nodecount, exit
@@ -95,7 +97,7 @@ int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfr
 
 	// Voterfreindcount must be at least 1
 	if (voterfriendcount == 0)
-		return -1;
+		voterfriendcount = 1;
 	int voter_friends = voterfriendcount;
 
 	int free_voters = people - candidates - candidates * party_buddies;
