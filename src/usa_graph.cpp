@@ -1,13 +1,16 @@
+// TODO iostream not needed if print array gets removed
 #include <iostream>
+
 #include <fstream>
 #include <string>
 #include <sstream>
 
 #include "constants.h"
 
-void print_array(int **m, int& max){
-	for (int i = 0; i < max; i++){
-		for (int j = 0; j < max; j++){
+// Print given array with size to std out
+void print_array(int **m, int& size){
+	for (int i = 0; i < size; i++){
+		for (int j = 0; j < size; j++){
 			std::cout << m[i][j] << " ";
 		}
 		std::cout << "\n";
@@ -15,37 +18,43 @@ void print_array(int **m, int& max){
 	std::cout << "\n";
 }
 
+// returns a random value in the range starting at 1
+// zero is never returned
 int get_random_node(int range){
 	if(range == 0)
 		return 1;
 	return (std::rand() % range) + 1;
 }
 
-int print_matrix_to_graphviz(int **m, int& max, int& candidates){
+// Prints a given 2D array to the file GRAPHFILE in graphviz format
+int print_matrix_to_graphviz(int **m, int& size, int& candidates){
+
+	// Prepare stringstream
 	std::ostringstream os;
 	os << "graph G{\n";
 
+	// Print the candidates with their connections to the partybuddies
 	for (int j = 0; j < candidates; j++){
-		for (int i = 0; i < max; i++){
+		for (int i = 0; i < size; i++){
 			if (m[j][i] == 1)
 				os << "c" << j + 1 << " -- " << i - candidates + 1 << "\n";
 		}
 	}
 
+	// Print the voters from which some are partybuddies
+	// The p offset secures only half the matrix is printed and the connections which are bidirectional 
+	// doesn't haveto get double checked
 	int p = 0;
-	for(int j = candidates; j < max; j++){
-		for(int i = max; i > candidates - 1 + p; i--){
+	for(int j = candidates; j < size; j++){
+		for(int i = size; i > candidates - 1 + p; i--){
 			if (m[j][i] == 1)
 				os << j - candidates + 1 << " -- " << i - candidates + 1 << "\n";
 		}
 		p++;
 	}
 
-	for (int i = candidates; i < max; i++){
-		for (int j = candidates; j < max; j++){
-		}
-	}
 
+	// Finish the outputstream and print it to the file
 	os << "}";
 	std::ofstream ofs;
 	ofs.open(GRAPHFILE);
