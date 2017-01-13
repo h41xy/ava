@@ -64,19 +64,39 @@ int print_matrix_to_graphviz(int **m, int& size, int& candidates){
 	return -1;
 }
 
-int run(){
-	int people = 18;
+// Creates a graph with <nocecount> nodes from whom <candidatecount> are candidates.
+// These candidates only connect to <partybuddiecount> partybuddies from whom each candidate has equal
+// All n - c leftover nodes are voters and are in a connected random graph
+// TODO
+// every voter has <voterfriendcount> neighbor nodes to whom he is connected
+int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfriendcount){
+	// int n // Nodecount
+	// int c // Candidates // c <= n
+	// int pb // PartyBuddies // n - c - (c * pb) > 0
+	// int vf // VoterFriendCount // vf >= n - c && vf < ((n-c)*(n-c-1)/2)
 
-	int candidates = 2;
-	int party_buddies = 3;
+	int people = nodecount;
 
-	int voter_friends = 3;
+	// if there are more candidates than nodes, exit
+	if ( candidatecount >= nodecount)
+		return -1;
+	int candidates = candidatecount;
+
+	// if the number of partybuddies for each candidate exceeds teh nodecount, exit
+	if ( nodecount - candidatecount - (candidatecount * partybuddiecount) < 0 )
+		return -1;
+	int party_buddies = partybuddiecount;
+
+	// Voterfreindcount must be at least 1
+	if (voterfriendcount == 0)
+		return -1;
+	int voter_friends = voterfriendcount;
 
 	int free_voters = people - candidates - candidates * party_buddies;
 
 	int ncandidate = 0;
 
-	//int m[18][18];
+	// Use a new operator so i can pass the array to functions
 	int **m;
 	m = new int *[18];
 	for(int i = 0; i < 18; i++)
@@ -89,23 +109,15 @@ int run(){
 		}
 	}
 
-	print_array(m, people);
-
+	// TODO The offset clusterfuck is real, find something easier to read
 	// set candidate buddies
-	// Candidate 0
 
-for (int j = 0; j < candidates; j++){
-	for ( int i = candidates + j * party_buddies; i < people - free_voters - ((candidates - (j+1)) * party_buddies) ; i++ ){
-		m[j][i] = 1;
-		m[i][j] = 1;
+	for (int j = 0; j < candidates; j++){
+		for ( int i = candidates + j * party_buddies; i < people - free_voters - ((candidates - (j+1)) * party_buddies) ; i++ ){
+			m[j][i] = 1;
+			m[i][j] = 1;
+		}
 	}
-}
-//	// Candidate 1
-//	for (int i = candidates + party_buddies; i < people - free_voters; i ++){
-//		m[1][i] = 1;
-//		m[i][1] = 1;
-//	}
-	print_array(m, people);
 
 	// Construct a connected graph for all Nodes except the candidates
 	for (int i = candidates; i < people ; i++) {
@@ -120,6 +132,21 @@ for (int j = 0; j < candidates; j++){
 		m[i][ncandidate] = 1;
 	}
 
+	int friends = 0;
+	for (int i = candidates; i < people; i++) {
+		if ( m[2][i] == 1 )
+			friends++;
+	}
+	while ( friends != voter_friends ) {
+		int possible_neighbor = get_random_node(people - candidates) + candidates - 1;
+		if ( m[2][possible_neighbor] != 1 && m[possible_neighbor][2] != 1){
+			m[2][possible_neighbor] = 1;
+			m[possible_neighbor][2] = 1;
+			friends++;
+		}
+		std::cout << "friends: " << friends << "\nvoter freinds: " << voter_friends << "\n";
+	}
+
 	print_array(m, people);
 
 	print_matrix_to_graphviz(m, people, candidates);
@@ -129,15 +156,34 @@ for (int j = 0; j < candidates; j++){
 		delete[] m[i];
 	delete[] m;
 
-	return -1;
+	return 0;
 }
 
-int main(){
+int main(int argc, char* argv[]){
 
-	// int n // Nodecount
-	// int c // Candidates // c <= n
-	// int pb // PartyBuddies // n - c - (c * pb) > 0
-	// int vf // VoterFriendCount // vf >= n - c && vf < ((n-c)*(n-c-1)/2)
+	std::cout << "argc: " << argc << "\n";
+	if ( argc != 5 ){
+		std::cout << "Usage: graph <Nodecount> <candidatecount> <partybuddiecount> <voterfriendcount>\n";
+
+
+	} else {
+
+		// int n // Nodecount
+		// int c // Candidates // c <= n
+		// int pb // PartyBuddies // n - c - (c * pb) > 0
+		// int vf // VoterFriendCount // vf >= n - c && vf < ((n-c)*(n-c-1)/2)
+		int nodecount, candidatecount, partybuddiecount, voterfriendcount;
+		nodecount = std::stoi(std::string(argv[1]));
+		candidatecount = std::stoi(std::string(argv[2]));
+		partybuddiecount = std::stoi(std::string(argv[3]));
+		voterfriendcount = std::stoi(std::string(argv[4]));
+
+		if (run(nodecount, candidatecount, partybuddiecount, voterfriendcount) == -1)
+			std::cout << "Something went wrong. Exited\n";
+		else
+			std::cout << "Outputfile " << GRAPHFILE << " generated.\n";
+		return 0;
+	}
 
 	return -1;
 }
