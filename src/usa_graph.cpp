@@ -22,9 +22,16 @@ void print_array(int **m, int& size){
 
 // returns a random value in the range starting at 1
 // zero is never returned
-int get_random_node(const int& max, const int& min){
-	if(max == 0)
-		return 1;
+int get_random_node(const int& max, int min){
+	if (min > max)
+		return 0;
+
+	if(max <= 0)
+		return 0;
+
+	if(min <= 0)
+		min = 0;
+
 	return (std::rand() % max) + min;
 }
 
@@ -69,7 +76,6 @@ int print_matrix_to_graphviz(int **m, int& size, int& candidates){
 // Creates a graph with <nocecount> nodes from whom <candidatecount> are candidates.
 // These candidates only connect to <partybuddiecount> partybuddies from whom each candidate has equal
 // All n - c leftover nodes are voters and are in a connected random graph
-// TODO
 // every voter has <voterfriendcount> neighbor nodes to whom he is connected
 int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfriendcount){
 
