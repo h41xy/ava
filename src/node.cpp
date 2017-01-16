@@ -317,8 +317,9 @@ int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
 
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
+// TODO rework method, especially the cout
 std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
-	std::ifstream gifile;
+	std::ifstream gifile; // graph input file
 	gifile.open(gfname);
 
 	std::string line;
@@ -344,7 +345,7 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 		}
 	}
 	gifile.close();
-	std::cout << "ID: " << myid << "IDs neighboring me:";
+	std::cout << "ID: " << myid << " IDs neighboring me:";
 	// TODO eliminate duplicates
 	for(auto v : ids_neighboring_me)
 		std::cout << " " << v;
