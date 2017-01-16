@@ -18,7 +18,7 @@ TARGETS := $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 CFLAGS := -Wall
 INC := -I include
 
-MODULES_NODE := node_exec node n_rumor addressbook entry listener sender
+MODULES_NODE := node_exec node n_rumor n_candidate addressbook entry listener sender
 OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
 MODULES_CTRL := controller sender listener
