@@ -46,7 +46,8 @@ int print_matrix_to_graphviz(int **m, int& size, int& candidates){
 	for (int j = 0; j < candidates; j++){
 		for (int i = 0; i < size; i++){
 			if (m[j][i] == 1)
-				os << "c" << j + 1 << " -- " << i - candidates + 1 << "\n";
+				os << j + 1 << " -- " << i - candidates + 1 << "\n";
+				//os << "c" << j + 1 << " -- " << i - candidates + 1 << "\n"; // candidates have the cahr c before their number
 		}
 	}
 
