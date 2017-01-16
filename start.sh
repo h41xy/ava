@@ -11,10 +11,11 @@ RESULTFILE=doc/results.txt
 
 EXEC=n
 
-echo "You can also give the node count as first argument, the edge count as second and the believeborder as a third argument. Also if the fourth one is set, the execute question will be skipped."
+echo "Usage:\n start <nodecount> <edgecount> <believingborder> [<set if you want to execute all right after generation>]"
+echo "Usage:\n start <nodecount> <candidatecount> <party buddies> <friendcount> <responsecount> [<set if you want to execute all right after generation>]"
 if [ -z ${1+x} ]
 then
-	echo -n "Please enter the number of nodes: "
+	echo -n "Number of nodes: "
 	read NODES
 else
 	NODES=$1
@@ -22,22 +23,39 @@ fi
 
 if [ -z ${2+x} ]
 then
-echo -n "And the number of edges: "
-read EDGES
+	echo -n "Number of candidates: "
+	read CANDIDATES
 else
-	EDGES=$2
+	CANDIDATES=$2
 fi
 
 
 if [ -z ${3+x} ]
 then
-	echo -n "When should a rumor be believable? "
-	read RUMOR
+	echo -n "Number of party buddies of each candidate: "
+	read PBUDDIES
 else
-	RUMOR=$3
+	PBUDDIES=$3
 fi
 
-echo "I will now generate a graph with $NODES nodes, $EDGES edges. Thereupon, nodes will be started which believe a rumor if heard $RUMOR times."
+if [ -z ${4+x} ]
+then
+	echo -n "Number of friends (neighbors) every voter has: "
+	read FRIENDS
+else
+	FRIENDS=$4
+fi
+
+if [ -z ${5+x} ]
+then
+	echo -n "Number of responses until a candidate sends another signal: "
+	read RCOUNT
+else
+	RCOUNT=$5
+fi
+
+
+echo "A graph will be generated with $NODES nodes, $CANDIDATES candidates with $PBUDDIES party buddies and every voter has $FRIENDS friends (neighbors)."
 
 # Reduce the addressbook of 5000 Entries to just the number of nodes
 LINES=`cat $ADDRESSFILE | wc -l`
@@ -47,7 +65,7 @@ $GRAPHGEN $EDGES $NODES
 dot -Tpng $GRAPHFILE > $GRAPHPNG
 feh -. $GRAPHPNG &
 
-if [ -z ${4+x} ]
+if [ -z ${6+x} ]
 then
 	echo -n "Execute? "
 	read EXEC
@@ -57,13 +75,19 @@ fi
 
 if [[ $EXEC =~ ^[Yy]$ ]]
 then
-	echo "###################################################################################################" >> $RESULTFILE
-	echo -n "# Nodecount:	$NODES	| Edgecount:	$EDGES	| Believingborder:	$RUMOR | " >> $RESULTFILE
+#	echo "###################################################################################################" >> $RESULTFILE
+#	echo -n "# Nodecount:	$NODES	| Edgecount:	$EDGES	| Believingborder:	$RUMOR | " >> $RESULTFILE
 
-	for (( i=1; i<=$NODES; i++))
+	for (( i=1; i<=$CANDIDATES; i++))
 	do
-		echo "Starting node with ID $i..."
+		echo "starting candidate node with ID $i..."
+		#./bin/n_candidate $i $RCOUNT
+	done
+
+	for (( i=(($CANDIDATES+1)); i<=$NODES; i++))
+	do
+		echo "Starting voter node with ID $i..."
 		#urxvt -e ./bin/node $i $RUMOR &
-		./bin/node $i $RUMOR >/dev/null 2>&1 &
+		#./bin/node $i >/dev/null 2>&1 &
 	done
 fi
