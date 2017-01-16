@@ -31,35 +31,6 @@ Node::Node(char* id_cstr){
 	std::fill(vtime.begin(),vtime.end(),0);
 }
 
-// Delegating constructors is c++11 only, I want to stay away from that
-// so it is the same contsructor but the beliveing border parameter can be set
-Node::Node(char* id_cstr, char* belive_border_cstr){
-
-	// Args get passed as cstring so I am converting first to String and then to int
-	std::string believe_border_str(belive_border_cstr);
-	std::string id_str(id_cstr);
-
-	// init starting values
-	believe_border = std::stoi(believe_border_str);
-	myid = std::stoi(id_str);
-	heard_rumor = false;
-	believe_rumor = false;
-	clear_stringstream(ss);
-
-	//----Read File
-	// book knows all addresses because it is easier to terminate them all with one signal
-	book = Addressbook(ADDRESSFILE);
-
-	// Create a addressbook based on the neighboring IDs found in 
-	// doc/example_graph.txt and the addresses found in doc/example.txt
-	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
-
-	// resize the vector to the size of the addressbook
-	vtime.resize(book.entrycount());
-	// fill all values with 0
-	std::fill(vtime.begin(),vtime.end(),0);
-}
-
 // Message handling
 int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const bool& connection){
 
@@ -294,27 +265,6 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 	return -1;
 }
 
-// Sends a rumor to all neighbors except the one this node heard it from
-int Node::send_all_rumor(Addressbook receivers, int sender_id, int signalid){
-	std::list<Entry>::iterator it = receivers.get_iterator();
-	do{
-		// Don't send it to the one I received it
-		if((*it).getid() != sender_id){
-			Sender sender((*it).getip(),(*it).getport());
-			if((sender.get_connection()) != -1){
-				sender.send_signalid(signalid);
-				sender.send_id(myid);
-				sender.close_connection();
-				Node::signal_out(it,signalid,true);
-			} else {
-				Node::signal_out(it,signalid,false);
-			}
-		}
-
-	}while(++it != receivers.get_end());
-	return -1;
-}
-
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
 // TODO rework method, especially the cout
@@ -387,37 +337,12 @@ int Node::sc_recv_msg(int& confd){
 
 // Case SOCIALISE
 int Node::sc_socialise(){
+	// if there is no msg send in socialise, look up here, the ss.str() seems to be empty
 	send_all_msg(neighbors, ss.str());
 
 	return -1;
 }
 
-// Case RUMOR
-int Node::sc_rumor(int& confd){
-	int sender_id = -1;
-	read(confd,&sender_id,sizeof(sender_id));
-	rumor_counter++;
-	if(!heard_rumor){
-		Node::signal_in(RUMOR);
-		heard_rumor = true;
-		send_all_rumor(neighbors, sender_id, RUMOR);
-	}
-	if(rumor_counter >= believe_border && !believe_rumor){
-		believe_rumor = true;
-
-		Sender sender(WATCHER_IP,WATCHER_PORT);
-
-		std::string ibelieve = "I believe the rumor.";
-		if(sender.get_connection() != -1){
-			sender.send_msg(vtime, ibelieve);
-			sender.close_connection();
-			Node::msg_out(WATCHER_IP,WATCHER_PORT,ibelieve,true);
-		} else {
-			Node::msg_out(WATCHER_IP,WATCHER_PORT,ibelieve,false);
-		}
-	}
-	return -1;
-}
 
 // Case PRINT_VTIME
 int Node::sc_print_vtime(){
