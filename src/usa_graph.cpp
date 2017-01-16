@@ -42,23 +42,34 @@ int print_matrix_to_graphviz(int **m, int& size, int& candidates){
 	std::ostringstream os;
 	os << "graph G{\n";
 
-	// Print the candidates with their connections to the partybuddies
-	for (int j = 0; j < candidates; j++){
-		for (int i = 0; i < size; i++){
-			if (m[j][i] == 1)
-				os << j + 1 << " -- " << i - candidates + 1 << "\n";
-				//os << "c" << j + 1 << " -- " << i - candidates + 1 << "\n"; // candidates have the cahr c before their number
-		}
-	}
+//	// Print the candidates with their connections to the partybuddies
+//	for (int j = 0; j < candidates; j++){
+//		for (int i = candidates; i < size; i++){
+//			if (m[j][i] == 1)
+//				os << j + 1 << " -- " << i << "\n";
+//				//os << "c" << j + 1 << " -- " << i - candidates + 1 << "\n"; // candidates have the cahr c before their number
+//		}
+//	}
+//
+//	// Print the voters from which some are partybuddies
+//	// The p offset secures only half the matrix is printed and the connections which are bidirectional 
+//	// doesn't haveto get double checked
+//	int p = 0;
+//	for(int j = candidates; j < size; j++){
+//		for(int i = size; i > candidates - 1 + p; i--){
+//			if (m[j][i] == 1)
+//				os << j + 1 << " -- " << i - candidates + 1 << "\n";
+//				//os << j - candidates + 1 << " -- " << i - candidates + 1 << "\n";
+//		}
+//		p++;
+//	}
 
-	// Print the voters from which some are partybuddies
-	// The p offset secures only half the matrix is printed and the connections which are bidirectional 
-	// doesn't haveto get double checked
 	int p = 0;
-	for(int j = candidates; j < size; j++){
-		for(int i = size; i > candidates - 1 + p; i--){
-			if (m[j][i] == 1)
-				os << j - candidates + 1 << " -- " << i - candidates + 1 << "\n";
+	for (int i = 0; i < size; i ++){
+		//for (int j = 0; j < size; j++){
+		for (int j = size; j > p; j--){
+			if (m[i][j] == 1)
+				os << i + 1 << " -- " << j + 1 << "\n";
 		}
 		p++;
 	}
