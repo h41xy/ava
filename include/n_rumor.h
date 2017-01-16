@@ -1,3 +1,6 @@
+#ifndef N_RUMOR_H
+#define N_RUMOR_H
+
 #include "node.h"
 
 class N_rumor : public Node {
@@ -12,3 +15,4 @@ public:
 
 	int run(); // Main loop
 };
+#endif // N_RUMOR_H

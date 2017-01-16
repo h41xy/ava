@@ -1,3 +1,6 @@
+#ifndef N_CANDIDATE_H
+#define N_CANDIDATE_H
+
 #include "node.h"
 
 class N_candidate : public Node {
@@ -15,4 +18,5 @@ public:
 
 	// main loop switch cases
 	int run();
-}
+};
+#endif // N_CANDIDATE_H

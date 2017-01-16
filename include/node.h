@@ -1,4 +1,7 @@
 // The node
+#ifndef NODE_H
+#define NODE_H
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -55,3 +58,4 @@ protected:
 	
 	std::vector<int> get_vectortime();
 };
+#endif // NODE_H

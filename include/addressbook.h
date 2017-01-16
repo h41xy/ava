@@ -3,6 +3,9 @@
 // All get read from a given filepath and parsed into entries.
 // They get stored as a linked list.
 
+#ifndef ADDRESSBOOK_H
+#define ADDRESSBOOK_H
+
 #include <string>
 #include <fstream>
 #include <list>
@@ -29,3 +32,5 @@ class Addressbook{
 	std::list<Entry>::iterator get_end();
 	std::tuple<Entry,Entry,Entry> return_three_random_entries(); //Returns three random entries
 };
+
+#endif // ADDRESSBOOK_H

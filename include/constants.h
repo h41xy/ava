@@ -29,4 +29,4 @@ const std::string ADDRESSFILE = "doc/addresses.txt";
 const std::string GRAPHFILE = "doc/graph.txt";
 const std::string RESULTFILE = "doc/results.txt";
 
-#endif
+#endif // CONSTANTS_H

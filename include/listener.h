@@ -1,6 +1,9 @@
 // A listener class which gets a port.
 // It opens a socket on this port and listens for incoming connections
 
+#ifndef LISTENER_H
+#define LISTENER_H
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -27,3 +30,4 @@ class Listener{
 	int accept_connection();
 	int close_socket();
 };
+#endif // LISTENER_H

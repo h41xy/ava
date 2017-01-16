@@ -1,5 +1,8 @@
 // Prepares a connection based on given ip and port
 // Connects to it and messages can then be send until closed
+#ifndef SENDER_H
+#define SENDER_H
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -36,3 +39,4 @@ class Sender{
 
 	int close_connection();
 };
+#endif // SENDER_H
