@@ -13,8 +13,6 @@ Node::Node(char* id_cstr){
 
 	// init starting values
 	myid = std::stoi(id_str);
-	heard_rumor = false;
-	believe_rumor = false;
 	clear_stringstream(ss);
 
 	//----Read File
@@ -368,7 +366,7 @@ int Node::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "My ID is " << myid << ", my port is: " << myself.getport() << std::endl << "I believe a rumor if heard " << believe_border << " times." << std::endl;
+	std::cout << "My ID is " << myid << ", my port is: " << myself.getport() << std::endl;
 
 
 	// listen on the port
@@ -380,8 +378,6 @@ int Node::run(){
 	// Init values
 	int confd = -1;
 	bool listen_more = true;
-	// The rumor counter has to be initialized, unexpected behaviour is the result otherwise
-	rumor_counter = 0;
 
 	do{
 		confd = listener.accept_connection();
@@ -428,12 +424,6 @@ int Node::run(){
 						 sc_socialise();
 						 break;
 					 }
-			case RUMOR : {
-					     // start spreading a rumor
-					     vtime_up(vtimestamp);
-					     sc_rumor(confd);
-					     break;
-				     }
 			case PRINT_VTIME : {
 						   sc_print_vtime();
 						   break;

@@ -1,31 +1,15 @@
 #include "n_rumor.h"
 
-N_rumor::N_rumor(char* id_cstr, char* belive_border_cstr){
+// Calls super constructor
+N_rumor::N_rumor(char* id_cstr, char* belive_border_cstr) : Node(id_cstr) {
 
 	// Args get passed as cstring so I am converting first to String and then to int
 	std::string believe_border_str(belive_border_cstr);
-	std::string id_str(id_cstr);
 
 	// init starting values
 	believe_border = std::stoi(believe_border_str);
-	myid = std::stoi(id_str);
 	heard_rumor = false;
 	believe_rumor = false;
-	clear_stringstream(ss);
-
-	//----Read File
-	// book knows all addresses because it is easier to terminate them all with one signal
-	book = Addressbook(ADDRESSFILE);
-
-	// Create a addressbook based on the neighboring IDs found in 
-	// doc/example_graph.txt and the addresses found in doc/example.txt
-	neighbors = Addressbook(ADDRESSFILE, get_nb_ids(GRAPHFILE, myid));
-
-	// resize the vector to the size of the addressbook
-	vtime.resize(book.entrycount());
-	// fill all values with 0
-	std::fill(vtime.begin(),vtime.end(),0);
-
 }
 
 // Sends a rumor to all neighbors except the one this node heard it from

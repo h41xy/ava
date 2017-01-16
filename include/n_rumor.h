@@ -1,5 +1,6 @@
-class N_rumor : public Node
-{
+#include "node.h"
+
+class N_rumor : public Node {
 protected:
 	int believe_border, rumor_counter;
 	bool heard_rumor, believe_rumor;
@@ -10,4 +11,4 @@ public:
 	N_rumor(char*,char*); // own ID, believe_border
 
 	int run(); // Main loop
-}
+};
