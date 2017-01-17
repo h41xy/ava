@@ -8,11 +8,11 @@ ADDRESSFILE_THISRUN=doc/addresses.txt
 GRAPHFILE=doc/graph.txt
 GRAPHPNG=doc/graph.png
 RESULTFILE=doc/results.txt
+CANDIDATEFILE=doc/candidates.txt
 
 EXEC=n
 
-echo "Usage:\n start <nodecount> <edgecount> <believingborder> [<set if you want to execute all right after generation>]"
-echo "Usage:\n start <nodecount> <candidatecount> <party buddies> <friendcount> <responsecount> [<set if you want to execute all right after generation>]"
+echo "Usage: start <nodecount> <candidatecount> <party buddies> <friendcount> <responsecount> [<set if you want to execute all right after generation>]"
 if [ -z ${1+x} ]
 then
 	echo -n "Number of nodes: "
@@ -60,6 +60,12 @@ echo "A graph will be generated with $NODES nodes, $CANDIDATES candidates with $
 # Reduce the addressbook of 5000 Entries to just the number of nodes
 LINES=`cat $ADDRESSFILE | wc -l`
 cat $ADDRESSFILE | sed $((NODES+1)),${LINES}d > $ADDRESSFILE_THISRUN
+
+#write the candidates to file
+for(( i=1; i<=$CANDIDATES; i++))
+do
+	echo $i >> $CANDIDATEFILE
+done
 
 $GRAPHGEN $EDGES $NODES
 dot -Tpng $GRAPHFILE > $GRAPHPNG
