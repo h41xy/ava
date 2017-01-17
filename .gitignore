@@ -1,3 +1,9 @@
 *.ofs
 *.o
 *.swp
+*.out
+bin/*
+doc/addresses.txt
+doc/candidates.txt
+doc/graph.png
+doc/graph.txt
