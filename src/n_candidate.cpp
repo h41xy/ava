@@ -9,6 +9,7 @@ N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cs
 
 // Sends the VOTE_ME signal to all neighbors
 // packs the own candidateid and the senderid
+// TODO abstract method or something
 int N_candidate::vote_me(){
 	std::list<Entry>::iterator it = neighbors.get_iterator();
 	do{
@@ -17,10 +18,10 @@ int N_candidate::vote_me(){
 			sender.send_entry(myself);
 			sender.send_signalid(VOTE_ME);
 			sender.send_id(myid); // candidate id
-			Node::signal_out(it,VOTE_ME,true);
+			Node::signal_out((*it),VOTE_ME,true);
 			sender.close_connection();
 		} else {
-			Node::signal_out(it,VOTE_ME,false);
+			Node::signal_out((*it),VOTE_ME,false);
 		}
 
 	}while(++it != neighbors.get_end());
@@ -72,7 +73,6 @@ int N_candidate::run(){
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
 		int msg_id = -1;
-		Entry sender_entry;
 
 		read(confd,&sender_entry,sizeof(sender_entry));
 

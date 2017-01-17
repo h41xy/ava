@@ -19,7 +19,7 @@
 
 class Node{
 protected:
-	Entry myself;
+	Entry myself, sender_entry;
 	Addressbook book;
 	Addressbook neighbors;
 	int myid; //not pretty but I need it before I get myself
@@ -30,6 +30,7 @@ protected:
 
 	int vtime_up(std::vector<int>&);
 
+	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);
 	int send_all_msg(Addressbook,std::string);
 
@@ -46,7 +47,7 @@ protected:
 	std::stringstream ss;
 	int msg_out(std::list<Entry>::iterator&, const std::string&,const bool&); // iterator for receiver ip and Port, msg
 	int msg_out(const std::string&,const int&,const std::string&,const bool&); // ip, port, msg, connection success or failed
-	int signal_out(std::list<Entry>::iterator&,const int&,const bool&); // iterator for receiverID, signalid, connection success or failed
+	int signal_out(Entry&,const int&,const bool&); // iterator for receiverID, signalid, connection success or failed
 
 	int signal_in(const int&); // Signal ID
 	int msg_in(const int&, const std::string&);

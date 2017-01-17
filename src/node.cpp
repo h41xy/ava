@@ -110,7 +110,7 @@ int Node::msg_out(const std::string& ip, const int& port, const std::string& msg
 	return -1;
 }
 
-int Node::signal_out(std::list<Entry>::iterator& it,const int& signalid,const bool& connection){
+int Node::signal_out(Entry& entry,const int& signalid,const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
@@ -122,7 +122,7 @@ int Node::signal_out(std::list<Entry>::iterator& it,const int& signalid,const bo
 	ss << "\n\t";
 	ss << "Message Type: OUT";
 	ss << "\n\t";
-	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
+	ss << "Receiver IP/Port: " << entry.getip() << "/" << entry.getport();
 	ss << "\n\t";
 	ss << "Signal ID: " << signalid;
 	ss << "\n\t";
@@ -250,17 +250,22 @@ int Node::send_all_msg(Addressbook receivers, std::string msg){
 int Node::send_all_signal(Addressbook receivers, int signalid){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
-		Sender sender((*it).getip(),(*it).getport());
-		if((sender.get_connection()) != -1){
-			sender.send_entry(myself);
-			sender.send_signalid(signalid);
-			Node::signal_out(it,signalid,true);
-			sender.close_connection();
-		} else {
-			Node::signal_out(it,signalid,false);
-		}
-
+		send_signal((*it), signalid);
 	}while(++it != receivers.get_end());
+	return -1;
+}
+
+// Sends a signal to the given Entry
+int Node::send_signal(Entry& receiver, const int& signalid){
+	Sender sender(receiver.getip(),receiver.getport());
+	if(sender.get_connection() != -1){
+		sender.send_entry(myself);
+		sender.send_signalid(signalid);
+		Node::signal_out(receiver,signalid,true);
+		sender.close_connection();
+	} else {
+		Node::signal_out(receiver,signalid,false);
+	}
 	return -1;
 }
 
@@ -384,7 +389,6 @@ int Node::run(){
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
 		int msg_id = -1;
-		Entry sender_entry;
 
 		read(confd,&sender_entry,sizeof(sender_entry));
 

@@ -44,18 +44,56 @@ std::list<int> N_voter::get_candidate_ids(const std::string& fname){
 }
 
 int N_voter::vote_me_response(const int& confd){
-	int sender_id = 0;
-	read(confd,&sender_id,sizeof(sender_id));
+
+	// from which candidate originated teh msg
 	int candidate_id = 0;
 	read(confd,&candidate_id,sizeof(candidate_id));
+
+	// raise c lvl based on senders clvl
+	int sender_clvl = 0;
+	read(confd,&sender_clvl,sizeof(sender_clvl));
+
+	candidate_c_levels[candidate_id] += (sender_clvl / 10);
+
 	// check c_lvl and respond
 	bool doublemax = false;
 	int max_id = 0;
 	find_id_of_max_value(candidate_c_levels, max_id, doublemax);
-	if (sender_id == max_id && !doublemax) {
-		
+
+	// if candidateorigin is my fav candidate
+	if (sender_entry.getid() == max_id) {
+		// send him a KEEP_ON
+		// TODO let this method return a pointer
+		Entry candidate_entry = candidates.getbyid(candidate_id);
+		send_signal(candidate_entry, KEEP_ON);
+
+		// if max value is not shared with another candidate
+		if (!doublemax){
+			// send all neighbors a VOTE_ME signal with candidate origin id and my c lvl
+			std::list<Entry>::iterator it = neighbors.get_iterator();
+			do{
+				Sender sender((*it).getip(),(*it).getport());
+				if((sender.get_connection()) != -1){
+					sender.send_entry(myself);
+					sender.send_signalid(VOTE_ME);
+					sender.send_id(candidate_id); // candidate id
+					sender.send_id(candidate_c_levels[candidate_id]); // my clvl of this candidate
+					Node::signal_out((*it),VOTE_ME,true);
+					sender.close_connection();
+				} else {
+					Node::signal_out((*it),VOTE_ME,false);
+				}
+
+			}while(++it != neighbors.get_end());
+
+		}
+
+	} else {
+		// else send him a NOT_YOU
+		// TODO let this method return a pointer
+		Entry candidate_entry = candidates.getbyid(candidate_id);
+		send_signal(candidate_entry, NOT_YOU);
 	}
-	// check c_lvl and resend
 	//TODO msg in an out
 	return -1;
 }
@@ -104,8 +142,7 @@ int N_voter::run(){
 		// Receive msgs and react to them
 		int msg_id = -1;
 
-		Entry sender_entry;
-
+		// read out sender entry
 		read(confd,&sender_entry,sizeof(sender_entry));
 		// Read the msgid from an active connection
 		read(confd,&msg_id,sizeof(msg_id));
