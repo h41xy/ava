@@ -46,8 +46,35 @@ std::list<int> N_voter::get_candidate_ids(const std::string& fname){
 int N_voter::vote_me_response(const int& confd){
 	int sender_id = 0;
 	read(confd,&sender_id,sizeof(sender_id));
+	int candidate_id = 0;
+	read(confd,&candidate_id,sizeof(candidate_id));
 	// check c_lvl and respond
+	bool doublemax = false;
+	int max_id = 0;
+	find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+	if (sender_id == max_id && !doublemax) {
+		
+	}
 	// check c_lvl and resend
+	//TODO msg in an out
+	return -1;
+}
+
+int N_voter::find_id_of_max_value(std::map<int,int>& candidate_c_levels, int& max_id, bool& doublemax){
+	int max = 0; // max value
+	int c_id_max = 0; // id with max value
+	for (int i =1; i<=candidate_count; i++){
+		if (candidate_c_levels[i] >= max){
+			if (doublemax) {
+				doublemax = false;
+			}
+			if (candidate_c_levels[i] == max){
+				doublemax = true;
+			}
+			max = candidate_c_levels[i];	
+			max_id = i;
+		}
+	}
 	return -1;
 }
 
@@ -77,6 +104,9 @@ int N_voter::run(){
 		// Receive msgs and react to them
 		int msg_id = -1;
 
+		Entry sender_entry;
+
+		read(confd,&sender_entry,sizeof(sender_entry));
 		// Read the msgid from an active connection
 		read(confd,&msg_id,sizeof(msg_id));
 

@@ -85,3 +85,8 @@ int Sender::send_int(const int& i){
 	write(sockfd,&i,sizeof(i));
 	return -1;
 }
+
+int Sender::send_entry(const Entry& e){
+	write(sockfd,&e,sizeof(e));
+	return -1;
+}

@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "constants.h"
+#include "entry.h"
 
 class Sender{
 	//----getaddrinfo----
@@ -36,6 +37,7 @@ class Sender{
 	// These two basically call send_int(int&)
 	int send_signalid(const int&);
 	int send_id(const int&);
+	int send_entry(const Entry&);
 
 	int close_connection();
 };

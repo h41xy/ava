@@ -110,7 +110,7 @@ int Node::msg_out(const std::string& ip, const int& port, const std::string& msg
 	return -1;
 }
 
-int Node::signal_out(std::list<Entry>::iterator& it,int& signalid,const bool& connection){
+int Node::signal_out(std::list<Entry>::iterator& it,const int& signalid,const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
@@ -252,25 +252,8 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 	do{
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
+			sender.send_entry(myself);
 			sender.send_signalid(signalid);
-			Node::signal_out(it,signalid,true);
-			sender.close_connection();
-		} else {
-			Node::signal_out(it,signalid,false);
-		}
-
-	}while(++it != receivers.get_end());
-	return -1;
-}
-
-// Sends a signal to all addresses in the given book
-int Node::send_all_signal_with_id(Addressbook receivers, int signalid){
-	std::list<Entry>::iterator it = receivers.get_iterator();
-	do{
-		Sender sender((*it).getip(),(*it).getport());
-		if((sender.get_connection()) != -1){
-			sender.send_signalid(signalid);
-			sender.send_id(myid);
 			Node::signal_out(it,signalid,true);
 			sender.close_connection();
 		} else {
@@ -401,6 +384,9 @@ int Node::run(){
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
 		int msg_id = -1;
+		Entry sender_entry;
+
+		read(confd,&sender_entry,sizeof(sender_entry));
 
 		// Read the msgid from an active connection
 		read(confd,&msg_id,sizeof(msg_id));
