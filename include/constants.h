@@ -28,5 +28,6 @@ const int LOGGER_PORT = 25000;
 const std::string ADDRESSFILE = "doc/addresses.txt";
 const std::string GRAPHFILE = "doc/graph.txt";
 const std::string RESULTFILE = "doc/results.txt";
+const std::string CANDIDATEFILE = "doc/candidates.txt";
 
 #endif // CONSTANTS_H
