@@ -2,7 +2,30 @@
 
 N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	candidates = Addressbook(ADDRESSFILE, get_candidate_ids(CANDIDATEFILE));
+	candidate_count  = candidates.entrycount();
+
+	std::srand(std::time(0)); // seed for random
+	for (int i = 1; i<=candidate_count; i++){
+		candidate_c_levels[i] = get_random(100, 0);
+	}
 }
+
+// returns a random value in the range starting at 1
+// zero is never returned
+int N_voter::get_random(const int& max, int min){
+
+	if (min > max)
+		return 0;
+
+	if(max <= 0)
+		return 0;
+
+	if(min <= 0)
+		min = 0;
+
+	return (std::rand() % max) + min;
+}
+
 
 // Get the Candidate IDs from a file
 // TODO the whole, is it a file etc checks
@@ -27,6 +50,9 @@ int N_voter::run(){
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
 	std::cout << "I'm a voter. \nMy ID is " << myid << ", my port is: " << myself.getport() << std::endl;
+	for(int i = 1; i<=candidate_count; i++){
+		std::cout << "Confidence level for candidate " << i << " is " << candidate_c_levels[i] << "\n";
+	}
 
 
 	// listen on the port
