@@ -31,6 +31,7 @@ protected:
 	int vtime_up(std::vector<int>&);
 
 	int send_all_signal(Addressbook,int);
+	int send_all_signal_with_id(Addressbook, int);
 	int send_all_msg(Addressbook,std::string);
 
 	// switch case methods

@@ -15,6 +15,7 @@ protected:
 
 	std::list<int> get_candidate_ids(const std::string&);
 	int get_random(const int&, int);
+	int vote_me_response(const int&);
 public:
 	N_voter(char*);
 

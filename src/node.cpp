@@ -263,6 +263,24 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 	return -1;
 }
 
+// Sends a signal to all addresses in the given book
+int Node::send_all_signal_with_id(Addressbook receivers, int signalid){
+	std::list<Entry>::iterator it = receivers.get_iterator();
+	do{
+		Sender sender((*it).getip(),(*it).getport());
+		if((sender.get_connection()) != -1){
+			sender.send_signalid(signalid);
+			sender.send_id(myid);
+			Node::signal_out(it,signalid,true);
+			sender.close_connection();
+		} else {
+			Node::signal_out(it,signalid,false);
+		}
+
+	}while(++it != receivers.get_end());
+	return -1;
+}
+
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
 // TODO rework method, especially the cout

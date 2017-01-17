@@ -9,7 +9,7 @@ N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cs
 
 // Sends the VOTE_ME signal to all neighbors
 int N_candidate::vote_me(){
-	send_all_signal(neighbors,VOTE_ME);
+	send_all_signal_with_id(neighbors,VOTE_ME);
 	return -1;
 }
 

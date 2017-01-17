@@ -10,8 +10,7 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	}
 }
 
-// returns a random value in the range starting at 1
-// zero is never returned
+// returns a random value in the given range
 int N_voter::get_random(const int& max, int min){
 
 	if (min > max)
@@ -42,6 +41,14 @@ std::list<int> N_voter::get_candidate_ids(const std::string& fname){
 	}
 	ifile.close();
 	return candidate_ids;
+}
+
+int N_voter::vote_me_response(const int& confd){
+	int sender_id = 0;
+	read(confd,&sender_id,sizeof(sender_id));
+	// check c_lvl and respond
+	// check c_lvl and resend
+	return -1;
 }
 
 int N_voter::run(){
@@ -118,6 +125,8 @@ int N_voter::run(){
 					       break;
 				       }
 			case VOTE_ME : {
+						vtime_up(vtimestamp);
+						vote_me_response(confd);
 					       break;
 				       }
 			case KEEP_ON : {
