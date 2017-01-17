@@ -41,7 +41,7 @@ int N_candidate::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "I'm a candidate. My ID is " << myid << ", my port is: " << myself.getport() << std::endl;
+	std::cout << "I'm a candidate. \nMy ID is " << myid << ", my port is: " << myself.getport() << std::endl;
 
 
 	// listen on the port
@@ -103,6 +103,16 @@ int N_candidate::run(){
 						   sc_print_vtime();
 						   break;
 					   }
+			case CAMPAIGN : {
+// Signal is only for debugging or init reasons in the switch case
+					       campaign();
+					       break;
+				       }
+			case VOTE_ME : {
+// Signal is only for debugging or init reasons in the switch case
+					       vote_me();
+					       break;
+				       }
 			case KEEP_ON : {
 					       vtime_up(vtimestamp);
 					       sc_keep_on();
