@@ -3,11 +3,11 @@
 
 #include "entry.h"
 
-Entry::Entry (int id, std::string ip, int port){
-	// maybe change to linked list so next can be used
-	this->id = id;
-	this->ip = ip;
-	this->port = port;
+Entry::Entry (int id, std::string ip, int port)
+	: id(id)
+	, port(port)
+{
+	std::strcpy(this->ip, ip.c_str());
 }
 
 Entry::Entry(){}

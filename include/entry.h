@@ -5,10 +5,11 @@
 #define ENTRY_H
 
 #include <string>
+#include <cstring>
 
 class Entry{
 	int id, port;
-	std::string ip;
+	char ip[15]; // length of max ip 123.123.123.123
  public:
 	Entry (int,std::string,int);
 	Entry ();
