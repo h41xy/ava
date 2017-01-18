@@ -1,6 +1,5 @@
 // The node
 // TODO rework initialization
-// TODO get better string handling on cout
 #include "node.h"
 
 // Creates a Node object
@@ -58,7 +57,7 @@ int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const 
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
-		logger.send_msg(ss.str());
+		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
 		ss << "Connection to logger failed.";
@@ -98,7 +97,7 @@ int Node::msg_out(const std::string& ip, const int& port, const std::string& msg
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
-		logger.send_msg(ss.str());
+		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
 		ss << "Connection to logger failed.";
@@ -138,7 +137,7 @@ int Node::signal_out(Entry& entry,const int& signalid,const bool& connection){
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
-		logger.send_msg(ss.str());
+		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
 		ss << "Connection to logger failed.";
@@ -167,7 +166,7 @@ int Node::signal_in(const int& signalid){
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
-		logger.send_msg(ss.str());
+		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
 		ss << "Connection to logger failed.";
@@ -200,7 +199,7 @@ int Node::msg_in(const int& signalid, const std::string& msg){
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
-		logger.send_msg(ss.str());
+		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
 		ss << "Connection to logger failed.";
@@ -220,32 +219,6 @@ int Node::clear_stringstream(std::stringstream& ss){
 	return -1;
 }
 
-// Sends a string to all addresses in the given book
-int Node::send_all_msg(Addressbook receivers, std::string msg){
-
-	// Iterate over all entries in the addressbook
-	// - build up a connection
-	// - send the stringmsg
-	// - send the logging message to the logger on succesful connection
-	// - print the logging message to cout on unsuccessful logger connection
-	std::list<Entry>::iterator it = receivers.get_iterator();
-	do{
-
-
-		Sender sender((*it).getip(),(*it).getport());
-		if((sender.get_connection()) != -1){
-			sender.send_msg(vtime, msg);
-			sender.close_connection();
-
-			Node::msg_out(it,msg,true);
-		} else {
-			Node::msg_out(it,msg,false);
-		}
-
-	}while(++it != receivers.get_end());
-	return -1;
-}
-
 // Sends a signal to all addresses in the given book
 int Node::send_all_signal(Addressbook receivers, int signalid){
 	std::list<Entry>::iterator it = receivers.get_iterator();
@@ -259,8 +232,8 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 int Node::send_signal(Entry& receiver, const int& signalid){
 	Sender sender(receiver.getip(),receiver.getport());
 	if(sender.get_connection() != -1){
-		sender.send_entry(myself);
-		sender.send_signalid(signalid);
+		// TODO rework message class
+		sender.send_message(Message(myself, signalid, 0, 0, ""));
 		Node::signal_out(receiver,signalid,true);
 		sender.close_connection();
 	} else {
@@ -329,28 +302,9 @@ int Node::sc_exit_all(bool& listen_more){
 	return -1;
 }
 
-// Case RECV_MSG
-int Node::sc_recv_msg(int& confd){
-	char a[MSG_BUFFER_SIZE];
-	memset(&a[0],0,sizeof(a));
-	read(confd,&a,sizeof(a));
-	std::string msg_str(a);
-	Node::msg_in(RECV_MSG,msg_str);
-	return -1;
-}
-
-// Case SOCIALISE
-int Node::sc_socialise(){
-	// if there is no msg send in socialise, look up here, the ss.str() seems to be empty
-	send_all_msg(neighbors, ss.str());
-
-	return -1;
-}
-
-
 // Case PRINT_VTIME
 int Node::sc_print_vtime(){
-	for (int i = 0; i < vtime.size(); i++){
+	for (unsigned int i = 0; i < vtime.size(); i++){
 		std::cout << vtime[i] << " ";
 	}
 	std::cout << std::endl;
@@ -360,9 +314,10 @@ int Node::sc_print_vtime(){
 // Count the vectortime up
 int Node::vtime_up(std::vector<int>& vtimestamp){
 	vtime[myid - 1] = vtime[myid -1] + 1;
-	for (int i = 0; i < vtime.size(); i++){
+	for (unsigned int i = 0; i < vtime.size(); i++){
 		vtime[i] = std::max(vtime[i], vtimestamp[i]);
 	}
+	return -1;
 }
 
 // The main loop of the node
@@ -370,6 +325,7 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 int Node::run(){
 
 	// Lookup the id from argv and get my associated port
+	// TODO rework this output
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
 	std::cout << "My ID is " << myid << ", my port is: " << myself.getport() << std::endl;
@@ -388,24 +344,23 @@ int Node::run(){
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
-		int msg_id = -1;
+		Message message(Entry(-1,"",-1), -1, -1, -1, "");
 
-		read(confd,&sender_entry,sizeof(sender_entry));
+		read(confd,&message,sizeof(message));
 
-		// Read the msgid from an active connection
-		read(confd,&msg_id,sizeof(msg_id));
 
 		// Vectortimestamp from active connection
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
 
+/* currently not implemented
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
 			read(confd,&vtimestamp[i],sizeof(int));
 		}
-
-		switch(msg_id){
+*/
+		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
 						 // exit single node
@@ -419,19 +374,6 @@ int Node::run(){
 						sc_exit_all(listen_more);
 						break;
 					}
-			case RECV_MSG : {
-						// recv msgs with max length of 256 chars
-						// TODO check on length
-						vtime_up(vtimestamp);
-						sc_recv_msg(confd);
-						break;
-					}
-			case SOCIALISE : {
-						 // send a string msg to all my neighbors with my id
-						 vtime_up(vtimestamp);
-						 sc_socialise();
-						 break;
-					 }
 			case PRINT_VTIME : {
 						   sc_print_vtime();
 						   break;

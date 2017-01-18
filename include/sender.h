@@ -13,6 +13,7 @@
 
 #include "constants.h"
 #include "entry.h"
+#include "message.h"
 
 class Sender{
 	//----getaddrinfo----
@@ -25,19 +26,12 @@ class Sender{
 
 	void prepare_connection(); // Prepares the needed structs
 
-	int send_int(const int&); // Writes an interger value to the socket
-
  public:
 	Sender(std::string,int); // ip as string and port as int
 	int get_connection();
-	int send_msg(std::string);
-	int send_msg(std::vector<int>&, std::string);
-	int send_vtimestamp(std::vector<int>&);
 
-	// These two basically call send_int(int&)
-	int send_signalid(const int&);
-	int send_id(const int&);
-	int send_entry(const Entry&);
+	int send_message(Message);
+	int send_vtimestamp(std::vector<int>&);
 
 	int close_connection();
 };

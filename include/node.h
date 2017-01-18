@@ -16,10 +16,11 @@
 #include "addressbook.h"
 #include "listener.h"
 #include "sender.h"
+#include "message.h"
 
 class Node{
 protected:
-	Entry myself, sender_entry;
+	Entry myself;
 	Addressbook book;
 	Addressbook neighbors;
 	int myid; //not pretty but I need it before I get myself
@@ -32,13 +33,10 @@ protected:
 
 	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);
-	int send_all_msg(Addressbook,std::string);
 
 	// switch case methods
 	int sc_exit_node(bool&);
 	int sc_exit_all(bool&);
-	int sc_recv_msg(int&);
-	int sc_socialise();
 	int sc_print_vtime();
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
@@ -51,6 +49,7 @@ protected:
 
 	int signal_in(const int&); // Signal ID
 	int msg_in(const int&, const std::string&);
+
 	int clear_stringstream(std::stringstream&);
 
  public:

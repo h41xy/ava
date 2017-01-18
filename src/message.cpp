@@ -1,10 +1,11 @@
 #include "message.h"
 
-Message::Message(Entry& sender, int& signal_id, int& origin, int& clvl)
+Message::Message(const Entry& sender, const int& signal_id, const int& origin, const int& clvl, const std::string& msg)
 	: sender(sender)
 	, signal_id(signal_id)
 	, origin(origin)
 	  , clvl(clvl)
+	, msg(msg.c_str())
 { }
 
 const Entry& Message::get_sender(){
