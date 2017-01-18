@@ -5,7 +5,9 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	candidate_count  = candidates.entrycount();
 
 	eliminate_candidates_from_neighbors(neighbors, candidates);
-	std::srand(std::time(0)); // seed for random
+
+	// random generator
+
 	for (int i = 1; i<=candidate_count; i++){
 		candidate_c_levels[i] = get_random(100, 0);
 	}
@@ -23,7 +25,10 @@ int N_voter::get_random(const int& max, int min){
 	if(min <= 0)
 		min = 0;
 
-	return (std::rand() % max) + min;
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(min,max);
+	return dis(gen);
 }
 
 // I know the candidates addressbook is not needed, its in there for when the candidate ids get complex

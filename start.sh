@@ -1,6 +1,7 @@
 #!/bin/bash
 
-GRAPHGEN=bin/graphgen
+#GRAPHGEN=bin/graphgen
+GRAPHGEN=bin/usa_graphgen
 NODE=bin/node_exec
 
 ADDRESSFILE=doc/addresses_all.txt
@@ -67,7 +68,7 @@ do
 	echo $i >> $CANDIDATEFILE
 done
 
-$GRAPHGEN $EDGES $NODES
+$GRAPHGEN $NODES $CANDIDATES $PBUDDIES $FRIENDS
 dot -Tpng $GRAPHFILE > $GRAPHPNG
 feh -. $GRAPHPNG &
 
@@ -87,13 +88,14 @@ then
 	for (( i=1; i<=$CANDIDATES; i++))
 	do
 		echo "starting candidate node with ID $i..."
-		#./bin/n_candidate $i $RCOUNT
+		urxvt -e ./bin/node_exec $i $RCOUNT &
+		#./bin/node_exec $i $RCOUNT
 	done
 
 	for (( i=(($CANDIDATES+1)); i<=$NODES; i++))
 	do
 		echo "Starting voter node with ID $i..."
-		#urxvt -e ./bin/node $i $RUMOR &
-		#./bin/node $i >/dev/null 2>&1 &
+		urxvt -e ./bin/node_exec $i &
+		#./bin/node_exec $i >/dev/null 2>&1 &
 	done
 fi

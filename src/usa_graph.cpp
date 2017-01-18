@@ -124,9 +124,9 @@ int run(int& nodecount, int& candidatecount, int& partybuddiecount, int& voterfr
 
 	// Use a new operator so i can pass the array to functions
 	int **m;
-	m = new int *[18];
-	for(int i = 0; i < 18; i++)
-		m[i] = new int[18];
+	m = new int *[nodecount];
+	for(int i = 0; i < nodecount; i++)
+		m[i] = new int[nodecount];
 
 	// init array
 	for ( int i = 0; i < people; i++){

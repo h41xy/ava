@@ -4,7 +4,7 @@
 #include "node.h"
 
 #include <map>
-#include <ctime> // for random seed
+#include <random>
 
 class N_voter : public Node {
 protected:
