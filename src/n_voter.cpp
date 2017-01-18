@@ -80,18 +80,21 @@ int N_voter::vote_me_response(const int& confd){
 			// send all neighbors a VOTE_ME signal with candidate origin id and my c lvl
 			std::list<Entry>::iterator it = neighbors.get_iterator();
 			do{
-				Sender sender((*it).getip(),(*it).getport());
-				if((sender.get_connection()) != -1){
-					sender.send_entry(myself);
-					sender.send_signalid(VOTE_ME);
-					sender.send_id(candidate_id); // candidate id
-					sender.send_id(candidate_c_levels[candidate_id]); // my clvl of this candidate
-					Node::signal_out((*it),VOTE_ME,true);
-					sender.close_connection();
-				} else {
-					Node::signal_out((*it),VOTE_ME,false);
-				}
+				// all except the sender
+				if ((*it).getid() != sender_entry.getid()){
+					Sender sender((*it).getip(),(*it).getport());
+					if((sender.get_connection()) != -1){
+						sender.send_entry(myself);
+						sender.send_signalid(VOTE_ME);
+						sender.send_id(candidate_id); // candidate id
+						sender.send_id(candidate_c_levels[candidate_id]); // my clvl of this candidate
+						Node::signal_out((*it),VOTE_ME,true);
+						sender.close_connection();
+					} else {
+						Node::signal_out((*it),VOTE_ME,false);
+					}
 
+				}
 			}while(++it != neighbors.get_end());
 
 		}
