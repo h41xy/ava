@@ -12,6 +12,7 @@ protected:
 	const int clvl;
 	char msg[MSG_BUFFER_SIZE];
 public:
+	// Myself, signalid, origin, clvl, msg
 	Message(const Entry&, const int&, const int&, const int&, const std::string&);
 
 	const Entry& get_sender() const;

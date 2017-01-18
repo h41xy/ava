@@ -242,6 +242,27 @@ int Node::send_signal(Entry& receiver, const int& signalid){
 	return -1;
 }
 
+int Node::send_all_message(Addressbook& receivers, const Message& message){
+	std::list<Entry>::iterator it = receivers.get_iterator();
+	do{
+		send_message((*it), message);
+	}while(++it != receivers.get_end());
+	return -1;
+}
+
+int Node::send_message(Entry& receiver, const Message& message){
+	Sender sender(receiver.getip(),receiver.getport());
+	if(sender.get_connection() != -1){
+		// TODO rework message class
+		sender.send_message(message);
+		Node::signal_out(receiver,message.get_signal_id(),true);
+		sender.close_connection();
+	} else {
+		Node::signal_out(receiver,message.get_signal_id(),false);
+	}
+return -1;
+}
+
 // Based on the Addressfile and the graphfile,
 // create the Addressbook only with known neighbors
 // TODO rework method, especially the cout

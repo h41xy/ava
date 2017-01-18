@@ -33,6 +33,8 @@ protected:
 
 	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);
+	int send_message(Entry&, const Message&);
+	int send_all_message(Addressbook&, const Message&);
 
 	// switch case methods
 	int sc_exit_node(bool&);

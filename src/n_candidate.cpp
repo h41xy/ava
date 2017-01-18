@@ -50,6 +50,12 @@ int N_candidate::recv_response(){
 	return -1;
 }
 
+int N_candidate::init_partybuddies(){
+	// send signal to partybuddies with origin me and clvl 100
+	send_all_message(neighbors,Message(myself,INIT_PB,myself.getid(),100,""));
+	return -1;
+}
+
 int N_candidate::run(){
 
 	// Lookup the id from argv and get my associated port
@@ -125,6 +131,11 @@ int N_candidate::run(){
 					       sc_not_you();
 					       break;
 				       }
+			case INIT : {
+						// do all init work
+						init_partybuddies();
+						break;
+					}
 
 			default :
 				       std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
