@@ -7,9 +7,11 @@
 #include <string>
 #include <cstring>
 
+#include "constants.h"
+
 class Entry{
 	int id, port;
-	char ip[15]; // length of max ip 123.123.123.123
+	char ip[IP_BUFFER_SIZE]; // length of max ip 123.123.123.123
  public:
 	Entry (int,std::string,int);
 	Entry ();

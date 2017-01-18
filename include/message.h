@@ -10,7 +10,7 @@ protected:
 	const int signal_id;
 	const int origin;
 	const int clvl;
-	char msg[256];
+	char msg[MSG_BUFFER_SIZE];
 public:
 	Message(const Entry&, const int&, const int&, const int&, const std::string&);
 
