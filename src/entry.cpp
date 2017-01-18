@@ -12,12 +12,12 @@ Entry::Entry (int id, std::string ip, int port){
 
 Entry::Entry(){}
 
-int Entry::getid(){
+int Entry::getid() const{
 	return this->id;
 }
-std::string Entry::getip(){
+std::string Entry::getip() const{
 	return this->ip;
 }
-int Entry::getport(){
+int Entry::getport() const{
 	return this->port;
 }

@@ -31,8 +31,8 @@ int Sender::get_connection(){
 }
 
 // TODO check if connected
-int Sender::send_message(Message){
-	write(sockfd,&Message.sizeof(Message));
+int Sender::send_message(Message message){
+	write(sockfd,&message,sizeof(Message));
 	return -1;
 }
 
@@ -43,7 +43,7 @@ int Sender::send_vtimestamp(std::vector<int>& vtimestamp){
 	// write every value sequentially to the socket
 	// the read on the other side will pick them up the same way and write
 	// them in a new vector
-	for(int i = 0; i < vtimestamp.size(); i++){
+	for(unsigned int i = 0; i < vtimestamp.size(); i++){
 		write(sockfd,&vtimestamp[i],sizeof(vtimestamp[i]));
 	}
 	return -1;

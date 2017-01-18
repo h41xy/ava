@@ -5,21 +5,22 @@ Message::Message(const Entry& sender, const int& signal_id, const int& origin, c
 	, signal_id(signal_id)
 	, origin(origin)
 	  , clvl(clvl)
-	, msg(msg.c_str())
-{ }
+{
+	std::strcpy(this->msg, msg.c_str());
+}
 
-const Entry& Message::get_sender(){
+const Entry& Message::get_sender() const{
 	return this->sender;
 }
 
-const int& Message::get_signal_id(){
+const int& Message::get_signal_id() const{
 	return this->signal_id;
 }
 
-const int& Message::get_origin(){
+const int& Message::get_origin() const{
 	return this->origin;
 }
 
-const int& Message::get_sender_clvl(){
+const int& Message::get_sender_clvl() const{
 	return this->clvl;
 }

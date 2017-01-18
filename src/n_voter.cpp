@@ -51,15 +51,13 @@ std::list<int> N_voter::get_candidate_ids(const std::string& fname){
 	return candidate_ids;
 }
 
-int N_voter::vote_me_response(const int& confd){
+int N_voter::vote_me_response(Message& message){
 
 	// from which candidate originated teh msg
-	int candidate_id = 0;
-	read(confd,&candidate_id,sizeof(candidate_id));
+	int candidate_id = message.get_origin();
 
 	// raise c lvl based on senders clvl
-	int sender_clvl = 0;
-	read(confd,&sender_clvl,sizeof(sender_clvl));
+	int sender_clvl = message.get_sender_clvl();
 
 	candidate_c_levels[candidate_id] += (sender_clvl / 10);
 
@@ -69,7 +67,7 @@ int N_voter::vote_me_response(const int& confd){
 	find_id_of_max_value(candidate_c_levels, max_id, doublemax);
 
 	// if candidateorigin is my fav candidate
-	if (sender_entry.getid() == max_id) {
+	if (message.get_origin() == max_id) {
 		// send him a KEEP_ON
 		// TODO let this method return a pointer
 		Entry candidate_entry = candidates.getbyid(candidate_id);
@@ -81,13 +79,10 @@ int N_voter::vote_me_response(const int& confd){
 			std::list<Entry>::iterator it = neighbors.get_iterator();
 			do{
 				// all except the sender
-				if ((*it).getid() != sender_entry.getid()){
+				if ((*it).getid() != message.get_sender().getid()){
 					Sender sender((*it).getip(),(*it).getport());
 					if((sender.get_connection()) != -1){
-						sender.send_entry(myself);
-						sender.send_signalid(VOTE_ME);
-						sender.send_id(candidate_id); // candidate id
-						sender.send_id(candidate_c_levels[candidate_id]); // my clvl of this candidate
+						sender.send_message(Message(myself, VOTE_ME, candidate_id, candidate_c_levels[candidate_id], ""));
 						Node::signal_out((*it),VOTE_ME,true);
 						sender.close_connection();
 					} else {
@@ -111,7 +106,6 @@ int N_voter::vote_me_response(const int& confd){
 
 int N_voter::find_id_of_max_value(std::map<int,int>& candidate_c_levels, int& max_id, bool& doublemax){
 	int max = 0; // max value
-	int c_id_max = 0; // id with max value
 	for (int i =1; i<=candidate_count; i++){
 		if (candidate_c_levels[i] >= max){
 			if (doublemax) {
@@ -158,12 +152,9 @@ int N_voter::run(){
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
-		int msg_id = -1;
+		Message message(Entry(-1,"",-1), -1, -1, -1, "");
 
-		// read out sender entry
-		read(confd,&sender_entry,sizeof(sender_entry));
-		// Read the msgid from an active connection
-		read(confd,&msg_id,sizeof(msg_id));
+		read(confd,&message,sizeof(message));
 
 		// Vectortimestamp from active connection
 		std::vector<int> vtimestamp;
@@ -175,7 +166,7 @@ int N_voter::run(){
 			read(confd,&vtimestamp[i],sizeof(int));
 		}
 */
-		switch(msg_id){
+		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
 						 // exit single node
@@ -189,19 +180,6 @@ int N_voter::run(){
 						sc_exit_all(listen_more);
 						break;
 					}
-			case RECV_MSG : {
-						// recv msgs with max length of 256 chars
-						// TODO check on length
-						vtime_up(vtimestamp);
-						sc_recv_msg(confd);
-						break;
-					}
-			case SOCIALISE : {
-						 // send a string msg to all my neighbors with my id
-						 vtime_up(vtimestamp);
-						 sc_socialise();
-						 break;
-					 }
 			case PRINT_VTIME : {
 						   sc_print_vtime();
 						   break;
@@ -212,7 +190,7 @@ int N_voter::run(){
 			case VOTE_ME : {
 						vtime_up(vtimestamp);
 						signal_in(VOTE_ME);
-						vote_me_response(confd);
+						vote_me_response(message);
 					       break;
 				       }
 			case KEEP_ON : {

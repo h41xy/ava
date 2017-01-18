@@ -16,7 +16,7 @@ protected:
 	std::list<int> get_candidate_ids(const std::string&);
 	int get_random(const int&, int);
 	int eliminate_candidates_from_neighbors(Addressbook&, Addressbook&);
-	int vote_me_response(const int&);
+	int vote_me_response(Message&);
 	int find_id_of_max_value(std::map<int, int>&, int&, bool&);
 public:
 	N_voter(char*);

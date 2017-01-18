@@ -15,10 +15,8 @@ int N_candidate::vote_me(){
 	do{
 		Sender sender((*it).getip(),(*it).getport());
 		if((sender.get_connection()) != -1){
-			sender.send_entry(myself);
-			sender.send_signalid(VOTE_ME);
-			sender.send_id(myid); // candidate id
-			sender.send_id(100); // candidate clvl is always 100
+			sender.send_message(Message(myself, VOTE_ME, myself.getid(), 100, "")); //candidate confidence is always 100
+
 			Node::signal_out((*it),VOTE_ME,true);
 			sender.close_connection();
 		} else {
@@ -73,12 +71,9 @@ int N_candidate::run(){
 	do{
 		confd = listener.accept_connection();
 		// Receive msgs and react to them
-		int msg_id = -1;
+		Message message(Entry(-1,"",-1), -1, -1, -1, "");
 
-		read(confd,&sender_entry,sizeof(sender_entry));
-
-		// Read the msgid from an active connection
-		read(confd,&msg_id,sizeof(msg_id));
+		read(confd,&message,sizeof(message));
 
 		// Vectortimestamp from active connection
 		std::vector<int> vtimestamp;
@@ -90,7 +85,7 @@ int N_candidate::run(){
 			read(confd,&vtimestamp[i],sizeof(int));
 		}
 */
-		switch(msg_id){
+		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
 						 // exit single node
@@ -104,19 +99,6 @@ int N_candidate::run(){
 						sc_exit_all(listen_more);
 						break;
 					}
-			case RECV_MSG : {
-						// recv msgs with max length of 256 chars
-						// TODO check on length
-						vtime_up(vtimestamp);
-						sc_recv_msg(confd);
-						break;
-					}
-			case SOCIALISE : {
-						 // send a string msg to all my neighbors with my id
-						 vtime_up(vtimestamp);
-						 sc_socialise();
-						 break;
-					 }
 			case PRINT_VTIME : {
 						   sc_print_vtime();
 						   break;

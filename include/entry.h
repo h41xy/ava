@@ -12,8 +12,8 @@ class Entry{
  public:
 	Entry (int,std::string,int);
 	Entry ();
-	int getid();
-	std::string getip();
-	int getport();
+	int getid() const;
+	std::string getip() const;
+	int getport() const;
 };
 #endif // ENTRY_H
