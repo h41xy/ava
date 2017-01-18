@@ -121,6 +121,17 @@ int N_voter::find_id_of_max_value(std::map<int,int>& candidate_c_levels, int& ma
 	return -1;
 }
 
+int N_voter::init_as_partybuddy(Message& message){
+	for (int i = 1; i <= candidate_count; i++){
+		if ( candidate_c_levels[i] == message.get_origin()) {
+			candidate_c_levels[i] = 100;
+		} else {
+			candidate_c_levels[i] = 0;
+		}
+	}
+	return -1;
+}
+
 int N_voter::run(){
 
 	// Lookup the id from argv and get my associated port
@@ -201,6 +212,10 @@ int N_voter::run(){
 // Signal is only for debugging or init reasons in the switch case
 					       break;
 				       }
+			case INIT_PB : {
+						init_as_partybuddy(message);
+						break;
+					}
 
 			default :
 				       std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
