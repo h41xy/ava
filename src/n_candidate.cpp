@@ -18,6 +18,7 @@ int N_candidate::vote_me(){
 			sender.send_entry(myself);
 			sender.send_signalid(VOTE_ME);
 			sender.send_id(myid); // candidate id
+			sender.send_id(100); // candidate clvl is always 100
 			Node::signal_out((*it),VOTE_ME,true);
 			sender.close_connection();
 		} else {
@@ -83,12 +84,12 @@ int N_candidate::run(){
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
-
+/*
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
 			read(confd,&vtimestamp[i],sizeof(int));
 		}
-
+*/
 		switch(msg_id){
 
 			case EXIT_NODE : {
@@ -132,11 +133,13 @@ int N_candidate::run(){
 				       }
 			case KEEP_ON : {
 					       vtime_up(vtimestamp);
+						signal_in(KEEP_ON);
 					       sc_keep_on();
 					       break;
 				       }
 			case NOT_YOU : {
 					       vtime_up(vtimestamp);
+						signal_in(NOT_YOU);
 					       sc_not_you();
 					       break;
 				       }

@@ -31,6 +31,7 @@ class Addressbook{
 	Entry get_entry_at(std::list<Entry>::iterator);
 	std::list<Entry>::iterator get_end();
 	std::tuple<Entry,Entry,Entry> return_three_random_entries(); //Returns three random entries
+//	friend std::ostream& operator<<(std::ostream&, const Addressbook&);
 };
 
 #endif // ADDRESSBOOK_H

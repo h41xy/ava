@@ -160,3 +160,14 @@ std::tuple<Entry,Entry,Entry> Addressbook::return_three_random_entries(){
 
 	return std::make_tuple (efirst,esecond,ethird);
 }
+
+//std::ostream& operator<<(std::ostream& os, const Addressbook& book){
+////	for(auto v : book)
+////		os << " " << v;
+////	return os;
+//	std::list<Entry>::iterator it = book.get_iterator();
+//	do{
+//		os << " " << (*it).getid();
+//	}while(++it != book.get_end());
+//	return os;
+//}

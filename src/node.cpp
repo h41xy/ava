@@ -299,11 +299,11 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 		}
 	}
 	gifile.close();
-	std::cout << "ID: " << myid << " IDs neighboring me:";
-	// TODO eliminate duplicates
-	for(auto v : ids_neighboring_me)
-		std::cout << " " << v;
-	std::cout << std::endl;
+//	std::cout << "ID: " << myid << " IDs neighboring me:";
+//	// TODO eliminate duplicates
+//	for(auto v : ids_neighboring_me)
+//		std::cout << " " << v;
+//	std::cout << std::endl;
 	return ids_neighboring_me;
 }
 

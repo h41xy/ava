@@ -4,6 +4,7 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	candidates = Addressbook(ADDRESSFILE, get_candidate_ids(CANDIDATEFILE));
 	candidate_count  = candidates.entrycount();
 
+	eliminate_candidates_from_neighbors(neighbors, candidates);
 	std::srand(std::time(0)); // seed for random
 	for (int i = 1; i<=candidate_count; i++){
 		candidate_c_levels[i] = get_random(100, 0);
@@ -25,6 +26,13 @@ int N_voter::get_random(const int& max, int min){
 	return (std::rand() % max) + min;
 }
 
+// I know the candidates addressbook is not needed, its in there for when the candidate ids get complex
+int N_voter::eliminate_candidates_from_neighbors(Addressbook& neighbors, Addressbook& candidates){
+	for (int i=1; i<=candidate_count; i++){
+		neighbors.remove(i);
+	}
+	return -1;
+}
 
 // Get the Candidate IDs from a file
 // TODO the whole, is it a file etc checks
@@ -121,7 +129,14 @@ int N_voter::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "I'm a voter. \nMy ID is " << myid << ", my port is: " << myself.getport() << std::endl;
+	std::cout << "I'm a voter. \nMy ID is " << myid << ", my port is: " << myself.getport() << "\n";
+	std::cout << "My neighbors are: ";
+	std::list<Entry>::iterator it = neighbors.get_iterator();
+	do{
+		std::cout << " " << (*it).getid();
+	}while(++it != neighbors.get_end());
+	std::cout << "\n";
+
 	for(int i = 1; i<=candidate_count; i++){
 		std::cout << "Confidence level for candidate " << i << " is " << candidate_c_levels[i] << "\n";
 	}
@@ -151,12 +166,12 @@ int N_voter::run(){
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
-
+/*
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
 			read(confd,&vtimestamp[i],sizeof(int));
 		}
-
+*/
 		switch(msg_id){
 
 			case EXIT_NODE : {
@@ -193,6 +208,7 @@ int N_voter::run(){
 				       }
 			case VOTE_ME : {
 						vtime_up(vtimestamp);
+						signal_in(VOTE_ME);
 						vote_me_response(confd);
 					       break;
 				       }

@@ -6,6 +6,7 @@
 #include "sender.h"
 #include "listener.h"
 #include "constants.h"
+#include "entry.h"
 
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
@@ -54,6 +55,7 @@ int main(int argc, char* argv[]){
 	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
 	Sender sender("localhost",port);
 	sender.get_connection();
+	sender.send_entry(Entry(0,"0.0.0.0",25000));
 	sender.send_signalid(signal);
 	sender.close_connection();
 	if(start_watcher){
