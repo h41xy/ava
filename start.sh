@@ -96,6 +96,6 @@ then
 	do
 		echo "Starting voter node with ID $i..."
 		#urxvt -e ./bin/node_exec $i &
-		./bin/node_exec $i >/dev/null 2>&1 &
+		./bin/node_exec $i &
 	done
 fi

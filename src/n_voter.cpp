@@ -143,18 +143,22 @@ int N_voter::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "I'm a voter. \nMy ID is " << myid << ", my port is: " << myself.getport() << "\n";
-	std::cout << "My neighbors are: ";
+	std::cout << "[NODE_ID: " << myid << " ]";
+	std::cout << "[NType: VOTER]";
+	std::cout << "[State: STARTED]";
+	std::cout << "[Neighbors: ";
 	std::list<Entry>::iterator it = neighbors.get_iterator();
 	do{
 		std::cout << " " << (*it).getid();
 	}while(++it != neighbors.get_end());
-	std::cout << "\n";
+	std::cout << " ]";
 
+	std::cout << "[Clvls";
 	for(int i = 1; i<=candidate_count; i++){
-		std::cout << "Confidence level for candidate " << i << " is " << candidate_c_levels[i] << "\n";
+		std::cout << " " << i << ":" << candidate_c_levels[i];
 	}
-
+	std::cout << " ]";
+	std::cout << std::endl;
 
 	// listen on the port
 	Listener listener(myself.getport());

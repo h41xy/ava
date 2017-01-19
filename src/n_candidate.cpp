@@ -63,8 +63,10 @@ int N_candidate::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
-	std::cout << "I'm a candidate. \nMy ID is " << myid << ", my port is: " << myself.getport() << std::endl;
-
+	std::cout << "[NODE_ID: " << myid << " ]";
+	std::cout << "[NType: CANDIDATE]";
+	std::cout << "[State: STARTED]";
+	std::cout << std::endl;
 
 	// listen on the port
 	Listener listener(myself.getport());
