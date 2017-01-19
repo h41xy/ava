@@ -80,12 +80,10 @@ int main(int argc, char* argv[]){
 			//a = message.get_msg();
 			std::string a(message.get_msg());
 			std::cout << a;
-			//rumorresponses << a;
+			rumorresponses << a;
 			believing_counter++;
 			close(confd);
 		}while(listen_more);
-		rumorresponses << "Total believes: \t" << believing_counter << " #" << std::endl;
-		rumorresponses << "###################################################################################################" << std::endl;
 		std::ofstream ofs;
 		ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
 		ofs << rumorresponses.str();
