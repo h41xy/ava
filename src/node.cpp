@@ -29,30 +29,23 @@ Node::Node(char* id_cstr){
 }
 
 // Message handling
-int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const bool& connection){
+int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	std::time_t t = std::time(nullptr);
 
-	ss << "NODE_ID: " << myid;
-	ss << "\n\t";
-	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << "\n\t";
-	ss << "Message Type: OUT";
-	ss << "\n\t";
-	ss << "Receiver IP/Port: " << (*it).getip() << "/" << (*it).getport();
-	ss << "\n\t";
-	ss << "String sended: >>\"" << msg << "\"<<";
-	ss << "\n\t";
-	ss << "Sending status: ";
+	ss << "[NODE_ID: " << myid << " ]";
+	ss << "[MType: OUT]";
+	ss << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
+	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
+	ss << "[S_ID: " << message.get_signal_id() << "]";;
+	ss << "[Send: ";
 
 	if (connection) {
-		ss << "SUCCESS";
-		ss << "\n\t";
+		ss << "SUCCESS]";
 	} else {
-		ss << "FAILED";
-		ss << "\n\t";
+		ss << "FAILED]";
 	}
 
 	if (logger.get_connection() != -1) {
@@ -60,8 +53,7 @@ int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const 
 		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
-		ss << "Connection to logger failed.";
-		ss << "\n\t";
+		ss << "[LoggerCon FAILED]";
 		std::cout << ss.str() << std::endl;
 	}
 
@@ -69,147 +61,28 @@ int Node::msg_out(std::list<Entry>::iterator& it, const std::string& msg, const 
 	return -1;
 }
 
-int Node::msg_out(const std::string& ip, const int& port, const std::string& msg, const bool& connection){
+int Node::logger_signal_in(Message& message){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	std::time_t t = std::time(nullptr);
 
-	ss << "NODE_ID: " << myid;
-	ss << "\n\t";
-	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << "\n\t";
-	ss << "Message Type: OUT";
-	ss << "\n\t";
-	ss << "Receiver IP/Port: " << ip << "/" << port;
-	ss << "\n\t";
-	ss << "String sended: >>\"" << msg << "\"<<";
-	ss << "\n\t";
-	ss << "Sending status: ";
-
-	if (connection) {
-		ss << "SUCCESS";
-		ss << "\n\t";
-	} else {
-		ss << "FAILED";
-		ss << "\n\t";
-	}
+	ss << "[NODE_ID: " << myid << " ]";
+	ss << "[MType: IN]";
+	ss << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
+	ss << "[S_ID: " << message.get_signal_id() << "]";;
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;
 		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
 		logger.close_connection();
 	} else {
-		ss << "Connection to logger failed.";
-		ss << "\n\t";
+		ss << "[LoggerCon FAILED]";
 		std::cout << ss.str() << std::endl;
 	}
 
 	clear_stringstream(ss);
 	return -1;
-}
-
-int Node::signal_out(Entry& entry,const int& signalid,const bool& connection){
-
-	Sender logger(LOGGER_IP, LOGGER_PORT);
-
-	std::time_t t = std::time(nullptr);
-
-	ss << "NODE_ID: " << myid;
-	ss << "\n\t";
-	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << "\n\t";
-	ss << "Message Type: OUT";
-	ss << "\n\t";
-	ss << "Receiver IP/Port: " << entry.getip() << "/" << entry.getport();
-	ss << "\n\t";
-	ss << "Signal ID: " << signalid;
-	ss << "\n\t";
-	ss << "Sending status: ";
-
-	if (connection) {
-		ss << "SUCCESS";
-		ss << "\n\t";
-	} else {
-		ss << "FAILED";
-		ss << "\n\t";
-	}
-
-	if (logger.get_connection() != -1) {
-		ss << std::endl;
-		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
-		logger.close_connection();
-	} else {
-		ss << "Connection to logger failed.";
-		ss << "\n\t";
-		std::cout << ss.str() << std::endl;
-	}
-
-	clear_stringstream(ss);
-	return -1;
-}
-
-int Node::signal_in(const int& signalid){
-
-	Sender logger(LOGGER_IP, LOGGER_PORT);
-
-	std::time_t t = std::time(nullptr);
-
-	ss << "NODE_ID: " << myid;
-	ss << "\n\t";
-	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << "\n\t";
-	ss << "Message Type: IN";
-	ss << "\n\t";
-	ss << "Signal ID: " << signalid;
-	ss << "\n\t";
-
-	if (logger.get_connection() != -1) {
-		ss << std::endl;
-		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
-		logger.close_connection();
-	} else {
-		ss << "Connection to logger failed.";
-		ss << "\n\t";
-		std::cout << ss.str() << std::endl;
-	}
-
-	clear_stringstream(ss);
-	return -1;
-}
-
-int Node::msg_in(const int& signalid, const std::string& msg){
-	
-	Sender logger(LOGGER_IP, LOGGER_PORT);
-
-	std::time_t t = std::time(nullptr);
-
-	ss << "NODE_ID: " << myid;
-	ss << "\n\t";
-	ss << std::put_time(std::localtime(&t), "Timestamp: %H:%M:%S");
-	ss << "\n\t";
-	ss << "Message Type: IN";
-	ss << "\n\t";
-	ss << "Signal ID: " << signalid;
-	ss << "\n\t";
-	ss << "Content:";
-	ss << "\n\t";
-	ss << msg;
-	ss << "\n\t";
-
-	if (logger.get_connection() != -1) {
-		ss << std::endl;
-		logger.send_message(Message(myself, RECV_MSG, 0, 0, ss.str()));
-		logger.close_connection();
-	} else {
-		ss << "Connection to logger failed.";
-		ss << "\n\t";
-		std::cout << ss.str() << std::endl;
-	}
-
-	clear_stringstream(ss);
-	return -1;
-
 }
 
 // Deletes the content in the stringstream
@@ -231,18 +104,19 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 // Sends a signal to the given Entry
 int Node::send_signal(Entry& receiver, const int& signalid){
 	Sender sender(receiver.getip(),receiver.getport());
+	Message message(myself, signalid, 0, 0, "");
 	if(sender.get_connection() != -1){
 		// TODO rework message class
-		sender.send_message(Message(myself, signalid, 0, 0, ""));
-		Node::signal_out(receiver,signalid,true);
+		sender.send_message(message);
+		logger_signal_out(receiver,message,true);
 		sender.close_connection();
 	} else {
-		Node::signal_out(receiver,signalid,false);
+		logger_signal_out(receiver,message,false);
 	}
 	return -1;
 }
 
-int Node::send_all_message(Addressbook& receivers, const Message& message){
+int Node::send_all_message(Addressbook& receivers, Message& message){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
 		send_message((*it), message);
@@ -250,15 +124,15 @@ int Node::send_all_message(Addressbook& receivers, const Message& message){
 	return -1;
 }
 
-int Node::send_message(Entry& receiver, const Message& message){
+int Node::send_message(Entry& receiver, Message& message){
 	Sender sender(receiver.getip(),receiver.getport());
 	if(sender.get_connection() != -1){
 		// TODO rework message class
 		sender.send_message(message);
-		Node::signal_out(receiver,message.get_signal_id(),true);
+		logger_signal_out(receiver,message,true);
 		sender.close_connection();
 	} else {
-		Node::signal_out(receiver,message.get_signal_id(),false);
+		logger_signal_out(receiver,message,false);
 	}
 return -1;
 }
@@ -309,16 +183,17 @@ std::vector<int> Node::get_vectortime(){
 // Switch case methods
 
 // Case EXIT_NODE
-int Node::sc_exit_node(bool& listen_more){
-	Node::signal_in(EXIT_NODE);
+int Node::sc_exit_node(Message& message, bool& listen_more){
+	logger_signal_in(message);
 	listen_more = false;
 	return -1;
 }
 
 // Case EXIT_ALL
-int Node::sc_exit_all(bool& listen_more){
-	Node::signal_in(EXIT_ALL);
-	send_all_signal(book,EXIT_NODE);
+int Node::sc_exit_all(Message& message, bool& listen_more){
+	logger_signal_in(message);
+	Message new_message(message.get_sender(),EXIT_NODE,message.get_origin(), message.get_sender_clvl(),message.get_msg());
+	send_all_message(book, new_message);
 	listen_more = false;
 	return -1;
 }
@@ -386,13 +261,13 @@ int Node::run(){
 			case EXIT_NODE : {
 						 // exit single node
 						 vtime_up(vtimestamp);
-						 sc_exit_node(listen_more);
+						 sc_exit_node(message, listen_more);
 						 break;
 					 }
 			case EXIT_ALL : {
 						// exit all nodes
 						vtime_up(vtimestamp);
-						sc_exit_all(listen_more);
+						sc_exit_all(message, listen_more);
 						break;
 					}
 			case PRINT_VTIME : {

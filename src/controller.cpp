@@ -63,9 +63,11 @@ int main(int argc, char* argv[]){
 		bool listen_more = true;
 		std::ostringstream rumorresponses;
 		do{ 
-			msg_id = -1;
 			confd = listener.accept_connection();
-			read(confd,&msg_id,sizeof(msg_id));
+
+			Message message(Entry(0,"",0),-1,-1,-1,"");
+			read(confd,&message,sizeof(message));
+			msg_id = message.get_signal_id();
 
 			if(msg_id == EXIT_NODE || msg_id == EXIT_ALL)
 				listen_more = false;
@@ -75,7 +77,7 @@ int main(int argc, char* argv[]){
 
 			char a[MSG_BUFFER_SIZE];
 			memset(&a[0],0,sizeof(a));
-			read(confd,&a,sizeof(a));
+			a = message.get_msg();
 			std::cout << a;
 			//rumorresponses << a;
 			believing_counter++;

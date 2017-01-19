@@ -33,24 +33,20 @@ protected:
 
 	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);
-	int send_message(Entry&, const Message&);
-	int send_all_message(Addressbook&, const Message&);
+	int send_message(Entry&, Message&);
+	int send_all_message(Addressbook&, Message&);
 
 	// switch case methods
-	int sc_exit_node(bool&);
-	int sc_exit_all(bool&);
+	int sc_exit_node(Message&, bool&);
+	int sc_exit_all(Message&, bool&);
 	int sc_print_vtime();
 
 	std::list<int> get_nb_ids(std::string,int); //gfname, own_id
 
 	// msg handling
 	std::stringstream ss;
-	int msg_out(std::list<Entry>::iterator&, const std::string&,const bool&); // iterator for receiver ip and Port, msg
-	int msg_out(const std::string&,const int&,const std::string&,const bool&); // ip, port, msg, connection success or failed
-	int signal_out(Entry&,const int&,const bool&); // iterator for receiverID, signalid, connection success or failed
-
-	int signal_in(const int&); // Signal ID
-	int msg_in(const int&, const std::string&);
+	int logger_signal_out(Entry&, Message&, const bool&); // Receiver, Message, connection fail/success
+	int logger_signal_in(Message&);
 
 	int clear_stringstream(std::stringstream&);
 
