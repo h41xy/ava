@@ -11,10 +11,10 @@ Message::Message(const Entry& sender, const int& signal_id, const int& origin, c
 }
 
 unsigned int Message::get_random(const unsigned int& min, const unsigned int& max){
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(min,max);
-	return dis(gen);
+	std::mt19937 rng;
+	rng.seed(std::random_device()());
+	std::uniform_int_distribution<std::mt19937::result_type> dis(min,max);
+	return dis(rng);
 }
 
 const Entry& Message::get_sender() const{
@@ -31,6 +31,10 @@ const int& Message::get_origin() const{
 
 const int& Message::get_sender_clvl() const{
 	return this->clvl;
+}
+
+const unsigned int& Message::get_msg_id() const{
+	return this->msg_id;
 }
 
 const std::string Message::get_msg() const{

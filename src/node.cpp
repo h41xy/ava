@@ -55,7 +55,8 @@ int Node::logger_signal_out(Entry& receiver, Message& message, const bool& conne
 
 	ss << "[NODE_ID: " << myid << " ]";
 	ss << "[MType: OUT]";
-	ss << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
+	ss << "[M_ID: " << std::hex << message.get_msg_id() << " ]";
+	ss << std::dec << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
 	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
 	ss << "[Send: ";
@@ -87,7 +88,8 @@ int Node::logger_signal_in(Message& message){
 
 	ss << "[NODE_ID: " << myid << " ]";
 	ss << "[MType: IN]";
-	ss << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
+	ss << "[M_ID: " << std::hex << message.get_msg_id() << " ]";
+	ss << std::dec << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
 	ss << "[SenderID: " << message.get_sender().getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
 

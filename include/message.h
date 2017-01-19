@@ -24,6 +24,7 @@ public:
 	const int& get_signal_id() const;
 	const int& get_origin() const;
 	const int& get_sender_clvl() const;
+	const unsigned int& get_msg_id() const;
 	const std::string get_msg() const;
 };
 #endif // MESSAGE_H
