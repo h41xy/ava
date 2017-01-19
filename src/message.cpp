@@ -7,6 +7,14 @@ Message::Message(const Entry& sender, const int& signal_id, const int& origin, c
 	  , clvl(clvl)
 {
 	std::strcpy(this->msg, msg.c_str());
+	msg_id = get_random(std::numeric_limits<unsigned int>::min(), std::numeric_limits<unsigned int>::max());
+}
+
+unsigned int Message::get_random(const unsigned int& min, const unsigned int& max){
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(min,max);
+	return dis(gen);
 }
 
 const Entry& Message::get_sender() const{
