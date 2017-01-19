@@ -70,6 +70,7 @@ int Node::logger_signal_in(Message& message){
 	ss << "[NODE_ID: " << myid << " ]";
 	ss << "[MType: IN]";
 	ss << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
+	ss << "[SenderID: " << message.get_sender().getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
 
 	if (logger.get_connection() != -1) {
