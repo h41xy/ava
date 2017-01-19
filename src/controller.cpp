@@ -75,9 +75,10 @@ int main(int argc, char* argv[]){
 			if(msg_id != RECV_MSG)
 				break;
 
-			char a[MSG_BUFFER_SIZE];
-			memset(&a[0],0,sizeof(a));
-			a = message.get_msg();
+			//char a[MSG_BUFFER_SIZE];
+			//memset(&a[0],0,sizeof(a));
+			//a = message.get_msg();
+			std::string a(message.get_msg());
 			std::cout << a;
 			//rumorresponses << a;
 			believing_counter++;

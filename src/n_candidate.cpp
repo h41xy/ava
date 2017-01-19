@@ -14,13 +14,14 @@ int N_candidate::vote_me(){
 	std::list<Entry>::iterator it = neighbors.get_iterator();
 	do{
 		Sender sender((*it).getip(),(*it).getport());
+		Message message(myself, VOTE_ME, myself.getid(), 100, "");
 		if((sender.get_connection()) != -1){
-			sender.send_message(Message(myself, VOTE_ME, myself.getid(), 100, "")); //candidate confidence is always 100
+			sender.send_message(message); //candidate confidence is always 100
 
-			Node::signal_out((*it),VOTE_ME,true);
+			logger_signal_out((*it),message,true);
 			sender.close_connection();
 		} else {
-			Node::signal_out((*it),VOTE_ME,false);
+			logger_signal_out((*it),message,false);
 		}
 
 	}while(++it != neighbors.get_end());
@@ -52,7 +53,8 @@ int N_candidate::recv_response(){
 
 int N_candidate::init_partybuddies(){
 	// send signal to partybuddies with origin me and clvl 100
-	send_all_message(neighbors,Message(myself,INIT_PB,myself.getid(),100,""));
+	Message message(myself,INIT_PB,myself.getid(),100,"");
+	send_all_message(neighbors, message);
 	return -1;
 }
 
@@ -96,13 +98,13 @@ int N_candidate::run(){
 			case EXIT_NODE : {
 						 // exit single node
 						 vtime_up(vtimestamp);
-						 sc_exit_node(listen_more);
+						 sc_exit_node(message, listen_more);
 						 break;
 					 }
 			case EXIT_ALL : {
 						// exit all nodes
 						vtime_up(vtimestamp);
-						sc_exit_all(listen_more);
+						sc_exit_all(message, listen_more);
 						break;
 					}
 			case PRINT_VTIME : {
@@ -121,13 +123,13 @@ int N_candidate::run(){
 				       }
 			case KEEP_ON : {
 					       vtime_up(vtimestamp);
-						signal_in(KEEP_ON);
+						logger_signal_in(message);
 					       sc_keep_on();
 					       break;
 				       }
 			case NOT_YOU : {
 					       vtime_up(vtimestamp);
-						signal_in(NOT_YOU);
+						logger_signal_in(message);
 					       sc_not_you();
 					       break;
 				       }

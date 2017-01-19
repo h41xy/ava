@@ -24,3 +24,7 @@ const int& Message::get_origin() const{
 const int& Message::get_sender_clvl() const{
 	return this->clvl;
 }
+
+const std::string Message::get_msg() const{
+	return std::string(this->msg);
+}

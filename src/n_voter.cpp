@@ -86,12 +86,13 @@ int N_voter::vote_me_response(Message& message){
 				// all except the sender
 				if ((*it).getid() != message.get_sender().getid()){
 					Sender sender((*it).getip(),(*it).getport());
+Message message(myself, VOTE_ME, candidate_id, candidate_c_levels[candidate_id], "");
 					if((sender.get_connection()) != -1){
-						sender.send_message(Message(myself, VOTE_ME, candidate_id, candidate_c_levels[candidate_id], ""));
-						Node::signal_out((*it),VOTE_ME,true);
+						sender.send_message(message);
+						logger_signal_out((*it),message,true);
 						sender.close_connection();
 					} else {
-						Node::signal_out((*it),VOTE_ME,false);
+						logger_signal_out((*it),message,false);
 					}
 
 				}
@@ -187,13 +188,13 @@ int N_voter::run(){
 			case EXIT_NODE : {
 						 // exit single node
 						 vtime_up(vtimestamp);
-						 sc_exit_node(listen_more);
+						 sc_exit_node(message, listen_more);
 						 break;
 					 }
 			case EXIT_ALL : {
 						// exit all nodes
 						vtime_up(vtimestamp);
-						sc_exit_all(listen_more);
+						sc_exit_all(message, listen_more);
 						break;
 					}
 			case PRINT_VTIME : {
@@ -205,7 +206,7 @@ int N_voter::run(){
 				       }
 			case VOTE_ME : {
 						vtime_up(vtimestamp);
-						signal_in(VOTE_ME);
+						logger_signal_in(message);
 						vote_me_response(message);
 					       break;
 				       }
