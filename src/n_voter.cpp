@@ -13,23 +13,6 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	}
 }
 
-// returns a random value in the given range
-int N_voter::get_random(const int& max, int min){
-
-	if (min > max)
-		return 0;
-
-	if(max <= 0)
-		return 0;
-
-	if(min <= 0)
-		min = 0;
-
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(min,max);
-	return dis(gen);
-}
 
 // I know the candidates addressbook is not needed, its in there for when the candidate ids get complex
 int N_voter::eliminate_candidates_from_neighbors(Addressbook& neighbors, Addressbook& candidates){

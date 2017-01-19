@@ -28,6 +28,24 @@ Node::Node(char* id_cstr){
 	std::fill(vtime.begin(),vtime.end(),0);
 }
 
+// returns a random value in the given range
+unsigned int Node::get_random(const unsigned int& max, unsigned int min){
+
+	if (min > max)
+		return 0;
+
+	if(max <= 0)
+		return 0;
+
+	if(min <= 0)
+		min = 0;
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(min,max);
+	return dis(gen);
+}
+
 // Message handling
 int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 

@@ -11,6 +11,7 @@
 #include <cerrno>
 #include <unistd.h>
 #include <vector>
+#include <random>
 
 #include "constants.h"
 #include "addressbook.h"
@@ -35,6 +36,10 @@ protected:
 	int send_all_signal(Addressbook,int);
 	int send_message(Entry&, Message&);
 	int send_all_message(Addressbook&, Message&);
+
+
+	// watch out for return values
+	unsigned int get_random(const unsigned int&, unsigned int);
 
 	// switch case methods
 	int sc_exit_node(Message&, bool&);
