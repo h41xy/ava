@@ -26,6 +26,10 @@ Node::Node(char* id_cstr){
 	vtime.resize(book.entrycount());
 	// for the init fill all values with 0
 	std::fill(vtime.begin(),vtime.end(),0);
+
+	// ECHO Alg
+	state = white;
+	echo_counter = 0;
 }
 
 // returns a random value in the given range

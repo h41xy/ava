@@ -5,6 +5,10 @@ N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cs
 	response_border = std::stoi(response_border_str);
 
 	response_count = 0;
+
+	// ECHO Alg
+	state = white;
+	echo_counter = 0;
 }
 
 // Sends the VOTE_ME signal to all neighbors

@@ -37,6 +37,11 @@ protected:
 	int send_message(Entry&, Message&);
 	int send_all_message(Addressbook&, Message&);
 
+	// ECHO alg
+	enum NodeColor { white, red, green };
+	NodeColor state;
+	int echo_counter;
+	Entry first_neighbor;
 
 	// watch out for return values
 	unsigned int get_random(const unsigned int&, unsigned int);
