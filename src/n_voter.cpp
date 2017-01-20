@@ -211,6 +211,12 @@ int N_voter::run(){
 					       }
 					       break;
 				       }
+			case ECHO_EXPLORE : {
+						    vtime_up(vtimestamp);
+						    logger_signal_in(message);
+						    process_echo_explore(message);
+						    break;
+					    }
 			case KEEP_ON : {
 					       // Signal is only for debugging or init reasons in the switch case
 					       break;

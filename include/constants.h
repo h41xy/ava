@@ -20,7 +20,6 @@ const int INIT = 10; // global init signal
 const int INIT_PB = 11; // candidate nodes init their partybuddies with this signal
 
 const int ECHO_EXPLORE = 12;
-const int ECHO = 13;
 
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;

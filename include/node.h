@@ -67,7 +67,6 @@ protected:
 
 	// ECHO Alg
 	int process_echo_explore(Message&);
-	int process_echo(Message&);
 
  public:
 	Node(char*); // own ID

@@ -36,7 +36,8 @@ int N_candidate::campaign(){
 	Message new_explorer(myself,ECHO_EXPLORE, myself.getid(), 100, "");
 	// keep track of my echo algorithms
 	echo_id_list.push_back(new_explorer.get_msg_id());
-	// TODO process futher
+	state = red;
+	send_all_message(neighbors, new_explorer);
 	return -1;
 }
 
@@ -123,7 +124,8 @@ int N_candidate::run(){
 					   }
 			case CAMPAIGN : {
 // Signal is only for debugging or init reasons in the switch case
-					       campaign();
+						logger_signal_in(message);
+						campaign();
 					       break;
 				       }
 			case VOTE_ME : {
@@ -143,6 +145,12 @@ int N_candidate::run(){
 					       sc_not_you();
 					       break;
 				       }
+			case ECHO_EXPLORE : {
+						    vtime_up(vtimestamp);
+						    logger_signal_in(message);
+						    process_echo_explore(message);
+						    break;
+					    }
 			case INIT : {
 						// do all init work
 						init_partybuddies();

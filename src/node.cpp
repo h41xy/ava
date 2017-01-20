@@ -271,14 +271,12 @@ int Node::process_echo_explore(Message& explore){
 		// remember sender
 		first_neighbor = explore.get_sender();
 	}
-
-	// if echo counter = neighbor.count
-	// state = green
-	// send echo to first sender
-	return -1;
-}
-
-int Node::process_echo(Message& echo){
+	if (echo_counter == neighbors.entrycount()){
+		state = green;
+		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
+		echo.set_msg_id(explore.get_msg_id());
+		send_message(first_neighbor, echo);
+	}
 	return -1;
 }
 
