@@ -40,3 +40,8 @@ const unsigned int& Message::get_msg_id() const{
 const std::string Message::get_msg() const{
 	return std::string(this->msg);
 }
+
+int Message::set_msg_id(unsigned int new_msg_id){
+	this->msg_id = new_msg_id;
+	return -1;
+}

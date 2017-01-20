@@ -26,5 +26,7 @@ public:
 	const int& get_sender_clvl() const;
 	const unsigned int& get_msg_id() const;
 	const std::string get_msg() const;
+
+	int set_msg_id(unsigned int);
 };
 #endif // MESSAGE_H

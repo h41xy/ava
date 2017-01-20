@@ -39,15 +39,18 @@ std::list<int> N_voter::get_candidate_ids(const std::string& fname){
 	return candidate_ids;
 }
 
-int N_voter::vote_me_response(Message& message){
+int N_voter::vote_me_response(Message& inc_message){
 
 	// from which candidate originated teh msg
-	int candidate_id = message.get_origin();
+	int candidate_id = inc_message.get_origin();
 
 	// raise c lvl based on senders clvl
-	int sender_clvl = message.get_sender_clvl();
+	int sender_clvl = inc_message.get_sender_clvl();
 
 	candidate_c_levels[candidate_id] += (sender_clvl / 10);
+
+	Message message(myself, VOTE_ME, candidate_id, candidate_c_levels[candidate_id], "");
+	message.set_msg_id(inc_message.get_msg_id());
 
 	// check c_lvl and respond
 	bool doublemax = false;
@@ -55,7 +58,7 @@ int N_voter::vote_me_response(Message& message){
 	find_id_of_max_value(candidate_c_levels, max_id, doublemax);
 
 	// if candidateorigin is my fav candidate
-	if (message.get_origin() == max_id) {
+	if (inc_message.get_origin() == max_id) {
 		// send him a KEEP_ON
 		// TODO let this method return a pointer
 		Entry candidate_entry = candidates.getbyid(candidate_id);
@@ -69,7 +72,6 @@ int N_voter::vote_me_response(Message& message){
 				// all except the sender
 				if ((*it).getid() != message.get_sender().getid()){
 					Sender sender((*it).getip(),(*it).getport());
-Message message(myself, VOTE_ME, candidate_id, candidate_c_levels[candidate_id], "");
 					if((sender.get_connection()) != -1){
 						sender.send_message(message);
 						logger_signal_out((*it),message,true);
@@ -126,6 +128,7 @@ int N_voter::run(){
 	// Lookup the id from argv and get my associated port
 	myself = book.getbyid(myid);
 	std::string myip = myself.getip();
+	// TODO standartize output
 	std::cout << "[NODE_ID: " << myid << " ]";
 	std::cout << "[NType: VOTER]";
 	std::cout << "[State: STARTED]";
@@ -164,12 +167,12 @@ int N_voter::run(){
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
-/*
+		/*
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
-			read(confd,&vtimestamp[i],sizeof(int));
+		read(confd,&vtimestamp[i],sizeof(int));
 		}
-*/
+		 */
 		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
@@ -189,26 +192,33 @@ int N_voter::run(){
 						   break;
 					   }
 			case CAMPAIGN : {
-					       break;
-				       }
+						break;
+					}
 			case VOTE_ME : {
-						vtime_up(vtimestamp);
-						logger_signal_in(message);
-						vote_me_response(message);
+					       vtime_up(vtimestamp);
+					       if (std::find(known_signals.begin(), known_signals.end(), message.get_msg_id()) != known_signals.end()){
+						       // TODO some kind of rejected message
+						       logger_signal_in(message);
+						       break;
+					       } else {
+						       known_signals.push_back(message.get_msg_id());
+						       logger_signal_in(message);
+						       vote_me_response(message);
+					       }
 					       break;
 				       }
 			case KEEP_ON : {
-// Signal is only for debugging or init reasons in the switch case
+					       // Signal is only for debugging or init reasons in the switch case
 					       break;
 				       }
 			case NOT_YOU : {
-// Signal is only for debugging or init reasons in the switch case
+					       // Signal is only for debugging or init reasons in the switch case
 					       break;
 				       }
 			case INIT_PB : {
-						init_as_partybuddy(message);
-						break;
-					}
+					       init_as_partybuddy(message);
+					       break;
+				       }
 
 			default :
 				       std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";

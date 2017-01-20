@@ -12,9 +12,9 @@ N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cs
 // TODO abstract method or something
 int N_candidate::vote_me(){
 	std::list<Entry>::iterator it = neighbors.get_iterator();
+	Message message(myself, VOTE_ME, myself.getid(), 100, "");
 	do{
 		Sender sender((*it).getip(),(*it).getport());
-		Message message(myself, VOTE_ME, myself.getid(), 100, "");
 		if((sender.get_connection()) != -1){
 			sender.send_message(message); //candidate confidence is always 100
 

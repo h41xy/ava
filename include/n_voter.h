@@ -12,6 +12,8 @@ protected:
 	int candidate_count;
 	std::map<int, int> candidate_c_levels;
 
+	std::vector<unsigned int> known_signals;
+
 	std::list<int> get_candidate_ids(const std::string&);
 	int eliminate_candidates_from_neighbors(Addressbook&, Addressbook&);
 	int vote_me_response(Message&);
