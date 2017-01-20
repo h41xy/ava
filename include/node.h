@@ -34,8 +34,11 @@ protected:
 
 	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);
+
 	int send_message(Entry&, Message&);
 	int send_all_message(Addressbook&, Message&);
+	// forward is like send but excepts the sender
+	int forward_all_message(Addressbook&, Message&);
 
 	// ECHO alg
 	enum NodeColor { white, red, green };
@@ -59,6 +62,10 @@ protected:
 	int logger_signal_in(Message&);
 
 	int clear_stringstream(std::stringstream&);
+
+	// ECHO Alg
+	int process_echo_explore(Message&);
+	int process_echo(Message&);
 
  public:
 	Node(char*); // own ID

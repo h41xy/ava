@@ -18,6 +18,9 @@ protected:
 	// init the partybuddies is hard via script so the candidate does it
 	int init_partybuddies();
 
+	// ECHO Alg
+	std::vector<unsigned int> echo_id_list;
+
 public:
 	N_candidate(char*,char*);	
 

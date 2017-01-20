@@ -33,6 +33,10 @@ int N_candidate::vote_me(){
 }
 
 int N_candidate::campaign(){
+	Message new_explorer(myself,ECHO_EXPLORE, myself.getid(), 100, "");
+	// keep track of my echo algorithms
+	echo_id_list.push_back(new_explorer.get_msg_id());
+	// TODO process futher
 	return -1;
 }
 

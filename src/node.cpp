@@ -149,6 +149,15 @@ int Node::send_all_message(Addressbook& receivers, Message& message){
 	return -1;
 }
 
+int Node::forward_all_message(Addressbook& receivers, Message& message){
+	std::list<Entry>::iterator it = receivers.get_iterator();
+	do{
+		if ((*it).getid() != message.get_sender().getid())
+			send_message((*it), message);
+	}while(++it != receivers.get_end());
+	return -1;
+}
+
 int Node::send_message(Entry& receiver, Message& message){
 	Sender sender(receiver.getip(),receiver.getport());
 	if(sender.get_connection() != -1){
@@ -229,6 +238,28 @@ int Node::sc_print_vtime(){
 		std::cout << vtime[i] << " ";
 	}
 	std::cout << std::endl;
+	return -1;
+}
+
+int Node::process_echo_explore(Message& explore){
+	echo_counter++;
+	// if state == white
+	if (state == white){
+		state = red;
+	// send explore to neighbors (except sender)
+		Message new_explore(myself, ECHO_EXPLORE, myself.getid(), 100, "");
+		new_explore.set_msg_id(explore.get_msg_id());
+		// send all except sender
+	// remember sender
+	}
+
+	// if echo counter = neighbor.count
+	// state = green
+	// send echo to first sender
+	return -1;
+}
+
+int Node::process_echo(Message& echo){
 	return -1;
 }
 
