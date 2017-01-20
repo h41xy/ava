@@ -38,6 +38,8 @@ protected:
 	int send_message(Entry&, Message&);
 	int send_all_message(Addressbook&, Message&);
 	// forward is like send but excepts the sender
+	// TODO theses are unfinished methods
+	int forward_message(Entry&, Message&);
 	int forward_all_message(Addressbook&, Message&);
 
 	// ECHO alg

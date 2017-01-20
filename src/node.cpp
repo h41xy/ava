@@ -153,8 +153,22 @@ int Node::forward_all_message(Addressbook& receivers, Message& message){
 	std::list<Entry>::iterator it = receivers.get_iterator();
 	do{
 		if ((*it).getid() != message.get_sender().getid())
-			send_message((*it), message);
+			forward_message((*it), message);
 	}while(++it != receivers.get_end());
+	return -1;
+}
+
+int Node::forward_message(Entry& receiver, Message& message){
+	Sender sender(receiver.getip(),receiver.getport());
+	if(sender.get_connection() != -1){
+		// TODO rework message class
+		sender.send_message(message);
+		logger_signal_out(receiver,message,true);
+		sender.close_connection();
+	} else {
+		logger_signal_out(receiver,message,false);
+	}
+
 	return -1;
 }
 
@@ -168,7 +182,7 @@ int Node::send_message(Entry& receiver, Message& message){
 	} else {
 		logger_signal_out(receiver,message,false);
 	}
-return -1;
+	return -1;
 }
 
 // Based on the Addressfile and the graphfile,
@@ -201,11 +215,11 @@ std::list<int> Node::get_nb_ids(std::string gfname, int own_id){
 		}
 	}
 	gifile.close();
-//	std::cout << "ID: " << myid << " IDs neighboring me:";
-//	// TODO eliminate duplicates
-//	for(auto v : ids_neighboring_me)
-//		std::cout << " " << v;
-//	std::cout << std::endl;
+	//	std::cout << "ID: " << myid << " IDs neighboring me:";
+	//	// TODO eliminate duplicates
+	//	for(auto v : ids_neighboring_me)
+	//		std::cout << " " << v;
+	//	std::cout << std::endl;
 	return ids_neighboring_me;
 }
 
@@ -246,11 +260,16 @@ int Node::process_echo_explore(Message& explore){
 	// if state == white
 	if (state == white){
 		state = red;
-	// send explore to neighbors (except sender)
+		// send explore to neighbors (except sender)
 		Message new_explore(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		new_explore.set_msg_id(explore.get_msg_id());
-		// send all except sender
-	// remember sender
+		std::list<Entry>::iterator it = neighbors.get_iterator();
+		do{
+			if ((*it).getid() != explore.get_sender().getid())
+				send_message((*it), new_explore);
+		}while(++it != neighbors.get_end());
+		// remember sender
+		first_neighbor = explore.get_sender();
 	}
 
 	// if echo counter = neighbor.count
@@ -306,12 +325,12 @@ int Node::run(){
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
 
-/* currently not implemented
+		/* currently not implemented
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
-			read(confd,&vtimestamp[i],sizeof(int));
+		read(confd,&vtimestamp[i],sizeof(int));
 		}
-*/
+		 */
 		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
