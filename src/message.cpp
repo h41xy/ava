@@ -45,3 +45,7 @@ int Message::set_msg_id(unsigned int new_msg_id){
 	this->msg_id = new_msg_id;
 	return -1;
 }
+
+int Message::set_vtimestamp(int vtimestamp[MAX_VECTORTIME_SIZE]){
+	return -1;
+}

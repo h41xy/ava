@@ -8,6 +8,8 @@
 class N_voter : public Node {
 protected:
 	Addressbook candidates;
+	// needed for ECHO alg
+	Addressbook neighbors_wo_candidates;
 
 	int candidate_count;
 	std::map<int, int> candidate_c_levels;

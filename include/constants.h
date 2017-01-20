@@ -24,6 +24,9 @@ const int ECHO_EXPLORE = 12;
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 
+// with the +1 I spare the whole offset confusion later on
+const int MAX_VECTORTIME_SIZE =  1001;
+
 const std::string WATCHER_IP = "localhost";
 const int WATCHER_PORT = 25000;
 

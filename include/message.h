@@ -16,6 +16,9 @@ protected:
 	char msg[MSG_BUFFER_SIZE];
 
 	unsigned int get_random(const unsigned int&, const unsigned int&); // min max
+
+	// vector time
+	int vtimestamp[MAX_VECTORTIME_SIZE];
 public:
 	// Myself, signalid, origin, clvl, msg
 	Message(const Entry&, const int&, const int&, const int&, const std::string&);
@@ -28,5 +31,6 @@ public:
 	const std::string get_msg() const;
 
 	int set_msg_id(unsigned int);
-};
+	int set_vtimestamp(int[MAX_VECTORTIME_SIZE]);
+	};
 #endif // MESSAGE_H

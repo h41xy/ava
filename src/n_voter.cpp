@@ -4,7 +4,8 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	candidates = Addressbook(ADDRESSFILE, get_candidate_ids(CANDIDATEFILE));
 	candidate_count  = candidates.entrycount();
 
-	eliminate_candidates_from_neighbors(neighbors, candidates);
+	neighbors_wo_candidates = neighbors;
+	eliminate_candidates_from_neighbors(neighbors_wo_candidates, candidates);
 
 	// random generator
 
@@ -19,9 +20,9 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 
 
 // I know the candidates addressbook is not needed, its in there for when the candidate ids get complex
-int N_voter::eliminate_candidates_from_neighbors(Addressbook& neighbors, Addressbook& candidates){
+int N_voter::eliminate_candidates_from_neighbors(Addressbook& neighbors_wo_candidates, Addressbook& candidates){
 	for (int i=1; i<=candidate_count; i++){
-		neighbors.remove(i);
+		neighbors_wo_candidates.remove(i);
 	}
 	return -1;
 }
@@ -71,7 +72,7 @@ int N_voter::vote_me_response(Message& inc_message){
 		// if max value is not shared with another candidate
 		if (!doublemax){
 			// send all neighbors a VOTE_ME signal with candidate origin id and my c lvl
-			std::list<Entry>::iterator it = neighbors.get_iterator();
+			std::list<Entry>::iterator it = neighbors_wo_candidates.get_iterator();
 			do{
 				// all except the sender
 				if ((*it).getid() != message.get_sender().getid()){
@@ -85,7 +86,7 @@ int N_voter::vote_me_response(Message& inc_message){
 					}
 
 				}
-			}while(++it != neighbors.get_end());
+			}while(++it != neighbors_wo_candidates.get_end());
 
 		}
 
@@ -137,10 +138,10 @@ int N_voter::run(){
 	std::cout << "[NType: VOTER]";
 	std::cout << "[State: STARTED]";
 	std::cout << "[Neighbors: ";
-	std::list<Entry>::iterator it = neighbors.get_iterator();
+	std::list<Entry>::iterator it = neighbors_wo_candidates.get_iterator();
 	do{
 		std::cout << " " << (*it).getid();
-	}while(++it != neighbors.get_end());
+	}while(++it != neighbors_wo_candidates.get_end());
 	std::cout << " ]";
 
 	std::cout << "[Clvls";
