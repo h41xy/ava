@@ -13,9 +13,6 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 		candidate_c_levels[i] = get_random(100, 0);
 	}
 
-	// ECHO Alg
-	state = white;
-	echo_counter = 0;
 }
 
 

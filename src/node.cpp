@@ -27,9 +27,6 @@ Node::Node(char* id_cstr){
 	// for the init fill all values with 0
 	std::fill(vtime.begin(),vtime.end(),0);
 
-	// ECHO Alg
-	state = white;
-	echo_counter = 0;
 }
 
 // returns a random value in the given range
@@ -256,10 +253,22 @@ int Node::sc_print_vtime(){
 }
 
 int Node::process_echo_explore(Message& explore){
-	echo_counter++;
+
+	// if echo_identifier[explorer.get_msg_id()] == empty
+	if (echo_identifier.count(explore.get_msg_id()) == 0){
+	// 	create new struct
+	// 	insert in map
+		echo_identifier[explore.get_msg_id()] = Echo_content();
+	}
+
+	// Struct current = map[msg_id]
+	Echo_content current = echo_identifier[explore.get_msg_id()];
+	// all following but with ref to the cur struct
+
+	current.echo_counter++;
 	// if state == white
-	if (state == white){
-		state = red;
+	if (current.state == white){
+		current.state = red;
 		// send explore to neighbors (except sender)
 		Message new_explore(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		new_explore.set_msg_id(explore.get_msg_id());
@@ -269,13 +278,13 @@ int Node::process_echo_explore(Message& explore){
 				send_message((*it), new_explore);
 		}while(++it != neighbors.get_end());
 		// remember sender
-		first_neighbor = explore.get_sender();
+		current.first_neighbor = explore.get_sender();
 	}
-	if (echo_counter == neighbors.entrycount()){
-		state = green;
+	if (current.echo_counter == neighbors.entrycount()){
+		current.state = green;
 		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		echo.set_msg_id(explore.get_msg_id());
-		send_message(first_neighbor, echo);
+		send_message(current.first_neighbor, echo);
 	}
 	return -1;
 }

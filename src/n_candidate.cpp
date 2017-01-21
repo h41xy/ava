@@ -6,9 +6,6 @@ N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cs
 
 	response_count = 0;
 
-	// ECHO Alg
-	state = white;
-	echo_counter = 0;
 }
 
 // Sends the VOTE_ME signal to all neighbors
@@ -36,7 +33,8 @@ int N_candidate::campaign(){
 	Message new_explorer(myself,ECHO_EXPLORE, myself.getid(), 100, "");
 	// keep track of my echo algorithms
 	echo_id_list.push_back(new_explorer.get_msg_id());
-	state = red;
+	echo_identifier[new_explorer.get_msg_id()] = Echo_content();
+	echo_identifier[new_explorer.get_msg_id()].state = red;
 	send_all_message(neighbors, new_explorer);
 	return -1;
 }
@@ -64,6 +62,46 @@ int N_candidate::init_partybuddies(){
 	// send signal to partybuddies with origin me and clvl 100
 	Message message(myself,INIT_PB,myself.getid(),100,"");
 	send_all_message(neighbors, message);
+	return -1;
+}
+
+int N_candidate::c_process_echo_explore(Message& explore){
+
+	// if echo_identifier[explorer.get_msg_id()] == empty
+	if (echo_identifier.count(explore.get_msg_id()) == 0){
+	// 	create new struct
+	// 	insert in map
+		echo_identifier[explore.get_msg_id()] = Echo_content();
+	}
+
+	// Struct current = map[msg_id]
+	Echo_content current = echo_identifier[explore.get_msg_id()];
+	// all following but with ref to the cur struct
+
+	current.echo_counter++;
+	// if state == white
+	if (current.state == white){
+		current.state = red;
+		// send explore to neighbors (except sender)
+		Message new_explore(myself, ECHO_EXPLORE, myself.getid(), 100, "");
+		new_explore.set_msg_id(explore.get_msg_id());
+		std::list<Entry>::iterator it = neighbors.get_iterator();
+		do{
+			if ((*it).getid() != explore.get_sender().getid())
+				send_message((*it), new_explore);
+		}while(++it != neighbors.get_end());
+		// remember sender
+		current.first_neighbor = explore.get_sender();
+	}
+	if (current.echo_counter == neighbors.entrycount()){
+		current.state = green;
+		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
+		echo.set_msg_id(explore.get_msg_id());
+		send_message(current.first_neighbor, echo);
+
+		// Remove the returned msg id from the stack
+		echo_id_list.erase(std::find(std::begin(echo_id_list), std::end(echo_id_list), explore.get_msg_id()));
+	}
 	return -1;
 }
 
@@ -148,7 +186,7 @@ int N_candidate::run(){
 			case ECHO_EXPLORE : {
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
-						    process_echo_explore(message);
+						    c_process_echo_explore(message);
 						    break;
 					    }
 			case INIT : {

@@ -20,6 +20,7 @@ protected:
 
 	// ECHO Alg
 	std::vector<unsigned int> echo_id_list;
+	int c_process_echo_explore(Message&);
 
 public:
 	N_candidate(char*,char*);	

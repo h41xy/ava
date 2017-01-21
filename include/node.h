@@ -11,6 +11,7 @@
 #include <cerrno>
 #include <unistd.h>
 #include <vector>
+#include <map>
 #include <random>
 
 #include "constants.h"
@@ -44,9 +45,16 @@ protected:
 
 	// ECHO alg
 	enum NodeColor { white, red, green };
-	NodeColor state;
-	int echo_counter;
-	Entry first_neighbor;
+
+	struct Echo_content {
+		Echo_content() : state(white), echo_counter(0) {}
+
+		NodeColor state;
+		int echo_counter;
+		Entry first_neighbor;
+	};
+
+	std::map<unsigned int, Echo_content> echo_identifier;
 
 	// watch out for return values
 	unsigned int get_random(const unsigned int&, unsigned int);
