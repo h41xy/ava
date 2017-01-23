@@ -30,7 +30,10 @@ protected:
 
 	// Vector clock
 	std::vector<int> vtime;
+	std::vector<int> vtime_to_terminate;
+	bool vtime_terminated;
 
+	int vtime_check_terminate(std::vector<int>&, std::vector<int>&, bool&); // above three values
 	int vtime_up(std::vector<int>&);
 
 	int send_signal(Entry&, const int&);
@@ -46,6 +49,7 @@ protected:
 	// ECHO alg
 	enum NodeColor { white, red, green };
 
+	// needed for the map to differentiate the echo signals
 	struct Echo_content {
 		Echo_content() : state(white), echo_counter(0) {}
 

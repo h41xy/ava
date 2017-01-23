@@ -5,7 +5,8 @@
 // Creates a Node object
 // Reads all addresses and in a seperate list all neighbors
 // reason to know all addresses is the exit
-Node::Node(char* id_cstr){
+// TODO rewrite constructor with initial values
+Node::Node(char* id_cstr) : vtime_terminated(false) {
 
 	// Args get passed as cstring so I am converting first to String and then to int
 	std::string id_str(id_cstr);
@@ -24,8 +25,9 @@ Node::Node(char* id_cstr){
 
 	// resize the vector to the size of the addressbook
 	vtime.resize(book.entrycount());
-	// for the init fill all values with 0
+	// for the init fill all values with 0 otherwise unexpoected behavior can happen
 	std::fill(vtime.begin(),vtime.end(),0);
+	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),0);
 
 }
 
@@ -291,10 +293,19 @@ int Node::process_echo_explore(Message& explore){
 
 // Count the vectortime up
 int Node::vtime_up(std::vector<int>& vtimestamp){
+	// -1 for offset
 	vtime[myid - 1] = vtime[myid -1] + 1;
+
+	// doesnt need offset
 	for (unsigned int i = 0; i < vtime.size(); i++){
 		vtime[i] = std::max(vtime[i], vtimestamp[i]);
 	}
+	return -1;
+}
+
+int vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
+	if (cur_vtime >= term_vtime)
+		vtime_terminated = true;
 	return -1;
 }
 
