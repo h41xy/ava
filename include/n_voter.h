@@ -22,6 +22,9 @@ protected:
 	int find_id_of_max_value(std::map<int, int>&, int&, bool&);
 
 	int init_as_partybuddy(Message&);
+
+	// ECHO Alg
+	int v_process_echo_explore(Message&);
 public:
 	N_voter(char*);
 

@@ -125,6 +125,62 @@ int N_voter::init_as_partybuddy(Message& message){
 	return -1;
 }
 
+int N_voter::v_process_echo_explore(Message& explore){
+
+	// if echo_identifier[explorer.get_msg_id()] == empty
+	if (echo_identifier.count(explore.get_msg_id()) == 0){
+	// 	create new struct
+	// 	insert in map
+		echo_identifier[explore.get_msg_id()] = Echo_content();
+	}
+
+	// Struct current = map[msg_id]
+	Echo_content current = echo_identifier[explore.get_msg_id()];
+	// all following but with ref to the cur struct
+
+	current.echo_counter++;
+	// if state == white
+	if (current.state == white){
+		current.state = red;
+		// send explore to neighbors (except sender)
+		Message new_explore(myself, ECHO_EXPLORE, explore.get_origin(), 100, "");
+		new_explore.set_msg_id(explore.get_msg_id());
+		std::list<Entry>::iterator it = neighbors.get_iterator();
+		do{
+			if ((*it).getid() != explore.get_sender().getid())
+				send_message((*it), new_explore);
+		}while(++it != neighbors.get_end());
+		// remember sender
+		current.first_neighbor = explore.get_sender();
+
+		// process clvls
+		bool doublemax = false;
+		int max_id = 0;
+		find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+
+		// if max values are unequal
+		if (!doublemax){
+			// whoever originates the echo, all but the fav candidate get --
+			for (int i=1; i<candidates.entrycount(); i++){
+				if ( i == max_id ){
+					candidate_c_levels[i]++;
+				} else {
+					candidate_c_levels[i]--;
+				}
+			}
+		}
+
+	}
+	if (current.echo_counter == neighbors.entrycount()){
+		current.state = green;
+		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
+		echo.set_msg_id(explore.get_msg_id());
+		send_message(current.first_neighbor, echo);
+	}
+
+	return -1;
+}
+
 int N_voter::run(){
 
 	// Lookup the id from argv and get my associated port
@@ -212,7 +268,7 @@ int N_voter::run(){
 			case ECHO_EXPLORE : {
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
-						    process_echo_explore(message);
+						    v_process_echo_explore(message);
 						    break;
 					    }
 			case KEEP_ON : {
