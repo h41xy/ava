@@ -5,6 +5,8 @@
 
 class N_candidate : public Node {
 protected:
+	bool initialised;
+
 	int response_count;
 	int response_border;
 

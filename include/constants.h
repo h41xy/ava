@@ -23,7 +23,7 @@ const int ECHO_EXPLORE = 12;
 
 const int SET_TERMINATE_VTIME = 13;
 const int SET_TERMINATE_VTIME_ALL = 14;
-const int INIT_TERM_TIME = 1000;
+const int INIT_TERM_TIME = 10;
 
 const int NODE_TERMINATED = 16;
 

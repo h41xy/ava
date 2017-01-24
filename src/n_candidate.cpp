@@ -1,6 +1,7 @@
 #include "n_candidate.h"
 
-N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cstr) {
+N_candidate::N_candidate(char* id_cstr, char* response_border_cstr) : Node(id_cstr) , initialised(false){
+	candidates = Addressbook(ADDRESSFILE, get_candidate_ids(CANDIDATEFILE));
 	std::string response_border_str(response_border_cstr);
 	response_border = std::stoi(response_border_str);
 
@@ -34,7 +35,7 @@ int N_candidate::vote_me(){
 int N_candidate::campaign(){
 	Message new_explorer(myself,ECHO_EXPLORE, myself.getid(), 100, "");
 	// keep track of my echo algorithms
-	echo_id_list.push_back(new_explorer.get_msg_id());
+	//echo_id_list.push_back(new_explorer.get_msg_id());
 	echo_identifier[new_explorer.get_msg_id()] = Echo_content();
 	echo_identifier[new_explorer.get_msg_id()].state = red;
 	send_all_message(neighbors, new_explorer);
@@ -79,8 +80,8 @@ int N_candidate::c_process_echo_explore(Message& explore){
 
 	// if echo_identifier[explorer.get_msg_id()] == empty
 	if (echo_identifier.count(explore.get_msg_id()) == 0){
-	// 	create new struct
-	// 	insert in map
+		// 	create new struct
+		// 	insert in map
 		echo_identifier[explore.get_msg_id()] = Echo_content();
 	}
 
@@ -111,7 +112,7 @@ int N_candidate::c_process_echo_explore(Message& explore){
 		send_message((*current).first_neighbor, echo);
 
 		// Remove the returned msg id from the stack
-		echo_id_list.erase(std::find(std::begin(echo_id_list), std::end(echo_id_list), explore.get_msg_id()));
+		//echo_id_list.erase(std::find(std::begin(echo_id_list), std::end(echo_id_list), explore.get_msg_id()));
 	}
 	return -1;
 }
@@ -147,12 +148,12 @@ int N_candidate::run(){
 		std::vector<int> vtimestamp;
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
-/*
+		/*
 		// TODO Thats so unsafe its insane...
 		for(int i = 0; i < vtimestamp.size(); i++){
-			read(confd,&vtimestamp[i],sizeof(int));
+		read(confd,&vtimestamp[i],sizeof(int));
 		}
-*/
+		 */
 		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
@@ -172,44 +173,53 @@ int N_candidate::run(){
 						   break;
 					   }
 			case CAMPAIGN : {
-// Signal is only for debugging or init reasons in the switch case
+						// Signal is only for debugging or init reasons in the switch case
 						logger_signal_in(message);
 						campaign();
-					       break;
-				       }
+						break;
+					}
 			case VOTE_ME : {
-// Signal is only for debugging or init reasons in the switch case
+					       // Signal is only for debugging or init reasons in the switch case
 					       vote_me();
 					       break;
 				       }
 			case KEEP_ON : {
-						if (vtime_terminated)
-							break;
+					       if (vtime_terminated)
+						       break;
 					       vtime_up(vtimestamp);
-						logger_signal_in(message);
+					       logger_signal_in(message);
 					       sc_keep_on();
 					       break;
 				       }
 			case NOT_YOU : {
-						if (vtime_terminated)
-							break;
+					       if (vtime_terminated)
+						       break;
 					       vtime_up(vtimestamp);
-						logger_signal_in(message);
+					       logger_signal_in(message);
 					       sc_not_you();
 					       break;
 				       }
 			case ECHO_EXPLORE : {
-						if (vtime_terminated)
-							break;
+						    if (vtime_terminated)
+							    break;
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
 						    c_process_echo_explore(message);
 						    break;
 					    }
 			case INIT : {
-						// do all init work
-						init_partybuddies();
-						vote_me();
+					    // start everything
+					    vote_me();
+					    break;
+				    }
+
+			case INIT_PB : {
+					       if(!initialised){
+						       // do all init work
+						       init_partybuddies();
+						       send_all_message(candidates,message);
+						       initialised = true;
+					       }
 						break;
 					}
 

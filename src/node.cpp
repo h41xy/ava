@@ -50,6 +50,21 @@ unsigned int Node::get_random(const unsigned int& max, unsigned int min){
 	return dis(gen);
 }
 
+std::list<int> Node::get_candidate_ids(const std::string& fname){
+	std::ifstream ifile;
+	ifile.open(fname);
+	std::list<int> candidate_ids;
+	std::string line;
+	int c_id;
+
+	while(getline(ifile,line)){
+		c_id = std::stoi(line);
+		candidate_ids.push_back(c_id);
+	}
+	ifile.close();
+	return candidate_ids;
+}
+
 // Message handling
 int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 

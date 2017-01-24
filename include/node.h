@@ -27,6 +27,8 @@ protected:
 	Addressbook neighbors;
 	int myid; //not pretty but I need it before I get myself
 
+	Addressbook candidates;
+	std::list<int> get_candidate_ids(const std::string&);
 
 	// Vector clock
 	std::vector<int> vtime;
