@@ -26,6 +26,8 @@ int N_candidate::vote_me(){
 		}
 
 	}while(++it != neighbors.get_end());
+	// vtime ++
+	vtime[myid -1] = vtime[myid - 1] ++;
 	return -1;
 }
 
@@ -36,6 +38,9 @@ int N_candidate::campaign(){
 	echo_identifier[new_explorer.get_msg_id()] = Echo_content();
 	echo_identifier[new_explorer.get_msg_id()].state = red;
 	send_all_message(neighbors, new_explorer);
+	
+	// vtime ++
+	vtime[myid -1] = vtime[myid - 1] ++;
 	return -1;
 }
 
@@ -53,6 +58,11 @@ int N_candidate::recv_response(){
 	response_count += 1;
 	if (response_count >= response_border) {
 		// TODO random start vote_me() || campaign()
+		if ( get_random(2,1) % 2 == 0 ){
+			vote_me();
+		} else {
+			campaign();
+		}
 		response_count = 0;
 	}
 	return -1;
@@ -198,6 +208,7 @@ int N_candidate::run(){
 			case INIT : {
 						// do all init work
 						init_partybuddies();
+						vote_me();
 						break;
 					}
 

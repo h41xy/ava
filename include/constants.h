@@ -25,6 +25,8 @@ const int SET_TERMINATE_VTIME = 13;
 const int SET_TERMINATE_VTIME_ALL = 14;
 const int INIT_TERM_TIME = 1000;
 
+const int NODE_TERMINATED = 16;
+
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 
