@@ -35,6 +35,7 @@ protected:
 
 	int vtime_check_terminate(std::vector<int>&, std::vector<int>&, bool&); // above three values
 	int vtime_up(std::vector<int>&);
+	int set_termination_vtime(int);
 
 	int send_signal(Entry&, const int&);
 	int send_all_signal(Addressbook,int);

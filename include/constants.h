@@ -21,6 +21,8 @@ const int INIT_PB = 11; // candidate nodes init their partybuddies with this sig
 
 const int ECHO_EXPLORE = 12;
 
+const int SET_TERMINATE_VTIME = 13;
+
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 

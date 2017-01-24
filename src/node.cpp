@@ -304,8 +304,14 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 }
 
 int Node::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
-	if (cur_vtime >= term_vtime)
+	//if (cur_vtime >= term_vtime)
+	if (cur_vtime[myid - 1] >= term_vtime[myid - 1])
 		vtime_terminated = true;
+	return -1;
+}
+
+int Node::set_termination_vtime(int term_time){
+	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),term_time);
 	return -1;
 }
 
@@ -368,6 +374,10 @@ int Node::run(){
 						   break;
 					   }
 
+			case SET_TERMINATE_VTIME : {
+						   set_termination_vtime(message.get_sender_clvl());
+						   break;
+					   }
 			default :
 					   std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
 					   break;
