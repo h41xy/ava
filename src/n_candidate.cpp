@@ -172,18 +172,24 @@ int N_candidate::run(){
 					       break;
 				       }
 			case KEEP_ON : {
+						if (vtime_terminated)
+							break;
 					       vtime_up(vtimestamp);
 						logger_signal_in(message);
 					       sc_keep_on();
 					       break;
 				       }
 			case NOT_YOU : {
+						if (vtime_terminated)
+							break;
 					       vtime_up(vtimestamp);
 						logger_signal_in(message);
 					       sc_not_you();
 					       break;
 				       }
 			case ECHO_EXPLORE : {
+						if (vtime_terminated)
+							break;
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
 						    c_process_echo_explore(message);

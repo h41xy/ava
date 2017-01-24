@@ -249,10 +249,9 @@ int N_voter::run(){
 						   sc_print_vtime();
 						   break;
 					   }
-			case CAMPAIGN : {
-						break;
-					}
 			case VOTE_ME : {
+						if (vtime_terminated)
+							break;
 					       vtime_up(vtimestamp);
 					       if (std::find(known_signals.begin(), known_signals.end(), message.get_msg_id()) != known_signals.end()){
 						       // TODO some kind of rejected message
@@ -263,22 +262,18 @@ int N_voter::run(){
 						       logger_signal_in(message);
 						       vote_me_response(message);
 					       }
+						vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 					       break;
 				       }
 			case ECHO_EXPLORE : {
+						if (vtime_terminated)
+							break;
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
 						    v_process_echo_explore(message);
+						vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 						    break;
 					    }
-			case KEEP_ON : {
-					       // Signal is only for debugging or init reasons in the switch case
-					       break;
-				       }
-			case NOT_YOU : {
-					       // Signal is only for debugging or init reasons in the switch case
-					       break;
-				       }
 			case INIT_PB : {
 					       init_as_partybuddy(message);
 					       break;

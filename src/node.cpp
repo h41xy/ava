@@ -303,7 +303,7 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 	return -1;
 }
 
-int vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
+int Node::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
 	if (cur_vtime >= term_vtime)
 		vtime_terminated = true;
 	return -1;
