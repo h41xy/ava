@@ -135,13 +135,13 @@ int N_voter::v_process_echo_explore(Message& explore){
 	}
 
 	// Struct current = map[msg_id]
-	Echo_content current = echo_identifier[explore.get_msg_id()];
+	Echo_content* current = &echo_identifier[explore.get_msg_id()];
 	// all following but with ref to the cur struct
 
-	current.echo_counter++;
+	(*current).echo_counter++;
 	// if state == white
-	if (current.state == white){
-		current.state = red;
+	if ((*current).state == white){
+		(*current).state = red;
 		// send explore to neighbors (except sender)
 		Message new_explore(myself, ECHO_EXPLORE, explore.get_origin(), 100, "");
 		new_explore.set_msg_id(explore.get_msg_id());
@@ -151,7 +151,7 @@ int N_voter::v_process_echo_explore(Message& explore){
 				send_message((*it), new_explore);
 		}while(++it != neighbors.get_end());
 		// remember sender
-		current.first_neighbor = explore.get_sender();
+		(*current).first_neighbor = explore.get_sender();
 
 		// process clvls
 		bool doublemax = false;
@@ -171,11 +171,11 @@ int N_voter::v_process_echo_explore(Message& explore){
 		}
 
 	}
-	if (current.echo_counter == neighbors.entrycount()){
-		current.state = green;
+	if ((*current).echo_counter == neighbors.entrycount()){
+		(*current).state = green;
 		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		echo.set_msg_id(explore.get_msg_id());
-		send_message(current.first_neighbor, echo);
+		send_message((*current).first_neighbor, echo);
 	}
 
 	return -1;

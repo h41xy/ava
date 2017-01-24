@@ -25,6 +25,7 @@ Node::Node(char* id_cstr) : vtime_terminated(false) {
 
 	// resize the vector to the size of the addressbook
 	vtime.resize(book.entrycount());
+	vtime_to_terminate.resize(book.entrycount());
 	// for the init fill all values with 0 otherwise unexpoected behavior can happen
 	std::fill(vtime.begin(),vtime.end(),0);
 	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),INIT_TERM_TIME);
@@ -260,7 +261,7 @@ int Node::process_echo_explore(Message& explore){
 	if (echo_identifier.count(explore.get_msg_id()) == 0){
 	// 	create new struct
 	// 	insert in map
-		echo_identifier[explore.get_msg_id()] = Echo_content();
+		echo_identifier[explore.get_msg_id()] = Echo_content(); //Echo_content is a struct
 	}
 
 	// Struct current = map[msg_id]

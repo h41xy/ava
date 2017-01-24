@@ -38,7 +38,7 @@ int N_candidate::campaign(){
 	echo_identifier[new_explorer.get_msg_id()] = Echo_content();
 	echo_identifier[new_explorer.get_msg_id()].state = red;
 	send_all_message(neighbors, new_explorer);
-	
+
 	// vtime ++
 	vtime[myid -1] = vtime[myid - 1] ++;
 	return -1;
@@ -85,13 +85,14 @@ int N_candidate::c_process_echo_explore(Message& explore){
 	}
 
 	// Struct current = map[msg_id]
-	Echo_content current = echo_identifier[explore.get_msg_id()];
+	// Watch out, this must be a pointer ; )
+	Echo_content* current = &echo_identifier[explore.get_msg_id()];
 	// all following but with ref to the cur struct
 
-	current.echo_counter++;
+	(*current).echo_counter++;
 	// if state == white
-	if (current.state == white){
-		current.state = red;
+	if ((*current).state == white){
+		(*current).state = red;
 		// send explore to neighbors (except sender)
 		Message new_explore(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		new_explore.set_msg_id(explore.get_msg_id());
@@ -101,13 +102,13 @@ int N_candidate::c_process_echo_explore(Message& explore){
 				send_message((*it), new_explore);
 		}while(++it != neighbors.get_end());
 		// remember sender
-		current.first_neighbor = explore.get_sender();
+		(*current).first_neighbor = explore.get_sender();
 	}
-	if (current.echo_counter == neighbors.entrycount()){
-		current.state = green;
+	if ((*current).echo_counter == neighbors.entrycount()){
+		(*current).state = green;
 		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		echo.set_msg_id(explore.get_msg_id());
-		send_message(current.first_neighbor, echo);
+		send_message((*current).first_neighbor, echo);
 
 		// Remove the returned msg id from the stack
 		echo_id_list.erase(std::find(std::begin(echo_id_list), std::end(echo_id_list), explore.get_msg_id()));
