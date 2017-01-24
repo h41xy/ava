@@ -378,6 +378,11 @@ int Node::run(){
 						   set_termination_vtime(message.get_sender_clvl());
 						   break;
 					   }
+			case SET_TERMINATE_VTIME_ALL : {
+						   set_termination_vtime(message.get_sender_clvl());
+						send_all_message(book, message);
+						   break;
+					   }
 			default :
 					   std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
 					   break;
