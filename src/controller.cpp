@@ -35,10 +35,10 @@ int main(int argc, char* argv[]){
 		std::stringstream ss;
 		ss << "Welches Signal?" << std::endl;
 		ss << EXIT_ALL << ") Exit all nodes." << std::endl;
-		// TODO send msg, not just signal
-		ss << RECV_MSG << ") Send a text message to this node." << std::endl;
-		ss << SOCIALISE << ") Send ID to neighbors." << std::endl;
-		ss << RUMOR << ") Spread a rumor." << std::endl;
+		ss << VOTE_ME << ") starts a vote me only if the addressant is a candidate.\n";
+		ss << CAMPAIGN << ") starts a campaign only if the addressant is a candidate.\n";
+		ss << INIT << ") inits the network.\n";
+		ss << SET_TERMINATE_VTIME_ALL << ") sets a termination time for all.\n";
 		std::cout << ss.str();
 		std::cin >> signal;
 	}

@@ -27,7 +27,7 @@ Node::Node(char* id_cstr) : vtime_terminated(false) {
 	vtime.resize(book.entrycount());
 	// for the init fill all values with 0 otherwise unexpoected behavior can happen
 	std::fill(vtime.begin(),vtime.end(),0);
-	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),0);
+	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),INIT_TERM_TIME);
 
 }
 
