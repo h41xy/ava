@@ -330,10 +330,11 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 int Node::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
 	//if (cur_vtime >= term_vtime)
 	if (cur_vtime[myid - 1] >= term_vtime[myid - 1]){
-		vtime_terminated = true;
 		// TODO no time to explain, get to da chopper
 		Message term_me(myself,NODE_TERMINATED,-1,-1,"");
-		logger_signal_out(myself, term_me, true); 
+		if (!vtime_terminated)
+			logger_signal_out(myself, term_me, true); 
+		vtime_terminated = true;
 	}
 	return -1;
 }

@@ -178,6 +178,8 @@ int N_voter::v_process_echo_explore(Message& explore){
 		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		echo.set_msg_id(explore.get_msg_id());
 		send_message((*current).first_neighbor, echo);
+		// reset map entry
+		(*current) = Echo_content();
 	}
 
 	return -1;
@@ -269,6 +271,7 @@ int N_voter::run(){
 				       }
 			case ECHO_EXPLORE : {
 							// cant break here on vtime terminated reached, the network gets a deadlock
+							// clvl changes get ignored in the following methods
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
 						    v_process_echo_explore(message);

@@ -89,13 +89,13 @@ then
 	do
 		echo "starting candidate node with ID $i..."
 		#urxvt -e ./bin/node_exec $i $RCOUNT &
-		./bin/node_exec $i $RCOUNT &
+		./bin/node_exec $i $RCOUNT  >> doc/candidate.log &
 	done
 
 	for (( i=(($CANDIDATES+1)); i<=$NODES; i++))
 	do
 		echo "Starting voter node with ID $i..."
 		#urxvt -e ./bin/node_exec $i &
-		./bin/node_exec $i &
+		./bin/node_exec $i  >> doc/voter.log &
 	done
 fi
