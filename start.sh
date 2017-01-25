@@ -69,8 +69,8 @@ do
 done
 
 $GRAPHGEN $NODES $CANDIDATES $PBUDDIES $FRIENDS
-dot -Tpng $GRAPHFILE > $GRAPHPNG
-feh -. $GRAPHPNG &
+#dot -Tpng $GRAPHFILE > $GRAPHPNG
+#feh -. $GRAPHPNG &
 
 if [ -z ${6+x} ]
 then

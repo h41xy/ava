@@ -8,6 +8,18 @@ Message::Message(const Entry& sender, const int& signal_id, const int& origin, c
 {
 	std::strcpy(this->msg, msg.c_str());
 	msg_id = get_random(std::numeric_limits<unsigned int>::min(), std::numeric_limits<unsigned int>::max());
+	std::fill(std::begin(vtimestamp),std::end(vtimestamp),0);
+}
+
+Message::Message(const Entry& sender, const int& signal_id, const int& origin, const int& clvl, const std::string& msg, int new_vtimestamp[MAX_VECTORTIME_SIZE])
+	: sender(sender)
+	, signal_id(signal_id)
+	, origin(origin)
+	  , clvl(clvl)
+{
+	std::strcpy(this->msg, msg.c_str());
+	msg_id = get_random(std::numeric_limits<unsigned int>::min(), std::numeric_limits<unsigned int>::max());
+	set_vtimestamp(new_vtimestamp);
 }
 
 unsigned int Message::get_random(const unsigned int& min, const unsigned int& max){
@@ -46,6 +58,17 @@ int Message::set_msg_id(unsigned int new_msg_id){
 	return -1;
 }
 
-int Message::set_vtimestamp(int vtimestamp[MAX_VECTORTIME_SIZE]){
+int Message::set_vtimestamp(std::vector<int> inc_vtimestamp){
+	for (unsigned int i = 0; i < inc_vtimestamp.size(); i++){
+		vtimestamp[i] = inc_vtimestamp[i];
+	}
+	return-1;
+}
+
+int Message::set_vtimestamp(int inc_vtimestamp[MAX_VECTORTIME_SIZE]){
+	// TODO dynamic array size of inc vtimestamp as border, think about new init of all arrays
+	for (int i = 0; i < MAX_VECTORTIME_SIZE; i++) {
+		vtimestamp[i] = inc_vtimestamp[i];
+	}
 	return -1;
 }

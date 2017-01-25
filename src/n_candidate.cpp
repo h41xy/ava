@@ -174,12 +174,14 @@ int N_candidate::run(){
 					   }
 			case CAMPAIGN : {
 						// Signal is only for debugging or init reasons in the switch case
+						    vtime_up(vtimestamp);
 						logger_signal_in(message);
 						campaign();
 						break;
 					}
 			case VOTE_ME : {
 					       // Signal is only for debugging or init reasons in the switch case
+						    vtime_up(vtimestamp);
 					       vote_me();
 					       break;
 				       }

@@ -129,8 +129,8 @@ int N_voter::v_process_echo_explore(Message& explore){
 
 	// if echo_identifier[explorer.get_msg_id()] == empty
 	if (echo_identifier.count(explore.get_msg_id()) == 0){
-	// 	create new struct
-	// 	insert in map
+		// 	create new struct
+		// 	insert in map
 		echo_identifier[explore.get_msg_id()] = Echo_content();
 	}
 
@@ -153,23 +153,25 @@ int N_voter::v_process_echo_explore(Message& explore){
 		// remember sender
 		(*current).first_neighbor = explore.get_sender();
 
-		// process clvls
-		bool doublemax = false;
-		int max_id = 0;
-		find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+		if(!vtime_terminated){
+			// process clvls
+			bool doublemax = false;
+			int max_id = 0;
+			find_id_of_max_value(candidate_c_levels, max_id, doublemax);
 
-		// if max values are unequal
-		if (!doublemax){
-			// whoever originates the echo, all but the fav candidate get --
-			for (int i=1; i<candidates.entrycount(); i++){
-				if ( i == max_id ){
-					candidate_c_levels[i]++;
-				} else {
-					candidate_c_levels[i]--;
+			// if max values are unequal
+			if (!doublemax){
+				// whoever originates the echo, all but the fav candidate get --
+				for (int i=1; i<candidates.entrycount(); i++){
+					if ( i == max_id ){
+						candidate_c_levels[i]++;
+					} else {
+						candidate_c_levels[i]--;
+					}
 				}
 			}
-		}
 
+		}
 	}
 	if ((*current).echo_counter == neighbors.entrycount()){
 		(*current).state = green;
@@ -250,9 +252,9 @@ int N_voter::run(){
 						   break;
 					   }
 			case VOTE_ME : {
+					       vtime_up(vtimestamp);
 						if (vtime_terminated)
 							break;
-					       vtime_up(vtimestamp);
 					       if (std::find(known_signals.begin(), known_signals.end(), message.get_msg_id()) != known_signals.end()){
 						       // TODO some kind of rejected message
 						       logger_signal_in(message);
@@ -266,8 +268,7 @@ int N_voter::run(){
 					       break;
 				       }
 			case ECHO_EXPLORE : {
-						if (vtime_terminated)
-							break;
+							// cant break here on vtime terminated reached, the network gets a deadlock
 						    vtime_up(vtimestamp);
 						    logger_signal_in(message);
 						    v_process_echo_explore(message);

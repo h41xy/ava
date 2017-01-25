@@ -143,8 +143,10 @@ int Node::send_all_signal(Addressbook receivers, int signalid){
 
 // Sends a signal to the given Entry
 int Node::send_signal(Entry& receiver, const int& signalid){
+	vtime_up(vtime);
 	Sender sender(receiver.getip(),receiver.getport());
 	Message message(myself, signalid, 0, 0, "");
+	message.set_vtimestamp(vtime);
 	if(sender.get_connection() != -1){
 		// TODO rework message class
 		sender.send_message(message);
@@ -153,6 +155,7 @@ int Node::send_signal(Entry& receiver, const int& signalid){
 	} else {
 		logger_signal_out(receiver,message,false);
 	}
+	vtime_up(vtime);
 	return -1;
 }
 
@@ -161,6 +164,22 @@ int Node::send_all_message(Addressbook& receivers, Message& message){
 	do{
 		send_message((*it), message);
 	}while(++it != receivers.get_end());
+	vtime_up(vtime);
+	return -1;
+}
+
+int Node::send_message(Entry& receiver, Message& message){
+	vtime_up(vtime);
+	message.set_vtimestamp(vtime);
+	Sender sender(receiver.getip(),receiver.getport());
+	if(sender.get_connection() != -1){
+		// TODO rework message class
+		sender.send_message(message);
+		logger_signal_out(receiver,message,true);
+		sender.close_connection();
+	} else {
+		logger_signal_out(receiver,message,false);
+	}
 	return -1;
 }
 
@@ -183,20 +202,7 @@ int Node::forward_message(Entry& receiver, Message& message){
 	} else {
 		logger_signal_out(receiver,message,false);
 	}
-
-	return -1;
-}
-
-int Node::send_message(Entry& receiver, Message& message){
-	Sender sender(receiver.getip(),receiver.getport());
-	if(sender.get_connection() != -1){
-		// TODO rework message class
-		sender.send_message(message);
-		logger_signal_out(receiver,message,true);
-		sender.close_connection();
-	} else {
-		logger_signal_out(receiver,message,false);
-	}
+	vtime_up(vtime);
 	return -1;
 }
 
@@ -263,6 +269,7 @@ int Node::sc_exit_all(Message& message, bool& listen_more){
 
 // Case PRINT_VTIME
 int Node::sc_print_vtime(){
+	// TODO make it logger compatible
 	for (unsigned int i = 0; i < vtime.size(); i++){
 		std::cout << vtime[i] << " ";
 	}
@@ -313,6 +320,7 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 	vtime[myid - 1] = vtime[myid -1] + 1;
 
 	// doesnt need offset
+	// sets the current vtime to the max of current and received vtime
 	for (unsigned int i = 0; i < vtime.size(); i++){
 		vtime[i] = std::max(vtime[i], vtimestamp[i]);
 	}
@@ -369,12 +377,6 @@ int Node::run(){
 		vtimestamp.resize(book.entrycount());
 		std::fill(vtimestamp.begin(),vtimestamp.end(),0);
 
-		/* currently not implemented
-		// TODO Thats so unsafe its insane...
-		for(int i = 0; i < vtimestamp.size(); i++){
-		read(confd,&vtimestamp[i],sizeof(int));
-		}
-		 */
 		switch(message.get_signal_id()){
 
 			case EXIT_NODE : {
@@ -395,10 +397,12 @@ int Node::run(){
 					   }
 
 			case SET_TERMINATE_VTIME : {
+						vtime_up(vtimestamp);
 						   set_termination_vtime(message.get_sender_clvl());
 						   break;
 					   }
 			case SET_TERMINATE_VTIME_ALL : {
+						vtime_up(vtimestamp);
 						   set_termination_vtime(message.get_sender_clvl());
 						send_all_message(book, message);
 						   break;

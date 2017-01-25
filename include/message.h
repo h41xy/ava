@@ -22,6 +22,7 @@ protected:
 public:
 	// Myself, signalid, origin, clvl, msg
 	Message(const Entry&, const int&, const int&, const int&, const std::string&);
+	Message(const Entry&, const int&, const int&, const int&, const std::string&, int[MAX_VECTORTIME_SIZE]);
 
 	const Entry& get_sender() const;
 	const int& get_signal_id() const;
@@ -32,5 +33,6 @@ public:
 
 	int set_msg_id(unsigned int);
 	int set_vtimestamp(int[MAX_VECTORTIME_SIZE]);
+	int set_vtimestamp(std::vector<int>);
 	};
 #endif // MESSAGE_H
