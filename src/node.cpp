@@ -68,6 +68,8 @@ std::list<int> Node::get_candidate_ids(const std::string& fname){
 // Message handling
 int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 
+	int signal_id = message.get_signal_id();
+
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	std::time_t t = std::time(nullptr);
@@ -78,6 +80,9 @@ int Node::logger_signal_out(Entry& receiver, Message& message, const bool& conne
 	ss << std::dec << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
 	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
+	if (signal_id == NODE_TERMINATED){
+		ss << "[C_ID:LVL " << message.get_origin() << ":" << message.get_sender_clvl() << " ]";
+	}
 	ss << "[Send: ";
 
 	if (connection) {
@@ -330,10 +335,11 @@ int Node::vtime_up(std::vector<int>& vtimestamp){
 int Node::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
 	//if (cur_vtime >= term_vtime)
 	if (cur_vtime[myid - 1] >= term_vtime[myid - 1]){
-		// TODO no time to explain, get to da chopper
-		Message term_me(myself,NODE_TERMINATED,-1,-1,"");
-		if (!vtime_terminated)
+		if (!vtime_terminated){
+			// TODO no time to explain, get to da chopper
+			Message term_me(myself,NODE_TERMINATED,-1,-1,"");
 			logger_signal_out(myself, term_me, true); 
+		}
 		vtime_terminated = true;
 	}
 	return -1;

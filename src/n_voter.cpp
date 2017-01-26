@@ -185,6 +185,25 @@ int N_voter::v_process_echo_explore(Message& explore){
 	return -1;
 }
 
+
+int N_voter::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>& term_vtime, bool& vtime_terminated){
+	//if (cur_vtime >= term_vtime)
+	if (cur_vtime[myid - 1] >= term_vtime[myid - 1]){
+		if (!vtime_terminated){
+			// TODO no time to explain, get to da chopper
+			std::map<int, int>::iterator max_v_it = std::max_element(candidate_c_levels.begin(), candidate_c_levels.end());
+			int max = max_v_it->second;
+			int max_id = 0;
+			bool doublemax = false;
+			find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+			Message term_me(myself,NODE_TERMINATED,max_id,max,"");
+			logger_signal_out(myself, term_me, true); 
+		}
+		vtime_terminated = true;
+	}
+	return -1;
+}
+
 int N_voter::run(){
 
 	// Lookup the id from argv and get my associated port

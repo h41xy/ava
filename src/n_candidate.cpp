@@ -33,12 +33,13 @@ int N_candidate::vote_me(){
 }
 
 int N_candidate::campaign(){
-	Message new_explorer(myself,ECHO_EXPLORE, myself.getid(), 100, "");
+	Message new_explorer(Entry(0,"0.0.0.0",0),ECHO_EXPLORE, myself.getid(), 100, "");
+	send_message(myself, new_explorer);
 	// keep track of my echo algorithms
 	//echo_id_list.push_back(new_explorer.get_msg_id());
-	echo_identifier[new_explorer.get_msg_id()] = Echo_content();
-	echo_identifier[new_explorer.get_msg_id()].state = red;
-	send_all_message(neighbors, new_explorer);
+	//echo_identifier[new_explorer.get_msg_id()] = Echo_content();
+	//echo_identifier[new_explorer.get_msg_id()].state = red;
+	//send_all_message(neighbors, new_explorer);
 
 	// vtime ++
 	vtime[myid -1] = vtime[myid - 1] ++;

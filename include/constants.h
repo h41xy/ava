@@ -27,6 +27,8 @@ const int INIT_TERM_TIME = 10;
 
 const int NODE_TERMINATED = 16;
 
+const int TERMINATE_CLVL = 17;
+
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 

@@ -21,6 +21,8 @@ protected:
 	int vote_me_response(Message&);
 	int find_id_of_max_value(std::map<int, int>&, int&, bool&);
 
+	int vtime_check_terminate(std::vector<int>&, std::vector<int>&, bool&); // above three values
+
 	int init_as_partybuddy(Message&);
 
 	// ECHO Alg
