@@ -81,7 +81,7 @@ int Node::logger_signal_out(Entry& receiver, Message& message, const bool& conne
 	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
 	if (signal_id == NODE_TERMINATED){
-		ss << "[C_ID:LVL " << message.get_origin() << ":" << message.get_sender_clvl() << " ]";
+		ss << "[C_ID:LVL " << message.get_msg() << " ]";
 	}
 	ss << "[Send: ";
 

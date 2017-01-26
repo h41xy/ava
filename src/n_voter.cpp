@@ -195,8 +195,10 @@ int N_voter::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>
 			int max = max_v_it->second;
 			int max_id = 0;
 			bool doublemax = false;
+			std::ostringstream os;
+			os << "1:" << candidate_c_levels[1] << " " << "2:" << candidate_c_levels[2];
 			find_id_of_max_value(candidate_c_levels, max_id, doublemax);
-			Message term_me(myself,NODE_TERMINATED,max_id,max,"");
+			Message term_me(myself,NODE_TERMINATED,max_id,max,os.str());
 			logger_signal_out(myself, term_me, true); 
 		}
 		vtime_terminated = true;
