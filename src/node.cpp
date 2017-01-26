@@ -169,7 +169,6 @@ int Node::send_all_message(Addressbook& receivers, Message& message){
 	do{
 		send_message((*it), message);
 	}while(++it != receivers.get_end());
-	vtime_up(vtime);
 	return -1;
 }
 

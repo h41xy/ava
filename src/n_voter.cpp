@@ -75,6 +75,7 @@ int N_voter::vote_me_response(Message& inc_message){
 				if ((*it).getid() != message.get_sender().getid()){
 					Sender sender((*it).getip(),(*it).getport());
 					if((sender.get_connection()) != -1){
+						vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 						sender.send_message(message);
 						logger_signal_out((*it),message,true);
 						sender.close_connection();
@@ -91,7 +92,9 @@ int N_voter::vote_me_response(Message& inc_message){
 		// else send him a NOT_YOU
 		// TODO let this method return a pointer
 		Entry candidate_entry = candidates.getbyid(candidate_id);
+		vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 		send_signal(candidate_entry, NOT_YOU);
+		vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 	}
 	//TODO msg in an out
 	return -1;
@@ -141,18 +144,6 @@ int N_voter::v_process_echo_explore(Message& explore){
 	(*current).echo_counter++;
 	// if state == white
 	if ((*current).state == white){
-		(*current).state = red;
-		// send explore to neighbors (except sender)
-		Message new_explore(myself, ECHO_EXPLORE, explore.get_origin(), 100, "");
-		new_explore.set_msg_id(explore.get_msg_id());
-		std::list<Entry>::iterator it = neighbors.get_iterator();
-		do{
-			if ((*it).getid() != explore.get_sender().getid())
-				send_message((*it), new_explore);
-		}while(++it != neighbors.get_end());
-		// remember sender
-		(*current).first_neighbor = explore.get_sender();
-
 		if(!vtime_terminated){
 			// process clvls
 			bool doublemax = false;
@@ -172,11 +163,26 @@ int N_voter::v_process_echo_explore(Message& explore){
 			}
 
 		}
+		(*current).state = red;
+		// send explore to neighbors (except sender)
+		Message new_explore(myself, ECHO_EXPLORE, explore.get_origin(), 100, "");
+		new_explore.set_msg_id(explore.get_msg_id());
+		std::list<Entry>::iterator it = neighbors.get_iterator();
+		do{
+			if ((*it).getid() != explore.get_sender().getid()){
+				vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
+				send_message((*it), new_explore);
+			}
+		}while(++it != neighbors.get_end());
+		// remember sender
+		(*current).first_neighbor = explore.get_sender();
+
 	}
 	if ((*current).echo_counter == neighbors.entrycount()){
 		(*current).state = green;
 		Message echo(myself, ECHO_EXPLORE, myself.getid(), 100, "");
 		echo.set_msg_id(explore.get_msg_id());
+		vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 		send_message((*current).first_neighbor, echo);
 		// reset map entry
 		(*current) = Echo_content();
