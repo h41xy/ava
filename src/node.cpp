@@ -68,21 +68,16 @@ std::list<int> Node::get_candidate_ids(const std::string& fname){
 // Message handling
 int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 
-	int signal_id = message.get_signal_id();
-
 	Sender logger(LOGGER_IP, LOGGER_PORT);
-
-	std::time_t t = std::time(nullptr);
 
 	ss << "[NODE_ID: " << myid << " ]";
 	ss << "[MType: OUT]";
 	ss << "[M_ID: " << std::hex << message.get_msg_id() << " ]";
-	ss << std::dec << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
-	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
+	ss << std::dec;
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
-	if (signal_id == NODE_TERMINATED){
-		ss << message.get_msg();
-	}
+	ss << "[V_TIME: " << vtime[myid - 1] << " ]";
+	ss << "[Recv IP/Port: " << receiver.getip() << "/" << receiver.getport() << " ]";
+	ss << message.get_msg();
 	ss << "[Send: ";
 
 	if (connection) {
@@ -108,14 +103,14 @@ int Node::logger_signal_in(Message& message){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
-	std::time_t t = std::time(nullptr);
-
 	ss << "[NODE_ID: " << myid << " ]";
 	ss << "[MType: IN]";
 	ss << "[M_ID: " << std::hex << message.get_msg_id() << " ]";
-	ss << std::dec << std::put_time(std::localtime(&t), "[T: %H:%M:%S ]");
-	ss << "[SenderID: " << message.get_sender().getid() << " ]";
+	ss << std::dec;
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
+	ss << "[V_TIME: " << vtime[myid - 1] << " ]";
+	ss << "[SenderID: " << message.get_sender().getid() << " ]";
+	ss << message.get_msg();
 
 	if (logger.get_connection() != -1) {
 		ss << std::endl;

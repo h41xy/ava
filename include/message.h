@@ -32,6 +32,7 @@ public:
 	const std::string get_msg() const;
 
 	int set_msg_id(unsigned int);
+	int set_msg(std::string);
 	int set_vtimestamp(int[MAX_VECTORTIME_SIZE]);
 	int set_vtimestamp(std::vector<int>);
 	};

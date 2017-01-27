@@ -64,7 +64,8 @@ int N_voter::vote_me_response(Message& inc_message){
 		// send him a KEEP_ON
 		// TODO let this method return a pointer
 		Entry candidate_entry = candidates.getbyid(candidate_id);
-		send_signal(candidate_entry, KEEP_ON);
+		Message answer(myself, KEEP_ON, myid, 0, "");
+		send_message(candidate_entry,answer);
 
 		// if max value is not shared with another candidate
 		if (!doublemax){
@@ -93,7 +94,9 @@ int N_voter::vote_me_response(Message& inc_message){
 		// TODO let this method return a pointer
 		Entry candidate_entry = candidates.getbyid(candidate_id);
 		vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
-		send_signal(candidate_entry, NOT_YOU);
+		Message answer(myself, NOT_YOU, myid, 0, "");
+		send_message(candidate_entry,answer);
+		//send_signal(candidate_entry, NOT_YOU);
 		vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
 	}
 	//TODO msg in an out
@@ -171,6 +174,7 @@ int N_voter::v_process_echo_explore(Message& explore){
 		do{
 			if ((*it).getid() != explore.get_sender().getid()){
 				vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
+				new_explore.set_msg(std::to_string(vtime[myid-1]));
 				send_message((*it), new_explore);
 			}
 		}while(++it != neighbors.get_end());

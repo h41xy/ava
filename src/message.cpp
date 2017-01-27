@@ -58,6 +58,11 @@ int Message::set_msg_id(unsigned int new_msg_id){
 	return -1;
 }
 
+int Message::set_msg(std::string new_msg){
+	std::strcpy(this->msg, new_msg.c_str());
+	return -1;	
+}
+
 int Message::set_vtimestamp(std::vector<int> inc_vtimestamp){
 	for (unsigned int i = 0; i < inc_vtimestamp.size(); i++){
 		vtimestamp[i] = inc_vtimestamp[i];
