@@ -11,8 +11,9 @@
 
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
-	int port = -1, signal = -1, watcher = -1;
+	int port = -1, signal = -1, watcher = -1, logger = -1;
 	bool start_watcher = false;
+	bool start_logger = false;
 	if( argc >= 2 ){
 	std::string port_str(argv[1]);
 	port = std::stoi(port_str);
@@ -26,6 +27,12 @@ int main(int argc, char* argv[]){
 		watcher = std::stoi(watcher_str);
 		if(watcher == 0)
 			start_watcher = true;
+	}
+	if(argc >= 5){
+		std::string logger_str(argv[4]);
+		logger = std::stoi(logger_str);
+		if(logger == 0)
+			start_logger = true;
 	}
 	if (port == -1) {
 		std::cout << "Welcher Port? ";
@@ -49,21 +56,43 @@ int main(int argc, char* argv[]){
 		if(i==0)
 			start_watcher = true;
 	}
-	Listener listener(WATCHER_PORT);
+	if (logger == -1){
+		int i = -1;
+		std::cout << "Start logger? 0 is yes ";
+		std::cin >> i;
+		if(i==0)
+			start_logger = true;
+	}
+	if (start_watcher && start_logger){
+		std::cout << "You can't start both, logger and watcher, in the same process.\n";
+		return -1;
+	}
+	Listener* listenerp;
+	Listener listener_watcher(WATCHER_PORT);
+	Listener listener_logger(LOGGER_PORT);
+	
 	if(start_watcher){
-		listener.create_and_listen();
+		listenerp = &listener_watcher;
+		(*listenerp).create_and_listen();
+		std:: cout << "Watcher started on Port " << WATCHER_PORT << "\n";
+	}
+	if(start_logger){
+		listenerp = &listener_logger;
+		(*listenerp).create_and_listen();
+		std:: cout << "Logger started on Port " << LOGGER_PORT << "\n";
 	}
 	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
 	Sender sender("localhost",port);
-	sender.get_connection();
-	sender.send_message(Message(Entry(0,"0.0.0.0",25000), signal, 0, 0, ""));
+	if(sender.get_connection() == 0){
+		sender.send_message(Message(Entry(0,"0.0.0.0",25000), signal, 0, 0, ""));
+	}
 	sender.close_connection();
-	if(start_watcher){
+	if(start_watcher || start_logger){
 		int confd, msg_id, believing_counter = 0;
 		bool listen_more = true;
 		std::ostringstream rumorresponses;
 		do{ 
-			confd = listener.accept_connection();
+			confd = (*listenerp).accept_connection();
 
 			Message message(Entry(0,"",0),-1,-1,-1,"");
 			read(confd,&message,sizeof(message));
@@ -85,9 +114,14 @@ int main(int argc, char* argv[]){
 			close(confd);
 		}while(listen_more);
 		std::ofstream ofs;
-		ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
+		if(start_watcher){
+			ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
+		}
+		if(start_logger){
+			ofs.open(LOGGERFILE, std::ios_base::app | std::ios_base::out);
+		}
 		ofs << rumorresponses.str();
 		ofs.close();
-		listener.close_socket();
+		(*listenerp).close_socket();
 	}
 }

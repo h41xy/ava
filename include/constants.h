@@ -39,12 +39,13 @@ const std::string WATCHER_IP = "localhost";
 const int WATCHER_PORT = 25000;
 
 const std::string LOGGER_IP = "localhost";
-const int LOGGER_PORT = 25000;
+const int LOGGER_PORT = 24999;
 
 
 const std::string ADDRESSFILE = "doc/addresses.txt";
+const std::string CANDIDATEFILE = "doc/candidates.txt";
 const std::string GRAPHFILE = "doc/graph.txt";
 const std::string RESULTFILE = "doc/results.txt";
-const std::string CANDIDATEFILE = "doc/candidates.txt";
+const std::string LOGGERFILE = "doc/election.log";
 
 #endif // CONSTANTS_H
