@@ -6,19 +6,25 @@ PROTDIR := prototype
 
 PRGNAME_NODE := node_exec
 TARGET_NODE := $(BINDIR)/$(PRGNAME_NODE)
+
 PRGNAME_CTRL := controller
 TARGET_CTRL := $(BINDIR)/$(PRGNAME_CTRL)
+
 PRGNAME_GG := graphgen
 TARGET_GG := $(BINDIR)/$(PRGNAME_GG)
+
 PRGNAME_USAGG := usa_graphgen
 TARGET_USAGG := $(BINDIR)/$(PRGNAME_USAGG)
+
+PRGNAME_WATCHER := watcher
+TARGET_WATCHER := $(BINDIR)/$(PRGNAME_WATCHER)
 
 TARGETS := $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG)
 
 CFLAGS := -Wall
 INC := -I include
 
-MODULES_NODE := node_exec node n_candidate n_voter addressbook entry listener sender message watcher
+MODULES_NODE := node_exec node n_candidate n_voter addressbook entry listener sender message 
 OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
 MODULES_CTRL := controller sender listener entry message
@@ -29,6 +35,9 @@ OBJECTS_GG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_GG))
 
 MODULES_USAGG := usa_graph
 OBJECTS_USAGG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_USAGG))
+
+MODULES_WATCHER := exec_watcher watcher node
+OBJECTS_WATCHER := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_WATCHER))
 
 all: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG) $(TARGET_USAGG)
 
