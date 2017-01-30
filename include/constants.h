@@ -51,5 +51,6 @@ const std::string CANDIDATEFILE = "doc/candidates.txt";
 const std::string GRAPHFILE = "doc/graph.txt";
 const std::string RESULTFILE = "doc/results.txt";
 const std::string LOGGERFILE = "doc/election.log";
+const std::string WATCHERFILE = "doc/election_prediction.log";
 
 #endif // CONSTANTS_H

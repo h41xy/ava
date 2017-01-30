@@ -113,5 +113,10 @@ int Watcher::process_all_responses(){
 
 int Watcher::write_to_file(std::string result){
 	// all file writeing logic for a string
+	std::ofstream ofs;
+	ofs.open(WATCHERFILE, std::ios_base::app | std::ios_base::out);
+	ofs << result;
+	ofs.close();
+
 	return -1;
 }
