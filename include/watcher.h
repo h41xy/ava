@@ -24,7 +24,7 @@ protected:
 	int process_all_responses();
 
 	// write the result to file
-	int write_to_file(std::string&);
+	int write_to_file(std::string);
 
 public:
 	// Get the char* to WATCHER_ID constant

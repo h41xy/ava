@@ -88,7 +88,7 @@ int Watcher::request_response_on_vtime(int vtime_to_respond){
 int Watcher::process_recvd_response(Message& message){
 	// check if response is successful
 	// get candidate id and increase clvl by recvd value
-	candidates_c_sums[message.get_origin() - 1] += message.get_sender_clvl();
+	candidates_c_sums[message.get_origin() - 1]++;
 	// succesful response decrements responsecounter
 	responsecounter--;
 	// if responsecounter reaches 0
@@ -99,14 +99,19 @@ int Watcher::process_recvd_response(Message& message){
 }
 
 int Watcher::process_all_responses(){
-	// see which is higher
-	// pretty up
 	// construct string
 	//	-> write_to_file(std::string);
+	std::ostringstream os;
+	if (candidates_c_sums[0] < candidates_c_sums[1]){
+		os << "Candidate 1 won with " << candidates_c_sums[0] << " Votes.\n";
+	} else {
+		os << "Candidate 2 won with " << candidates_c_sums[1] << " Votes.\n";
+	}
+	write_to_file(os.str());
 	return -1;
 }
 
-int Watcher::write_to_file(std::string& result){
+int Watcher::write_to_file(std::string result){
 	// all file writeing logic for a string
 	return -1;
 }
