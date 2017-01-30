@@ -28,7 +28,7 @@ protected:
 
 public:
 	// Get the char* to WATCHER_ID constant
-	Watcher(char*);
+	Watcher(char*, int);
 
 	int run();
 };

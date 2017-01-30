@@ -1,12 +1,12 @@
 #include "watcher.h"
 
-Watcher::Watcher(char* id_cstr) : Node(id_cstr) {
+Watcher::Watcher(char* id_cstr, int vtime_to_respond) : Node(id_cstr) {
 
 	// init starting values
 	myid = 24000;
 	clear_stringstream(ss);
 
-	vtime_to_respond = 0;
+	this->vtime_to_respond = vtime_to_respond;
 	responsecounter =  0;
 }
 

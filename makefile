@@ -36,13 +36,13 @@ OBJECTS_GG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_GG))
 MODULES_USAGG := usa_graph
 OBJECTS_USAGG := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_USAGG))
 
-MODULES_WATCHER := exec_watcher watcher node
+MODULES_WATCHER := exec_watcher watcher node entry listener sender message addressbook
 OBJECTS_WATCHER := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_WATCHER))
 
-all: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG) $(TARGET_USAGG)
+all: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG) $(TARGET_USAGG) $(TARGET_WATCHER)
 
 debug: CFLAGS += -g
-debug: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG) $(TARGET_USAGG)
+debug: $(TARGET_NODE) $(TARGET_CTRL) $(TARGET_GG) $(TARGET_USAGG) $(TARGET_WATCHER)
 
 $(PRGNAME_NODE): $(TARGET_NODE)
 $(TARGET_NODE): $(OBJECTS_NODE) | $(BINDIR)
@@ -58,6 +58,10 @@ $(TARGET_GG): $(OBJECTS_GG) | $(BINDIR)
 
 $(PRGNAME_USAGG): $(TARGET_USAGG)
 $(TARGET_USAGG): $(OBJECTS_USAGG) | $(BINDIR)
+	$(CC) $^ -o $@
+
+$(PRGNAME_WATCHER): $(TARGET_WATCHER)
+$(TARGET_WATCHER): $(OBJECTS_WATCHER) | $(BINDIR)
 	$(CC) $^ -o $@
 
 $(BINDIR):

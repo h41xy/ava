@@ -32,3 +32,7 @@ sysctl -a | grep somaxconn
 # To increase the number of backlog connections
 sysctl -w net.core.somaxconn=N
 # where N is your wished backlog queue.
+
+# Example
+# creates and starts the network then sleeps 1 sec to wait buildup and continues with the init signal
+./start 50 2 5 10 25 y && sleep 1 && ./bin/controller 25001 11 1
