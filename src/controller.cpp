@@ -11,8 +11,7 @@
 
 // Creates a Sender object on a given port and sends a signal to it (an int as binary)
 int main(int argc, char* argv[]){
-	int port = -1, signal = -1, watcher = -1, logger = -1;
-	bool start_watcher = false;
+	int port = -1, signal = -1, logger = -1;
 	bool start_logger = false;
 	if( argc >= 2 ){
 	std::string port_str(argv[1]);
@@ -23,13 +22,7 @@ int main(int argc, char* argv[]){
 		signal = std::stoi(signal_str);
 	}
 	if(argc >= 4){
-		std::string watcher_str(argv[3]);
-		watcher = std::stoi(watcher_str);
-		if(watcher == 0)
-			start_watcher = true;
-	}
-	if(argc >= 5){
-		std::string logger_str(argv[4]);
+		std::string logger_str(argv[3]);
 		logger = std::stoi(logger_str);
 		if(logger == 0)
 			start_logger = true;
@@ -49,13 +42,6 @@ int main(int argc, char* argv[]){
 		std::cout << ss.str();
 		std::cin >> signal;
 	}
-	if (watcher == -1){
-		int i = -1;
-		std::cout << "Start watcher? 0 is yes ";
-		std::cin >> i;
-		if(i==0)
-			start_watcher = true;
-	}
 	if (logger == -1){
 		int i = -1;
 		std::cout << "Start logger? 0 is yes ";
@@ -63,19 +49,9 @@ int main(int argc, char* argv[]){
 		if(i==0)
 			start_logger = true;
 	}
-	if (start_watcher && start_logger){
-		std::cout << "You can't start both, logger and watcher, in the same process.\n";
-		return -1;
-	}
 	Listener* listenerp;
-	Listener listener_watcher(WATCHER_PORT);
 	Listener listener_logger(LOGGER_PORT);
 	
-	if(start_watcher){
-		listenerp = &listener_watcher;
-		(*listenerp).create_and_listen();
-		std:: cout << "Watcher started on Port " << WATCHER_PORT << "\n";
-	}
 	if(start_logger){
 		listenerp = &listener_logger;
 		(*listenerp).create_and_listen();
@@ -87,7 +63,7 @@ int main(int argc, char* argv[]){
 		sender.send_message(Message(Entry(0,"0.0.0.0",25000), signal, 0, 0, ""));
 	}
 	sender.close_connection();
-	if(start_watcher || start_logger){
+	if(start_logger){
 		int confd, msg_id, believing_counter = 0;
 		bool listen_more = true;
 		std::ostringstream rumorresponses;
@@ -114,9 +90,6 @@ int main(int argc, char* argv[]){
 			close(confd);
 		}while(listen_more);
 		std::ofstream ofs;
-		if(start_watcher){
-			ofs.open(RESULTFILE, std::ios_base::app | std::ios_base::out);
-		}
 		if(start_logger){
 			ofs.open(LOGGERFILE, std::ios_base::app | std::ios_base::out);
 		}

@@ -29,6 +29,9 @@ const int NODE_TERMINATED = 16;
 
 const int TERMINATE_CLVL = 17;
 
+const int INIT_REQUEST_RESPONSES = 18;
+const int RESPONSE = 19;
+
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 
@@ -36,10 +39,11 @@ const int MSG_BUFFER_SIZE = 256;
 const int MAX_VECTORTIME_SIZE =  1001;
 
 const std::string WATCHER_IP = "localhost";
-const int WATCHER_PORT = 25000;
+const int WATCHER_PORT = 24000;
+const int WATCHER_ID = 24000;
 
 const std::string LOGGER_IP = "localhost";
-const int LOGGER_PORT = 24999;
+const int LOGGER_PORT = 25000;
 
 
 const std::string ADDRESSFILE = "doc/addresses.txt";

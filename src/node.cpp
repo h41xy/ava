@@ -176,6 +176,7 @@ int Node::send_message(Entry& receiver, Message& message){
 		sender.send_message(message);
 		logger_signal_out(receiver,message,true);
 		sender.close_connection();
+		return 0;
 	} else {
 		logger_signal_out(receiver,message,false);
 	}
