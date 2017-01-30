@@ -12,6 +12,8 @@ N_voter::N_voter(char* id_cstr) : Node(id_cstr){
 	for (int i = 1; i<=candidate_count; i++){
 		candidate_c_levels[i] = get_random(100, 0);
 	}
+	reported = true;
+	vtime_to_report = 0;
 
 }
 
@@ -210,6 +212,17 @@ int N_voter::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>
 		}
 		vtime_terminated = true;
 	}
+	if (cur_vtime[myid - 1] >= vtime_to_report && reported == false){
+		
+		int max_id = 0;
+		bool doublemax = false;
+		Entry watcher(24000,"localhost",24000);
+
+		find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+		Message response(myself,RESPONSE,max_id,candidate_c_levels[max_id],"");
+		send_message(watcher,response);
+		reported = true;
+	}
 	return -1;
 }
 
@@ -310,6 +323,11 @@ int N_voter::run(){
 					       init_as_partybuddy(message);
 					       break;
 				       }
+case INIT_REQUEST_RESPONSES : {
+	// sender clvl is vtime in this case
+	vtime_to_report = message.get_sender_clvl();
+break;
+}
 
 			default :
 				       std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";

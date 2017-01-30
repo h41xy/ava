@@ -1,7 +1,9 @@
 #include "watcher.h"
 
 Watcher::Watcher(char* id_cstr) : Node(id_cstr){
-	vtime_to_respond = 0;
+	std::string vtime_str(id_cstr);
+	
+	vtime_to_respond = std::stoi(vtime_str);
 	responsecounter =  0;
 }
 

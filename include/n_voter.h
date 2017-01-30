@@ -23,6 +23,9 @@ protected:
 
 	int vtime_check_terminate(std::vector<int>&, std::vector<int>&, bool&); // above three values
 
+	int reported;
+	int vtime_to_report;
+
 	int init_as_partybuddy(Message&);
 
 	// ECHO Alg
