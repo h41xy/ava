@@ -35,6 +35,9 @@ protected:
 	std::vector<int> vtime_to_terminate;
 	bool vtime_terminated;
 
+	int vtime_to_respond;
+	bool responded;
+
 	int vtime_check_terminate(std::vector<int>&, std::vector<int>&, bool&); // above three values
 	int vtime_up(std::vector<int>&);
 	int set_termination_vtime(int);

@@ -6,7 +6,7 @@
 // Reads all addresses and in a seperate list all neighbors
 // reason to know all addresses is the exit
 // TODO rewrite constructor with initial values
-Node::Node(char* id_cstr) : vtime_terminated(false) {
+Node::Node(char* id_cstr) : vtime_terminated(false), responded(true){
 
 	// Args get passed as cstring so I am converting first to String and then to int
 	std::string id_str(id_cstr);
@@ -26,6 +26,7 @@ Node::Node(char* id_cstr) : vtime_terminated(false) {
 	// resize the vector to the size of the addressbook
 	vtime.resize(book.entrycount());
 	vtime_to_terminate.resize(book.entrycount());
+	int vtime_to_respond = INIT_TERM_TIME;
 	// for the init fill all values with 0 otherwise unexpoected behavior can happen
 	std::fill(vtime.begin(),vtime.end(),0);
 	std::fill(vtime_to_terminate.begin(),vtime_to_terminate.end(),INIT_TERM_TIME);

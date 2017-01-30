@@ -210,6 +210,18 @@ int N_voter::vtime_check_terminate(std::vector<int>& cur_vtime, std::vector<int>
 		}
 		vtime_terminated = true;
 	}
+	if (cur_vtime[myid-1] >= vtime_to_respond && responded == false){
+		// get max
+		int max_id = 0;
+		bool doublemax = false;
+		find_id_of_max_value(candidate_c_levels, max_id, doublemax);
+
+		Entry watcher(24000,"localhost",24000);
+		Message response(myself,RESPONSE,max_id,0,"");
+		send_message(watcher,response);
+
+		responded = true;
+	}
 	return -1;
 }
 
@@ -310,7 +322,12 @@ int N_voter::run(){
 					       init_as_partybuddy(message);
 					       break;
 				       }
-
+case INIT_REQUEST_RESPONSES : {
+	responded = false;
+	vtime_to_respond = message.get_sender_clvl();
+						vtime_check_terminate(vtime,vtime_to_terminate,vtime_terminated);
+break;
+}
 			default :
 				       std::cout << "ID: " << myid << "I don't know this signal id. Close connection.\n";
 				       break;

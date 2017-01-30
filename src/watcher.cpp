@@ -6,6 +6,9 @@ Watcher::Watcher(char* id_cstr, int vtime_to_respond) : Node(id_cstr) {
 	myid = 24000;
 	clear_stringstream(ss);
 
+	candidates_c_sums[0]=0;
+	candidates_c_sums[1]=0;
+
 	this->vtime_to_respond = vtime_to_respond;
 	responsecounter =  0;
 }
@@ -78,10 +81,16 @@ case RESPONSE : {
 
 int Watcher::request_response_on_vtime(int vtime_to_respond){
 	// Construct message with vtime to respond and Signal
-	Message response_request(myself,INIT_REQUEST_RESPONSES,myid,vtime_to_respond,"");
+	Message response_request(myself,INIT_REQUEST_RESPONSES,myid,this->vtime_to_respond,"");
 	// send Message
 	std::list<Entry>::iterator it = book.get_iterator();
 	do{
+		if ((*it).getid() == 1 ){
+			it++;
+			if((*it).getid() == 2){
+				it++;
+			}
+		}
 		// on success, responsecounter++;
 		if (send_message((*it),  response_request) == 0)
 			responsecounter++;;
@@ -107,7 +116,7 @@ int Watcher::process_all_responses(){
 	// construct string
 	//	-> write_to_file(std::string);
 	std::ostringstream os;
-	if (candidates_c_sums[0] < candidates_c_sums[1]){
+	if (candidates_c_sums[0] > candidates_c_sums[1]){
 		os << "Candidate 1 won with " << candidates_c_sums[0] << " Votes.\n";
 	} else {
 		os << "Candidate 2 won with " << candidates_c_sums[1] << " Votes.\n";
@@ -122,6 +131,7 @@ int Watcher::write_to_file(std::string result){
 	ofs.open(WATCHERFILE, std::ios_base::app | std::ios_base::out);
 	ofs << result;
 	ofs.close();
+	std::exit(0);
 
 	return -1;
 }
