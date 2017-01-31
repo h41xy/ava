@@ -34,5 +34,23 @@ sysctl -w net.core.somaxconn=N
 # where N is your wished backlog queue.
 
 # Example
+# The default termination vtime is 1000, change it in include/constants.h and recompile
 # creates and starts the network then sleeps 1 sec to wait buildup and continues with the init signal
 ./start 50 2 5 10 25 y && sleep 1 && ./bin/controller 25001 11 1
+
+# if you want inbetween results start the watcher with a vector time at which the nodes should respond
+./bin/watcher 500
+
+# send the init signal to both candidates
+# the second parameter on each starts the logger if zero
+# the network will start after this
+./bin/controller 25001 10 1 && ./bin/controller 25002 10 0
+
+# send an init to the watcher so he propagates
+./bin/controller 24000 18 1
+
+# when all nodes reached the termination time, this is how you end them
+./bin/controller 25001 1 1
+
+# and end the watcher
+./bin/controller 25000 1 1

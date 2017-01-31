@@ -117,10 +117,11 @@ int Watcher::process_all_responses(){
 	//	-> write_to_file(std::string);
 	std::ostringstream os;
 	if (candidates_c_sums[0] > candidates_c_sums[1]){
-		os << "Candidate 1 won with " << candidates_c_sums[0] << " Votes.\n";
+		os << "Candidate 1 would win with " << candidates_c_sums[0] << " Votes against" << candidates_c_sums[1] << " votes of Candidate 2.\n";
 	} else {
-		os << "Candidate 2 won with " << candidates_c_sums[1] << " Votes.\n";
+		os << "Candidate 2 would win with " << candidates_c_sums[1] << " Votes against" << candidates_c_sums[0] << " votes of Candidate 1.\n";
 	}
+	std::cout << os.str();
 	write_to_file(os.str());
 	return -1;
 }
