@@ -19,6 +19,7 @@ protected:
 public:
 	Message();
 	Message(const int);
+	Message(const Entry, const int, std::string);
 	Message(const Entry, const int, const int);
 	// Sender Entry, Signal ID, Lamport time, Message
 	Message(const Entry, const int, const int, std::string);

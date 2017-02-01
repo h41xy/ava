@@ -14,7 +14,7 @@ TARGETS := $(TARGET_NODE) $(TARGET_CTRL)
 CFLAGS := -Wall
 INC := -I include
 
-MODULES_NODE := entry addressbook listener sender message node node_exec 
+MODULES_NODE := entry addressbook listener sender message node node_exec
 OBJECTS_NODE := $(patsubst %, $(BUILDDIR)/%.o, $(MODULES_NODE))
 
 MODULES_CTRL := entry sender listener message controller 

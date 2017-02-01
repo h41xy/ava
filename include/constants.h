@@ -8,6 +8,7 @@ const int STD_SIGNAL = 0;
 
 const int EXIT_NODE = 1;
 const int EXIT_ALL = 2;
+const int RECV_MSG = 3;
 
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;

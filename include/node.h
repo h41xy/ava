@@ -33,8 +33,7 @@ protected:
 	int send_all_message(Addressbook&, Message&);
 
 	// switch case methods
-	int sc_exit_node(Message&, bool&);
-	int sc_exit_all(Message&, bool&);
+	int sc_exit_all(Message&);
 
 	// msg handling
 	std::stringstream ss;

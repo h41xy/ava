@@ -4,6 +4,8 @@ Message::Message() : Message(Entry(), STD_SIGNAL, STD_LTIME, STD_STRING) {}
 
 Message::Message(const int signal_id) : Message(Entry(), signal_id, STD_LTIME, STD_STRING) {}
 
+Message::Message(const Entry sender, const int signal_id, std::string msg) : Message(sender, signal_id, STD_LTIME, msg) {}
+
 Message::Message(const Entry sender, const int signal_id, const int ltime) : Message(sender, signal_id, ltime, STD_STRING){}
 
 Message::Message(const Entry sender, const int signal_id, const int ltime, std::string msg)
