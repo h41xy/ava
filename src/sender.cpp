@@ -1,5 +1,7 @@
 #include "sender.h"
 
+Sender::Sender() : Sender(LOGGER_IP, LOGGER_PORT) {}
+
 // Prepares a connection with given parameters
 Sender::Sender(std::string ip, int port){
 	prepare_connection();
@@ -33,19 +35,6 @@ int Sender::get_connection(){
 // TODO check if connected
 int Sender::send_message(Message message){
 	write(sockfd,&message,sizeof(Message));
-	return -1;
-}
-
-// Sends the vtimestamp
-// TODO check if connected
-// TODO write own timestamp class
-int Sender::send_vtimestamp(std::vector<int>& vtimestamp){
-	// write every value sequentially to the socket
-	// the read on the other side will pick them up the same way and write
-	// them in a new vector
-	for(unsigned int i = 0; i < vtimestamp.size(); i++){
-		write(sockfd,&vtimestamp[i],sizeof(vtimestamp[i]));
-	}
 	return -1;
 }
 

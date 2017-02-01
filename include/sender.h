@@ -16,6 +16,16 @@
 #include "message.h"
 
 class Sender{
+public:
+	Sender();
+	Sender(std::string,int); // ip as string and port as int
+	int get_connection();
+
+	int send_message(Message);
+
+	int close_connection();
+
+private:
 	//----getaddrinfo----
 	struct addrinfo hints;
 	struct addrinfo *serverinfo;
@@ -25,14 +35,5 @@ class Sender{
 	std::string msg;
 
 	void prepare_connection(); // Prepares the needed structs
-
- public:
-	Sender(std::string,int); // ip as string and port as int
-	int get_connection();
-
-	int send_message(Message);
-	int send_vtimestamp(std::vector<int>&);
-
-	int close_connection();
 };
 #endif // SENDER_H
