@@ -3,6 +3,8 @@
 
 #include "entry.h"
 
+Entry::Entry() : Entry(-1,"localhost",-1) {}
+
 Entry::Entry (int id, std::string ip, int port)
 	: id(id)
 	, port(port)
@@ -10,7 +12,6 @@ Entry::Entry (int id, std::string ip, int port)
 	std::strcpy(this->ip, ip.c_str());
 }
 
-Entry::Entry(){}
 
 int Entry::getid() const{
 	return this->id;

@@ -5,52 +5,15 @@
 
 const int EXIT_NODE = 0;
 const int EXIT_ALL = 1;
-const int RECV_MSG = 2;
-const int SOCIALISE = 3;
-const int RUMOR = 4;
-const int PRINT_VTIME = 5;
-
-const int VOTE_ME = 6;
-const int CAMPAIGN = 7;
-
-const int KEEP_ON = 8;
-const int NOT_YOU = 9;
-
-const int INIT = 10; // global init signal
-const int INIT_PB = 11; // candidate nodes init their partybuddies with this signal
-
-const int ECHO_EXPLORE = 12;
-
-const int SET_TERMINATE_VTIME = 13;
-const int SET_TERMINATE_VTIME_ALL = 14;
-const int INIT_TERM_TIME = 1000;
-
-const int NODE_TERMINATED = 16;
-
-const int TERMINATE_CLVL = 17;
-
-const int INIT_REQUEST_RESPONSES = 18;
-const int RESPONSE = 19;
 
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
-
-// with the +1 I spare the whole offset confusion later on
-const int MAX_VECTORTIME_SIZE =  1001;
-
-const std::string WATCHER_IP = "localhost";
-const int WATCHER_PORT = 24000;
-const int WATCHER_ID = 24000;
 
 const std::string LOGGER_IP = "localhost";
 const int LOGGER_PORT = 25000;
 
 
 const std::string ADDRESSFILE = "doc/addresses.txt";
-const std::string CANDIDATEFILE = "doc/candidates.txt";
-const std::string GRAPHFILE = "doc/graph.txt";
-const std::string RESULTFILE = "doc/results.txt";
-const std::string LOGGERFILE = "doc/election.log";
-const std::string WATCHERFILE = "doc/election_prediction.log";
+const std::string SHARED_FILE = "doc/shared_res.txt";
 
 #endif // CONSTANTS_H

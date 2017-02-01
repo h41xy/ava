@@ -8,3 +8,4 @@ doc/candidates.txt
 doc/graph.png
 doc/graph.txt
 test/test_vectorclock_arrays
+*.log
