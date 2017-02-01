@@ -16,22 +16,19 @@
 #include "entry.h"
 
 class Addressbook{
-	std::list<Entry> book;
- public:
+public:
 	Addressbook();
 	Addressbook(std::string);
-	Addressbook(std::string, std::list<int>);
+
 	void fillfromfile(std::string);
-	void fillfromfile_nbs_only(std::string,std::list<int>);
 	void add(Entry);
-	int remove(int); // Removes an Entry identified by id, return -1 if not found
+	// TODO this method needs rework
 	Entry getbyid(int); // Returns found Entry, if not found returns an Entry with (-1,"",-1). pretty ulgy
-	int entrycount();
-	std::list<Entry>::iterator get_iterator();
-	Entry get_entry_at(std::list<Entry>::iterator);
-	std::list<Entry>::iterator get_end();
-	std::tuple<Entry,Entry,Entry> return_three_random_entries(); //Returns three random entries
-//	friend std::ostream& operator<<(std::ostream&, const Addressbook&);
+	int size();
+	std::list<Entry>::iterator begin();
+	std::list<Entry>::iterator end();
+private:
+	std::list<Entry> book;
 };
 
 #endif // ADDRESSBOOK_H
