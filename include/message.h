@@ -10,30 +10,26 @@ class Message {
 protected:
 	const Entry sender;
 	const int signal_id;
-	const int origin;
-	const int clvl;
+	const int ltime;
 	unsigned int msg_id;
 	char msg[MSG_BUFFER_SIZE];
 
 	unsigned int get_random(const unsigned int&, const unsigned int&); // min max
 
-	// vector time
-	int vtimestamp[MAX_VECTORTIME_SIZE];
 public:
-	// Myself, signalid, origin, clvl, msg
-	Message(const Entry&, const int&, const int&, const int&, const std::string&);
-	Message(const Entry&, const int&, const int&, const int&, const std::string&, int[MAX_VECTORTIME_SIZE]);
+	Message();
+	Message(const int);
+	Message(const Entry, const int, const int);
+	// Sender Entry, Signal ID, Lamport time, Message
+	Message(const Entry, const int, const int, std::string);
 
 	const Entry& get_sender() const;
 	const int& get_signal_id() const;
-	const int& get_origin() const;
-	const int& get_sender_clvl() const;
+	const int& get_ltime() const;
 	const unsigned int& get_msg_id() const;
 	const std::string get_msg() const;
 
 	int set_msg_id(unsigned int);
 	int set_msg(std::string);
-	int set_vtimestamp(int[MAX_VECTORTIME_SIZE]);
-	int set_vtimestamp(std::vector<int>);
 	};
 #endif // MESSAGE_H
