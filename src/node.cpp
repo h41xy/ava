@@ -1,8 +1,8 @@
 #include "node.h"
 
 Node::Node(const int node_id)
-	: myid(node_id)
-	, book(ADDRESSFILE)
+	: book(ADDRESSFILE)
+	, myid(node_id)
 {
 	myself = book.getbyid(myid);
 }
