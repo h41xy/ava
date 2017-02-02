@@ -33,12 +33,8 @@ int main(int argc, char* argv[]){
 	}
 	if (signal == -1){
 		std::stringstream ss;
-		ss << "Welches Signal?" << std::endl;
+		ss << "Signal to send?" << std::endl;
 		ss << EXIT_ALL << ") Exit all nodes." << std::endl;
-		ss << VOTE_ME << ") starts a vote me only if the addressant is a candidate.\n";
-		ss << CAMPAIGN << ") starts a campaign only if the addressant is a candidate.\n";
-		ss << INIT << ") inits the network.\n";
-		ss << SET_TERMINATE_VTIME_ALL << ") sets a termination time for all.\n";
 		std::cout << ss.str();
 		std::cin >> signal;
 	}
@@ -60,7 +56,7 @@ int main(int argc, char* argv[]){
 	std::cout << "Sending signal " << signal << " to port " << port << std::endl;
 	Sender sender("localhost",port);
 	if(sender.get_connection() == 0){
-		sender.send_message(Message(Entry(0,"0.0.0.0",25000), signal, 0, 0, ""));
+		sender.send_message(Message(signal));
 	}
 	sender.close_connection();
 	if(start_logger){
@@ -70,7 +66,7 @@ int main(int argc, char* argv[]){
 		do{ 
 			confd = (*listenerp).accept_connection();
 
-			Message message(Entry(0,"",0),-1,-1,-1,"");
+			Message message;
 			read(confd,&message,sizeof(message));
 			msg_id = message.get_signal_id();
 

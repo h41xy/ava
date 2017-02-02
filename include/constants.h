@@ -19,8 +19,8 @@ const std::string STD_STRING = "";
 const std::string LOGGER_IP = "localhost";
 const int LOGGER_PORT = 25000;
 
-
 const std::string ADDRESSFILE = "doc/addresses.txt";
-const std::string SHARED_FILE = "doc/shared_res.txt";
+const std::string SHARED_FILE = "doc/shared.res";
+const std::string LOGGERFILE = "doc/run.log";
 
 #endif // CONSTANTS_H
