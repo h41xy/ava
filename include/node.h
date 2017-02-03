@@ -54,8 +54,10 @@ protected:
 	int sc_exit_all(Message&);
 
 	int start_request();
+	int received_request(int, int); // id, ltime
 	int increment_ltime();
 	int send_request(int, int);
+	int send_ack(int);
 
 	// msg handling
 	std::stringstream ss;

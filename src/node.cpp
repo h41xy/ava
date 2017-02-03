@@ -58,7 +58,7 @@ bool Node::process_recvd_msg(Message& message){
 					return quit_node;
 				}
 		case REQUEST : {
-				       start_request();
+				       received_request(message.get_sender().getid(), message.get_ltime());
 					return continue_node;
 			       }
 
@@ -88,8 +88,25 @@ int Node::start_request(){
 	return -1;
 }
 
+int Node::received_request(int id, int ltimestamp){
+	increment_ltime();
+	QEntry qentry(id, ltimestamp);
+	request_queue.push(qentry);
+	send_ack(id);
+	return -1;
+}
+
+int Node::send_ack(int receiver_id){
+	Entry receiver = book.getbyid(receiver_id);
+	Message new_acknowledge(myself, ACKNOWLEDGE, this->ltime);
+
+	send_message(receiver, new_acknowledge);
+
+	return -1;
+}
+
 int Node::increment_ltime(){
-	this->ltime++;
+	ltime++;
 	return -1;
 }
 
