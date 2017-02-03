@@ -98,6 +98,7 @@ int Node::received_request(int id, int ltimestamp){
 }
 
 int Node::exit_cs(){
+	// TODO check if its me who pops (same ltimestamp)
 	request_queue.pop();
 	send_release(this->id);
 	return -1;

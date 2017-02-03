@@ -39,10 +39,16 @@ protected:
 		QEntry(int id, int ltimestamp) : id(id),ltimestamp(ltimestamp) {}
 		int id;
 		int ltimestamp;
+
+		bool operator<(const QEntry& rhs) const{
+			// return value inverted so priority queue will have
+			// the min item on top
+			return this->ltimestamp > rhs.ltimestamp;
+		}
 	};
 
 	std::vector<Acknowledge> acknowledges;
-	std::queue<QEntry> request_queue;
+	std::priority_queue<QEntry> request_queue;
 
 	int listen_loop(Listener&);
 	bool process_recvd_msg(Message&);
