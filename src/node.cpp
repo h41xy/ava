@@ -48,6 +48,8 @@ bool Node::process_recvd_msg(Message& message){
 	const bool quit_node = false;
 	const bool continue_node = true;
 
+	increment_ltime();
+
 	switch(message.get_signal_id()){
 
 		case EXIT_NODE : {
@@ -81,7 +83,6 @@ int Node::sc_exit_all(Message& message){
 }
 
 int Node::start_request(){
-	increment_ltime();
 	send_request(this->id,this->ltime);
 	request_queue.push(QEntry(this->id,this->ltime));
 
@@ -106,7 +107,7 @@ int Node::send_ack(int receiver_id){
 }
 
 int Node::increment_ltime(){
-	ltime++;
+	this->ltime++;
 	return -1;
 }
 
@@ -122,6 +123,7 @@ int Node::logger_signal_out(Entry& receiver, Message& message, const bool& conne
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	ss << "[NODE_ID: " << this->id << " ]";
+	ss << "[LTIME: " << this->ltime << " ]";
 	ss << "[MType: OUT]";
 	ss << "[Recv_ID: " << receiver.getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
@@ -192,6 +194,7 @@ int Node::send_all_message(Addressbook& receivers, Message& message){
 int Node::send_message(Entry& receiver, Message& message){
 	Sender sender(receiver.getip(),receiver.getport());
 	if(sender.get_connection() != -1){
+		increment_ltime();
 		sender.send_message(message);
 		logger_signal_out(receiver,message,true);
 		sender.close_connection();
