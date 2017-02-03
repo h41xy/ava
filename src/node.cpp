@@ -2,9 +2,9 @@
 
 Node::Node(const int node_id)
 	: book(ADDRESSFILE)
-	, myid(node_id)
+	  , id(node_id)
 {
-	myself = book.getbyid(myid);
+	myself = book.getbyid(node_id);
 }
 
 // The main loop of the node
@@ -28,12 +28,14 @@ int Node::listen_loop(Listener& listener){
 	int confd = -1;
 	Message message;
 
+	std::cout << "Node " << this->id << " startet on port " << myself.getport() << std::endl;
 	do{
 		confd = listener.accept_connection();
 		// Construct empty message which gets overwritten by recvd message
 		read(confd,&message,sizeof(message));
 		close(confd);
 
+	//}while(true);
 	}while(process_recvd_msg(message));
 
 	// Node exit
@@ -41,25 +43,30 @@ int Node::listen_loop(Listener& listener){
 	return -1;
 }
 
-int Node::process_recvd_msg(Message& message){
+bool Node::process_recvd_msg(Message& message){
 	// have to get initialised every time, consider make global
 	const bool quit_node = false;
 	const bool continue_node = true;
 
-		switch(message.get_signal_id()){
+	switch(message.get_signal_id()){
 
-			case EXIT_NODE : {
-						 return quit_node;
-					 }
-			case EXIT_ALL : {
-						sc_exit_all(message);
-						return quit_node;
-					}
+		case EXIT_NODE : {
+					 return quit_node;
+				 }
+		case EXIT_ALL : {
+					sc_exit_all(message);
+					return quit_node;
+				}
+		case REQUEST : {
+				       start_request();
+					return continue_node;
+			       }
 
-			default :
-					// received unknown signal
-					   return continue_node;
-		}
+		default :
+			       // received unknown signal
+			       return continue_node;
+	}
+
 
 	return continue_node;
 }
@@ -73,12 +80,31 @@ int Node::sc_exit_all(Message& message){
 	return -1;
 }
 
+int Node::start_request(){
+	increment_ltime();
+	send_request(this->id,this->ltime);
+	request_queue.push(QEntry(this->id,this->ltime));
+
+	return -1;
+}
+
+int Node::increment_ltime(){
+	this->ltime++;
+	return -1;
+}
+
+int Node::send_request(int id, int ltimestamp){
+	Message new_request_msg(myself,REQUEST,ltimestamp);
+	send_all_message(book, new_request_msg);
+	return -1;
+}
+
 // Message handling
 int Node::logger_signal_out(Entry& receiver, Message& message, const bool& connection){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
-	ss << "[NODE_ID: " << myid << " ]";
+	ss << "[NODE_ID: " << this->id << " ]";
 	ss << "[MType: OUT]";
 	ss << "[Recv_ID: " << receiver.getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
@@ -109,7 +135,7 @@ int Node::logger_signal_in(Message& message){
 
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
-	ss << "[NODE_ID: " << myid << " ]";
+	ss << "[NODE_ID: " << this->id << " ]";
 	ss << "[MType: IN]";
 	ss << "[SenderID: " << message.get_sender().getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
@@ -139,7 +165,9 @@ int Node::clear_stringstream(std::stringstream& ss){
 int Node::send_all_message(Addressbook& receivers, Message& message){
 	std::list<Entry>::iterator it = receivers.begin();
 	do{
-		send_message((*it), message);
+		// this if is dang unefficient but needed so I dont send signals to myself
+		if((*it).getid() != this->id)
+			send_message((*it), message);
 	}while(++it != receivers.end());
 	return -1;
 }

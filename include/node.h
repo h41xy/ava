@@ -25,7 +25,7 @@ public:
 protected:
 	Entry myself;
 	Addressbook book;
-	int myid; //not pretty but I need it before I get myself
+	int id; //not pretty but I need it before I get myself
 
 	int ltime;
 	
@@ -36,6 +36,7 @@ protected:
 	};
 
 	struct QEntry{
+		QEntry(int id, int ltimestamp) : id(id),ltimestamp(ltimestamp) {}
 		int id;
 		int ltimestamp;
 	};
@@ -44,13 +45,17 @@ protected:
 	std::queue<QEntry> request_queue;
 
 	int listen_loop(Listener&);
-	int process_recvd_msg(Message&);
+	bool process_recvd_msg(Message&);
 
 	int send_message(Entry&, Message&);
 	int send_all_message(Addressbook&, Message&);
 
 	// switch case methods
 	int sc_exit_all(Message&);
+
+	int start_request();
+	int increment_ltime();
+	int send_request(int, int);
 
 	// msg handling
 	std::stringstream ss;
