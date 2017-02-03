@@ -9,6 +9,7 @@
 #include <cerrno>
 #include <unistd.h>
 #include <vector>
+#include <queue>
 
 #include "constants.h"
 #include "addressbook.h"
@@ -25,6 +26,22 @@ protected:
 	Entry myself;
 	Addressbook book;
 	int myid; //not pretty but I need it before I get myself
+
+	int ltime;
+	
+	struct Acknowledge{
+		int id;
+		int ltimestamp;
+		bool acknowledged;
+	};
+
+	struct QEntry{
+		int id;
+		int ltimestamp;
+	};
+
+	std::vector<Acknowledge> acknowledges;
+	std::queue<QEntry> request_queue;
 
 	int listen_loop(Listener&);
 	int process_recvd_msg(Message&);
