@@ -97,6 +97,19 @@ int Node::received_request(int id, int ltimestamp){
 	return -1;
 }
 
+int Node::exit_cs(){
+	request_queue.pop();
+	send_release(this->id);
+	return -1;
+}
+
+int Node::send_release(int id){
+	Message new_release(myself, RELEASE, ltime);
+	send_all_message(book, new_release);
+
+	return -1;
+}
+
 int Node::send_ack(int receiver_id){
 	Entry receiver = book.getbyid(receiver_id);
 	Message new_acknowledge(myself, ACKNOWLEDGE, this->ltime);
