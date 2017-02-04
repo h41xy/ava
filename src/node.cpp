@@ -90,7 +90,6 @@ int Node::start_request(){
 }
 
 int Node::received_request(int id, int ltimestamp){
-	increment_ltime();
 	QEntry qentry(id, ltimestamp);
 	request_queue.push(qentry);
 	send_ack(id);
