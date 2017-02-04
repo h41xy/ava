@@ -109,6 +109,13 @@ int Node::received_release(int id){
 	return -1;
 }
 
+int Node::received_acknowledge(int id, int ltimestamp){
+	Acknowledge new_acknowledge(id, ltimestamp);
+	acknowledges.insert(new_acknowledge);
+
+	return -1;
+}
+
 int Node::send_release(int id){
 	Message new_release(myself, RELEASE, ltime);
 	send_all_message(book, new_release);

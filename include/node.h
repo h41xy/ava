@@ -30,9 +30,11 @@ protected:
 	int ltime;
 	
 	struct Acknowledge{
+		Acknowledge(int id, int ltimestamp)
+			: id(id)
+			, ltimestamp(ltimestamp) {}
 		int id;
 		int ltimestamp;
-		bool acknowledged;
 	};
 
 	struct QEntry{
@@ -47,7 +49,7 @@ protected:
 		}
 	};
 
-	std::vector<Acknowledge> acknowledges;
+	std::map<int, Acknowledge> acknowledges;
 	std::priority_queue<QEntry> request_queue;
 
 	int listen_loop(Listener&);
@@ -63,6 +65,7 @@ protected:
 	int received_request(int, int); // id, ltime
 	int exit_cs();
 	int received_release(int);
+	int received_acknowledge(int, int);
 
 	int increment_ltime();
 	int send_request(int, int);
