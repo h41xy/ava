@@ -44,6 +44,8 @@ int Node::listen_loop(Listener& listener){
 }
 
 bool Node::process_recvd_msg(Message& message){
+	logger_signal_in(message);
+
 	// have to get initialised every time, consider make global
 	const bool quit_node = false;
 	const bool continue_node = true;
@@ -60,7 +62,8 @@ bool Node::process_recvd_msg(Message& message){
 					return quit_node;
 				}
 		case REQUEST : {
-				       received_request(message.get_sender().getid(), message.get_ltime());
+					received_acknowledge(message.get_sender().getid(), message.get_ltime());
+				       //received_request(message.get_sender().getid(), message.get_ltime());
 					return continue_node;
 			       }
 
