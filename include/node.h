@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <vector>
 #include <queue>
+#include <map>
 
 #include "constants.h"
 #include "addressbook.h"
@@ -30,6 +31,7 @@ protected:
 	int ltime;
 	
 	struct Acknowledge{
+		Acknowledge() : Acknowledge(0,0) {}
 		Acknowledge(int id, int ltimestamp)
 			: id(id)
 			, ltimestamp(ltimestamp) {}

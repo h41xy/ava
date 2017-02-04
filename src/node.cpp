@@ -111,7 +111,7 @@ int Node::received_release(int id){
 
 int Node::received_acknowledge(int id, int ltimestamp){
 	Acknowledge new_acknowledge(id, ltimestamp);
-	acknowledges.insert(new_acknowledge);
+	acknowledges[id] = new_acknowledge;
 
 	return -1;
 }
