@@ -62,6 +62,7 @@ protected:
 	int start_request();
 	int received_request(int, int); // id, ltime
 	int exit_cs();
+	int received_release(int);
 
 	int increment_ltime();
 	int send_request(int, int);

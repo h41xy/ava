@@ -98,9 +98,15 @@ int Node::received_request(int id, int ltimestamp){
 }
 
 int Node::exit_cs(){
-	// TODO check if its me who pops (same ltimestamp)
+	// In this case it must be me whos on top
 	request_queue.pop();
 	send_release(this->id);
+	return -1;
+}
+
+int Node::received_release(int id){
+	request_queue.pop();
+
 	return -1;
 }
 
