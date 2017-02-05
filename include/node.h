@@ -65,10 +65,12 @@ protected:
 
 	int start_request();
 	int received_request(int, int); // id, ltime
-	int exit_cs();
 	int received_release(int);
 	int received_acknowledge(int, int);
 
+	int exit_cs();
+	int enter_cs();
+	bool check_access_cs();
 	int increment_ltime();
 	int send_request(int, int);
 	int send_ack(int);

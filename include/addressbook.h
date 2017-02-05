@@ -24,7 +24,7 @@ public:
 	void add(Entry);
 	// TODO this method needs rework
 	Entry getbyid(int); // Returns found Entry, if not found returns an Entry with (-1,"",-1). pretty ulgy
-	int size();
+	unsigned int size();
 	std::list<Entry>::iterator begin();
 	std::list<Entry>::iterator end();
 private:

@@ -35,7 +35,6 @@ int Node::listen_loop(Listener& listener){
 		read(confd,&message,sizeof(message));
 		close(confd);
 
-	//}while(true);
 	}while(process_recvd_msg(message));
 
 	// Node exit
@@ -62,9 +61,21 @@ bool Node::process_recvd_msg(Message& message){
 					return quit_node;
 				}
 		case REQUEST : {
-					received_acknowledge(message.get_sender().getid(), message.get_ltime());
-				       //received_request(message.get_sender().getid(), message.get_ltime());
-					return continue_node;
+				       received_request(message.get_sender().getid(), message.get_ltime());
+				       return continue_node;
+			       }
+		case ACKNOWLEDGE : {
+					   received_acknowledge(message.get_sender().getid(), message.get_ltime());
+					   if (check_access_cs()){
+						   enter_cs();
+					   }
+				   }
+
+		case RELEASE : {
+				       received_release(message.get_sender().getid());
+				       if (check_access_cs()){
+					       enter_cs();
+				       }
 			       }
 
 		default :
@@ -99,13 +110,6 @@ int Node::received_request(int id, int ltimestamp){
 	return -1;
 }
 
-int Node::exit_cs(){
-	// In this case it must be me whos on top
-	request_queue.pop();
-	send_release(this->id);
-	return -1;
-}
-
 int Node::received_release(int id){
 	request_queue.pop();
 
@@ -133,6 +137,35 @@ int Node::send_ack(int receiver_id){
 	send_message(receiver, new_acknowledge);
 
 	return -1;
+}
+
+int Node::exit_cs(){
+	// In this case it must be me whos on top
+	request_queue.pop();
+	send_release(this->id);
+	return -1;
+}
+
+int Node::enter_cs(){
+	return -1;
+}
+
+bool Node::check_access_cs(){
+	const bool access_denied = false;
+	const bool access_granted = true;
+
+	// check if the first in the list is me
+	QEntry top = request_queue.top();
+	if (top.id != this->id){
+		return access_denied;
+	}
+
+	// if I am the first in the list, check if all acks are received
+	if (acknowledges.size() == book.size()){
+		return access_granted;
+	}
+
+	return access_denied;
 }
 
 int Node::increment_ltime(){

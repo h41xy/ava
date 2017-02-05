@@ -58,7 +58,7 @@ Entry Addressbook::getbyid(int id){
 	return (*it);
 }
 
-int Addressbook::size(){
+unsigned int Addressbook::size(){
 	return book.size();
 }
 
