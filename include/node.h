@@ -80,6 +80,7 @@ protected:
 	std::stringstream ss;
 	int logger_signal_out(Entry&, Message&, const bool&); // Receiver, Message, connection fail/success
 	int logger_signal_in(Message&);
+	int logger_debug_msg(std::string);
 
 	int clear_stringstream(std::stringstream&);
 };

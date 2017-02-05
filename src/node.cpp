@@ -60,6 +60,11 @@ bool Node::process_recvd_msg(Message& message){
 					sc_exit_all(message);
 					return quit_node;
 				}
+		case INIT : {
+				    start_request();
+				    return continue_node;
+			    }
+
 		case REQUEST : {
 				       received_request(message.get_sender().getid(), message.get_ltime());
 				       return continue_node;
@@ -142,11 +147,16 @@ int Node::send_ack(int receiver_id){
 int Node::exit_cs(){
 	// In this case it must be me whos on top
 	request_queue.pop();
+	logger_debug_msg("Exit CS.");
 	send_release(this->id);
+
+	// TODO as soon as everything works
+	// start_request();
 	return -1;
 }
 
 int Node::enter_cs(){
+	logger_debug_msg("Enter CS.");
 	return -1;
 }
 
@@ -162,6 +172,7 @@ bool Node::check_access_cs(){
 
 	// if I am the first in the list, check if all acks are received
 	if (acknowledges.size() == book.size()){
+		logger_debug_msg("Received all acknowledges.");
 		return access_granted;
 	}
 
@@ -217,6 +228,7 @@ int Node::logger_signal_in(Message& message){
 	Sender logger(LOGGER_IP, LOGGER_PORT);
 
 	ss << "[NODE_ID: " << this->id << " ]";
+	ss << "[LTIME: " << this->ltime << " ]";
 	ss << "[MType: IN]";
 	ss << "[SenderID: " << message.get_sender().getid() << " ]";
 	ss << "[S_ID: " << message.get_signal_id() << "]";;
@@ -233,6 +245,29 @@ int Node::logger_signal_in(Message& message){
 	}
 
 	clear_stringstream(ss);
+	return -1;
+}
+
+int Node::logger_debug_msg(std::string dbg_msg){
+
+	Sender logger(LOGGER_IP, LOGGER_PORT);
+
+	ss << "[NODE_ID: " << this->id << " ]";
+	ss << "[LTIME: " << this->ltime << " ]";
+	ss << "[MType: DEBUG]";
+	ss << "[ " << dbg_msg << " ]";
+
+	if (logger.get_connection() != -1) {
+		ss << std::endl;
+		logger.send_message(Message(myself, RECV_MSG, ss.str()));
+		logger.close_connection();
+	} else {
+		ss << "[LoggerCon FAILED]";
+		std::cout << ss.str() << std::endl;
+	}
+
+	clear_stringstream(ss);
+
 	return -1;
 }
 

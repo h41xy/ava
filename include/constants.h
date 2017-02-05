@@ -14,6 +14,8 @@ const int REQUEST = 4;
 const int ACKNOWLEDGE = 5;
 const int RELEASE = 6;
 
+const int INIT = 7;
+
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 
