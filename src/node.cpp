@@ -75,6 +75,7 @@ bool Node::process_recvd_msg(Message& message){
 					   if (check_access_cs()){
 						   enter_cs();
 					   }
+					return continue_node;
 				   }
 
 		case RELEASE : {
@@ -82,6 +83,7 @@ bool Node::process_recvd_msg(Message& message){
 				       if (check_access_cs()){
 					       enter_cs();
 				       }
+					return continue_node;
 			       }
 
 		default :
@@ -103,8 +105,8 @@ int Node::sc_exit_all(Message& message){
 }
 
 int Node::start_request(){
-	send_request(this->id,this->ltime);
 	request_queue.push(QEntry(this->id,this->ltime));
+	send_request(this->id,this->ltime);
 
 	return -1;
 }
@@ -158,6 +160,12 @@ int Node::exit_cs(){
 
 int Node::enter_cs(){
 	logger_debug_msg("Enter CS.");
+
+	// do cs stuff
+
+	// release resource
+	exit_cs();
+
 	return -1;
 }
 
@@ -172,7 +180,7 @@ bool Node::check_access_cs(){
 	}
 
 	// if I am the first in the list, check if all acks are received
-	if (acknowledges.size() == book.size()){
+	if (acknowledges.size() >= (book.size() - 1)){ // book.size() - 1 because I dont send an acknowledge to myself
 		logger_debug_msg("Received all acknowledges.");
 		return access_granted;
 	}
