@@ -213,14 +213,27 @@ int Node::cs_processing(){
 
 	// read counter
 	fs >> counter;
-	std::cout << "Read " << counter << "\n";
+
 	// check terminate
+	// TODO really messy
 	if ( counter == 0 ){
 		term_counter++;
 		if (term_counter >= TERM_BORDER ){
-			// TODO enter terminate
+			Message exit(EXIT_NODE);
+			int receiver_id = 0;
+			if ( this->id % 2 == 1 ) {
+				receiver_id = this->id + 1;
+			} else {
+				receiver_id = this->id - 1;
+			}
+			logger_debug_msg("Read zero a third time, good bye cruel world, take me and my buddy.");
+			Entry receiver = book.getbyid(receiver_id);
+			send_message(receiver,exit);
+			send_message(myself,exit);
+			return -1;
 		}
 	}
+
 	// alter counter
 	if (this->id % 2 == 1){
 		counter++;
