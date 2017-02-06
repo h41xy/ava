@@ -222,7 +222,11 @@ int Node::cs_processing(){
 		}
 	}
 	// alter counter
-	counter++;
+	if (this->id % 2 == 1){
+		counter++;
+	} else {
+		counter--;
+	}
 
 	// write counter
 	fs.seekp(0); // return to start of file
