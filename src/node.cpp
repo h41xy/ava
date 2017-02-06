@@ -212,6 +212,8 @@ int Node::cs_processing(){
 	fs.open(SHARED_FILE);
 
 	// read counter
+	fs >> counter;
+	std::cout << "Read " << counter << "\n";
 	// check terminate
 	if ( counter == 0 ){
 		term_counter++;
@@ -220,8 +222,16 @@ int Node::cs_processing(){
 		}
 	}
 	// alter counter
+	counter++;
+
 	// write counter
+	fs.seekp(0); // return to start of file
+	fs << counter;
+
 	// append id to file and \n
+	fs.seekp(0, std::ios::end);
+	fs << this->id << "\n";
+
 	// close file
 	fs.close();
 
