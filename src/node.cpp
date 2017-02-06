@@ -2,7 +2,8 @@
 
 Node::Node(const int node_id)
 	: book(ADDRESSFILE)
-	  , id(node_id)
+	, id(node_id)
+	, ltime(0)
 {
 	myself = book.getbyid(node_id);
 }

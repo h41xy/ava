@@ -47,6 +47,11 @@ protected:
 		bool operator<(const QEntry& rhs) const{
 			// return value inverted so priority queue will have
 			// the min item on top
+
+			// second comparsion is id
+			if (this->ltimestamp == rhs.ltimestamp)
+				return this->id > rhs.id;
+
 			return this->ltimestamp > rhs.ltimestamp;
 		}
 	};
