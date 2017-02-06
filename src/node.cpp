@@ -50,7 +50,7 @@ bool Node::process_recvd_msg(Message& message){
 	const bool quit_node = false;
 	const bool continue_node = true;
 
-	increment_ltime();
+	increment_ltime(message.get_ltime());
 
 	switch(message.get_signal_id()){
 
@@ -190,6 +190,11 @@ bool Node::check_access_cs(){
 
 int Node::increment_ltime(){
 	this->ltime++;
+	return -1;
+}
+
+int Node::increment_ltime(int ltimestamp){
+	this->ltime = std::max(this->ltime, ltimestamp) + 1;
 	return -1;
 }
 

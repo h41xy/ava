@@ -77,6 +77,7 @@ protected:
 	int enter_cs();
 	bool check_access_cs();
 	int increment_ltime();
+	int increment_ltime(int);
 	int send_request(int, int);
 	int send_ack(int);
 	int send_release(int);
