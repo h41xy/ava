@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <fstream>
 #include <iomanip>
 #include <cerrno>
 #include <unistd.h>

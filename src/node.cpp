@@ -208,6 +208,9 @@ int Node::cs_processing(){
 	int counter = 0;
 
 	// open file
+	std::fstream fs;
+	fs.open(SHARED_FILE);
+
 	// read counter
 	// check terminate
 	if ( counter == 0 ){
@@ -220,6 +223,7 @@ int Node::cs_processing(){
 	// write counter
 	// append id to file and \n
 	// close file
+	fs.close();
 
 	return -1;
 }
