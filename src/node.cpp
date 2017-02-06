@@ -61,10 +61,17 @@ bool Node::process_recvd_msg(Message& message){
 					sc_exit_all(message);
 					return quit_node;
 				}
-		case INIT : {
+		case INIT_ALL : {
+				    Message exit(myself, INIT, this->ltime);
+				    send_all_message(book, exit);
 				    start_request();
 				    return continue_node;
 			    }
+
+case INIT : {
+start_request();
+return continue_node;
+}
 
 		case REQUEST : {
 				       received_request(message.get_sender().getid(), message.get_ltime());
@@ -105,6 +112,7 @@ int Node::sc_exit_all(Message& message){
 }
 
 int Node::start_request(){
+	logger_debug_msg("Put myself on the queue.");
 	request_queue.push(QEntry(this->id,this->ltime));
 	send_request(this->id,this->ltime);
 
@@ -112,6 +120,9 @@ int Node::start_request(){
 }
 
 int Node::received_request(int id, int ltimestamp){
+	std::ostringstream dbg_msg ;
+	dbg_msg << "Put " << id << " with ltime " << ltimestamp << " on the queue.";
+	logger_debug_msg(dbg_msg.str());
 	QEntry qentry(id, ltimestamp);
 	request_queue.push(qentry);
 	send_ack(id);
@@ -153,8 +164,8 @@ int Node::exit_cs(){
 	logger_debug_msg("Exit CS.");
 	send_release(this->id);
 
-	// TODO as soon as everything works
-	// start_request();
+	acknowledges.clear();
+	 start_request();
 	return -1;
 }
 
