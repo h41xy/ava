@@ -20,6 +20,8 @@ const int INIT_ALL = 8;
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;
 
+const int TERM_BORDER = 3;
+
 const int STD_LTIME = 0;
 const std::string STD_STRING = "";
 

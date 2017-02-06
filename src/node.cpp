@@ -4,6 +4,7 @@ Node::Node(const int node_id)
 	: book(ADDRESSFILE)
 	, id(node_id)
 	, ltime(0)
+	, term_counter(0)
 {
 	myself = book.getbyid(node_id);
 }
@@ -62,16 +63,16 @@ bool Node::process_recvd_msg(Message& message){
 					return quit_node;
 				}
 		case INIT_ALL : {
-				    Message exit(myself, INIT, this->ltime);
-				    send_all_message(book, exit);
+					Message exit(myself, INIT, this->ltime);
+					send_all_message(book, exit);
+					start_request();
+					return continue_node;
+				}
+
+		case INIT : {
 				    start_request();
 				    return continue_node;
 			    }
-
-case INIT : {
-start_request();
-return continue_node;
-}
 
 		case REQUEST : {
 				       received_request(message.get_sender().getid(), message.get_ltime());
@@ -82,7 +83,7 @@ return continue_node;
 					   if (check_access_cs()){
 						   enter_cs();
 					   }
-					return continue_node;
+					   return continue_node;
 				   }
 
 		case RELEASE : {
@@ -90,8 +91,12 @@ return continue_node;
 				       if (check_access_cs()){
 					       enter_cs();
 				       }
-					return continue_node;
+				       return continue_node;
 			       }
+case STD_SIGNAL : {
+cs_processing();
+return continue_node;
+}
 
 		default :
 			       // received unknown signal
@@ -165,7 +170,7 @@ int Node::exit_cs(){
 	send_release(this->id);
 
 	acknowledges.clear();
-	 start_request();
+	start_request();
 	return -1;
 }
 
@@ -197,6 +202,26 @@ bool Node::check_access_cs(){
 	}
 
 	return access_denied;
+}
+
+int Node::cs_processing(){
+	int counter = 0;
+
+	// open file
+	// read counter
+	// check terminate
+	if ( counter == 0 ){
+		term_counter++;
+		if (term_counter >= TERM_BORDER ){
+			// TODO enter terminate
+		}
+	}
+	// alter counter
+	// write counter
+	// append id to file and \n
+	// close file
+
+	return -1;
 }
 
 int Node::increment_ltime(){

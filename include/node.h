@@ -29,6 +29,7 @@ protected:
 	int id; //not pretty but I need it before I get myself
 
 	int ltime;
+	int term_counter;
 	
 	struct Acknowledge{
 		Acknowledge() : Acknowledge(0,0) {}
@@ -81,6 +82,8 @@ protected:
 	int send_request(int, int);
 	int send_ack(int);
 	int send_release(int);
+
+	int cs_processing();
 
 	// msg handling
 	std::stringstream ss;
