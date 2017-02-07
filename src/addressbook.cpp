@@ -44,6 +44,18 @@ void Addressbook::add(Entry nentry){
 	book.push_back(nentry);
 }
 
+int Addressbook::remove(int id){
+	std::list<Entry>::iterator it = book.begin();
+	while((*it).getid() != id){
+		it++;
+		if(it == book.end())
+			return -1;
+	}
+	book.erase(it);
+
+	return -1;
+}
+
 // Returns a Entry identified by id
 // can be combined with remove when good return is found
 // TODO work with list.end()

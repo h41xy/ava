@@ -22,6 +22,7 @@ public:
 
 	void fillfromfile(std::string);
 	void add(Entry);
+	int remove(int); // Entry matches ID gets removed
 	// TODO this method needs rework
 	Entry getbyid(int); // Returns found Entry, if not found returns an Entry with (-1,"",-1). pretty ulgy
 	unsigned int size();
