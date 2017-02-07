@@ -5,7 +5,6 @@ Node::Node(const int node_id)
 	, id(node_id)
 	, ltime(0)
 	, term_counter(0)
-	, out_counter(1)
 {
 	myself = book.getbyid(node_id);
 }
@@ -98,11 +97,6 @@ return continue_node;
 				       }
 				       return continue_node;
 			       }
-
-case IM_OUT : {
-	out_counter += 2;
-	return continue_node;
-}
 
 		default :
 			       // received unknown signal
@@ -203,7 +197,7 @@ bool Node::check_access_cs(){
 	}
 
 	// if I am the first in the list, check if all acks are received
-	if (acknowledges.size() >= (book.size() - out_counter)){ // book.size() - 1 because I dont send an acknowledge to myself
+	if (acknowledges.size() >= (book.size() - 1)){ // book.size() - 1 because I dont send an acknowledge to myself
 		logger_debug_msg("Received all acknowledges.");
 		return access_granted;
 	}

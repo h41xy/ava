@@ -31,7 +31,7 @@ protected:
 
 	int ltime;
 	int term_counter;
-	int out_counter;
+
 	
 	struct Acknowledge{
 		Acknowledge() : Acknowledge(0,0) {}
