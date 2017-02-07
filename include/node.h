@@ -31,6 +31,7 @@ protected:
 
 	int ltime;
 	int term_counter;
+	bool term_state;
 
 	
 	struct Acknowledge{

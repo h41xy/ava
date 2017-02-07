@@ -17,7 +17,7 @@ const int RELEASE = 6;
 const int INIT = 7;
 const int INIT_ALL = 8;
 
-const int RM_ENTRY = 9;
+const int TERMINATE = 9;
 
 const int IP_BUFFER_SIZE = 15;
 const int MSG_BUFFER_SIZE = 256;

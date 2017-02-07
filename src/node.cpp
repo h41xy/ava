@@ -5,6 +5,7 @@ Node::Node(const int node_id)
 	, id(node_id)
 	, ltime(0)
 	, term_counter(0)
+	, term_state(false)
 {
 	myself = book.getbyid(node_id);
 }
@@ -97,6 +98,11 @@ return continue_node;
 				       }
 				       return continue_node;
 			       }
+case TERMINATE : {
+	logger_debug_msg("Node terminated.");
+	term_state = true;
+	return continue_node;
+}
 
 		default :
 			       // received unknown signal
@@ -170,7 +176,9 @@ int Node::exit_cs(){
 	send_release(this->id);
 
 	acknowledges.clear();
-	start_request();
+	if(!term_state){
+		start_request();
+	}
 	return -1;
 }
 
@@ -178,7 +186,10 @@ int Node::enter_cs(){
 	logger_debug_msg("Enter CS.");
 
 	// do cs stuff
-	cs_processing();
+	if (!term_state){
+		logger_debug_msg("Process CS.");
+		cs_processing();
+	}
 
 	// release resource
 	exit_cs();
@@ -221,17 +232,17 @@ int Node::cs_processing(){
 		term_counter++;
 		logger_debug_msg("Read zero.");
 		if (term_counter >= TERM_BORDER ){
-			Message exit(EXIT_NODE);
+			Message terminate(TERMINATE);
 			int receiver_id = 0;
 			if ( this->id % 2 == 1 ) {
 				receiver_id = this->id + 1;
 			} else {
 				receiver_id = this->id - 1;
 			}
-			logger_debug_msg("Read zero a third time, good bye cruel world, take me and my buddy.");
+			logger_debug_msg("Read zero a third time, reached term state.");
 			Entry receiver = book.getbyid(receiver_id);
-			send_message(receiver,exit);
-			send_message(myself,exit);
+			send_message(receiver,terminate);
+			send_message(myself,terminate);
 			return -1;
 		}
 	}
