@@ -99,7 +99,9 @@ return continue_node;
 				       return continue_node;
 			       }
 case TERMINATE : {
-	logger_debug_msg("Node terminated.");
+			 if(!term_state){
+				 logger_debug_msg("Node terminated.");
+			}
 	term_state = true;
 	return continue_node;
 }

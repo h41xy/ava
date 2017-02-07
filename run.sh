@@ -3,6 +3,7 @@
 SHAREDRES="doc/shared.res"
 MAIN="bin/node_exec"
 
+LOGFILE="doc/run.log"
 ADDRESSFILE="doc/addresses_all.txt"
 ADDRESSFILE_THISRUN="doc/addresses.txt"
 
@@ -10,6 +11,7 @@ ADDRESSFILE_THISRUN="doc/addresses.txt"
 reset_runlog(){
 	echo -n "" > $SHAREDRES
 	echo "0" > $SHAREDRES
+	echo -n "" > $LOGFILE
 }
 
 reset_runlog
