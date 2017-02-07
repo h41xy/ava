@@ -12,6 +12,7 @@ reset_runlog(){
 	echo -n "" > $SHAREDRES
 	echo "0" > $SHAREDRES
 	echo -n "" > $LOGFILE
+	echo 'date' > $LOGFILE
 }
 
 reset_runlog

@@ -119,7 +119,7 @@ case TERMINATE : {
 
 // Case EXIT_ALL
 int Node::sc_exit_all(Message& message){
-	Message exit(EXIT_ALL);
+	Message exit(EXIT_NODE);
 	send_all_message(book, exit);
 	return -1;
 }
