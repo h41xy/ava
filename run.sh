@@ -4,7 +4,7 @@ SHAREDRES="doc/shared.res"
 MAIN="bin/node_exec"
 
 ADDRESSFILE="doc/addresses_all.txt"
-ADDRESSFILE_THIS_RUN="doc/addresses.txt"
+ADDRESSFILE_THISRUN="doc/addresses.txt"
 
 # Clean the shared file and init it
 reset_runlog(){
@@ -32,7 +32,7 @@ fi
 LINES=`cat $ADDRESSFILE | wc -l`
 cat $ADDRESSFILE | sed $((NODES+1)),${LINES}d > $ADDRESSFILE_THISRUN
 
-for (( i=0; i<=$NODES; i++))
+for (( i=1; i<=$NODES; i++))
 do
 	echo "Starting voter node with ID $i..."
 	./bin/node_exec $i &

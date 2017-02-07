@@ -86,6 +86,10 @@ bool Node::process_recvd_msg(Message& message){
 					   }
 					   return continue_node;
 				   }
+case STD_SIGNAL : {
+cs_processing();
+return continue_node;
+}
 
 		case RELEASE : {
 				       received_release(message.get_sender().getid());
@@ -221,6 +225,7 @@ int Node::cs_processing(){
 	// TODO really messy
 	if ( counter == 0 ){
 		term_counter++;
+		logger_debug_msg("Read zero.");
 		if (term_counter >= TERM_BORDER ){
 			Message exit(EXIT_NODE);
 			int receiver_id = 0;
@@ -244,13 +249,21 @@ int Node::cs_processing(){
 		counter--;
 	}
 
+	// stupid, read and write back whole file just to remove the minus
+
+
 	// write counter
 	fs.seekp(0); // return to start of file
-	fs << counter;
+	if (counter < 0) {
+		counter = -counter;
+		fs << '-' << counter;
+	} else {
+		fs << '+' << counter;
+	}
 
 	// append id to file and \n
 	fs.seekp(0, std::ios::end);
-	fs << this->id << "\n";
+	fs << "\n" << this->id;
 
 	// close file
 	fs.close();
