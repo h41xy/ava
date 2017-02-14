@@ -1,3 +1,3 @@
 #!/bin/bash
 
-watch -n 0.5 doc/shared.res
+watch -n 0.5 cat doc/shared.res
